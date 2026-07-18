@@ -8,9 +8,9 @@ from typing import Any
 
 def install_raid_balance_v58(core: Any) -> None:
     """Задаёт единый диапазон обычного и критического урона рейда."""
-    if getattr(core, "_raid_balance_v58_installed", False):
+    if getattr(core, "_raid_balance_v59_installed", False):
         return
-    core._raid_balance_v58_installed = True
+    core._raid_balance_v59_installed = True
 
     async def boss_apply_hit(
         self: Any,
@@ -70,11 +70,11 @@ def install_raid_balance_v58(core: Any) -> None:
             miss = random.random() < 0.03
             critical = (not miss) and random.random() < float(stats["crit_chance"])
 
-            # Reality 58: обычный удар 200–500, критический 2000–3000.
+            # Reality 59: обычный удар 200–500, критический 800–1200.
             if miss:
                 damage = 0
             elif critical:
-                damage = random.randint(2000, 3000)
+                damage = random.randint(800, 1200)
             else:
                 damage = random.randint(200, 500)
 
