@@ -12,6 +12,7 @@ from talent_system import install
 from talent_ux import install_ux
 from today_types_expansion import install_today_types
 from today_types_in_roles import install_types_in_roles
+from webapp_inline_fix import install_inline_webapp_fix
 
 install_today_types(core)
 install_types_in_roles(core)
@@ -24,6 +25,7 @@ install_explanations(core)
 install_mastery_ui(core)
 install_talent_rules(core)
 install_about_updates(core)
+install_inline_webapp_fix(core)
 
 # В main.py есть общий обработчик F.text, зарегистрированный раньше расширений.
 # Переносим команды древа и мастерства в начало списка, чтобы общий обработчик
