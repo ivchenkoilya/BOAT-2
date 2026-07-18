@@ -16,6 +16,7 @@ from raid_v64_direct_tree import install_raid_v64_direct_tree
 from raid_v65_balance import install_raid_v65_balance
 from talent_expansion import install_expansion
 from talent_explanations import install_explanations
+from talent_improvements_v66 import install_talent_improvements_v66
 from talent_mastery import install_mastery
 from talent_mastery_ui import install_mastery_ui
 from talent_menu import install_menu
@@ -38,11 +39,16 @@ install_menu(core)
 install_ux(core)
 install_explanations(core)
 install_mastery_ui(core)
+# Reality 66 ставится после расширенного древа и мастерства: он использует
+# их билды, предпросмотр и особые таланты, а затем добавляет специализацию,
+# недельный прогресс, косметические награды и исправление кнопки прокачки.
+install_talent_improvements_v66(core)
+
 # Сначала задаём базовый урон и тактические механики рейда. Reality 61
 # устанавливает предыдущий стабильный слой, Reality 64 выдаёт очки древа,
 # а Reality 65 поднимает HP до 100 000 и усложняет давление отряда.
-# Затем подключается защищённый админ-центр, возвращаются маршруты древа,
-# а recovery устанавливается последним поверх окончательного HTTP-сервера.
+# Затем подключается защищённый админ-центр, а финальный маршрут древа
+# возвращает весь расширенный интерфейс и API Reality 66.
 install_raid_balance_v58(core)
 install_raid_v59_fix(core)
 install_raid_v60(core)
