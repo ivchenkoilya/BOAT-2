@@ -8,6 +8,7 @@ from raid_balance_v58 import install_raid_balance_v58
 from raid_v59_fix import install_raid_v59_fix
 from raid_v59_recovery import install_raid_v59_recovery
 from raid_v60 import install_raid_v60
+from raid_v60_guard import install_raid_v60_guard
 from talent_expansion import install_expansion
 from talent_explanations import install_explanations
 from talent_mastery import install_mastery
@@ -37,6 +38,7 @@ install_raid_balance_v58(core)
 install_raid_v59_fix(core)
 install_raid_v59_recovery(core)
 install_raid_v60(core)
+install_raid_v60_guard(core)
 install_talent_rules(core)
 install_about_updates(core)
 install_inline_webapp_fix(core)
