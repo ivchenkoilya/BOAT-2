@@ -1,0 +1,104 @@
+/* Reality 58: final stable raid controls */
+
+/* Сцена босса больше вообще не перехватывает касания. Свайп сразу получает
+   стандартная прокрутка страницы Telegram WebView. */
+#bossStage,
+#bossStage *{
+  pointer-events:none!important;
+  touch-action:auto!important;
+  -webkit-user-drag:none!important;
+  user-select:none!important;
+}
+.boss-swipe-v23{display:none!important;pointer-events:none!important}
+html,body,.app{
+  overflow-y:auto!important;
+  overscroll-behavior-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+
+/* Защита — настоящий графический элемент, а не ненадёжный CSS-фон. */
+.combat [data-action="defend"]{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+  background-image:none!important;
+  background-color:transparent!important;
+}
+.combat [data-action="defend"] .action-card-art-defend{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+  filter:drop-shadow(0 0 5px #35a9ff) drop-shadow(0 0 16px #176de6aa)!important;
+}
+.combat [data-action="defend"]:disabled .action-card-art-defend{
+  opacity:.62!important;
+  filter:saturate(.65) brightness(.72) drop-shadow(0 0 8px #207fe099)!important;
+}
+
+/* Убираем мигающую conic-анимацию. Оставляем стабильные разноцветные
+   внешние рамки и мягкий glow вокруг каждой карточки. */
+.fighter,
+.raid-page .fighter{
+  clip-path:none!important;
+  overflow:visible!important;
+  border:1px solid var(--frame-a,#b75cff)!important;
+  border-radius:9px!important;
+  animation:none!important;
+  box-shadow:
+    inset 0 0 18px #000,
+    0 0 5px var(--frame-a,#b75cff),
+    0 0 15px color-mix(in srgb,var(--frame-a,#b75cff) 62%,transparent),
+    0 0 27px color-mix(in srgb,var(--frame-b,#7d2cff) 32%,transparent)!important;
+}
+.fighter::before,
+.raid-page .fighter::before{
+  content:""!important;
+  position:absolute!important;
+  z-index:1!important;
+  inset:-5px!important;
+  padding:0!important;
+  border:2px solid var(--frame-a,#b75cff)!important;
+  border-radius:13px!important;
+  background:transparent!important;
+  -webkit-mask:none!important;
+  mask:none!important;
+  filter:drop-shadow(0 0 5px var(--frame-a,#b75cff))!important;
+  animation:none!important;
+  pointer-events:none!important;
+}
+.fighter::after,
+.raid-page .fighter::after{
+  content:""!important;
+  position:absolute!important;
+  z-index:0!important;
+  inset:-8px!important;
+  border-radius:15px!important;
+  background:radial-gradient(ellipse at center,color-mix(in srgb,var(--frame-a,#b75cff) 38%,transparent),transparent 70%)!important;
+  opacity:.55!important;
+  filter:blur(7px)!important;
+  animation:none!important;
+  pointer-events:none!important;
+}
+.fighter:nth-child(1),.raid-page .fighter:nth-child(1){--frame-a:#ff4657;--frame-b:#ffad3d}
+.fighter:nth-child(2),.raid-page .fighter:nth-child(2){--frame-a:#258dff;--frame-b:#39d9ff}
+.fighter:nth-child(3),.raid-page .fighter:nth-child(3){--frame-a:#35e57d;--frame-b:#b6ff42}
+.fighter:nth-child(4),.raid-page .fighter:nth-child(4){--frame-a:#b94cff;--frame-b:#ff5ce1}
+
+/* Описание способности всегда видно и помещается в одну короткую строку. */
+.ability-card .ability-copy em{
+  display:block!important;
+  opacity:1!important;
+  visibility:visible!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  font-size:7px!important;
+  line-height:1.1!important;
+  color:#c3b4c7!important;
+}
+
+/* Небольшая подпись диапазона урона в справке. */
+.page-help-card.damage-range{
+  border-color:#9e5ac1!important;
+  box-shadow:inset 0 0 14px #000,0 0 12px #913fc044!important;
+}
