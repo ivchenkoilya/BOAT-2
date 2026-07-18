@@ -57,7 +57,7 @@ const E={
  'Культ личности':['Одна награда в день ×2.','Первая подходящая положительная награда дня удваивается. Например, 80 очков превратятся в 160.'],
  'Живой авторитет':['100 за активность → 102.','Добавляет ещё 2% к наградам за социальную активность за каждый уровень.'],
  'Легенда беседы':['100 за задание → 104.','Увеличивает награды за задания и миссии на 4% за уровень.'],
- 'Икона реальности':['Любая награда 100 → 105.','Финальный общий бонус: увеличивает почти все подходящие положительные начисления влияния на 5%.'],
+ 'Икона реальности':['Любая награда 100 → 105.','Финальный общий бонус увеличивает подходящие положительные начисления влияния на 5%.'],
  'Сильная подача':['100 за общение → 102,5.','Усиливает награды за сообщения, реакции и другие действия общения на 2,5% за уровень.'],
  'Вирусная слава':['Общая награда 100 → 104.','Даёт дополнительный общий прирост влияния 4% за уровень.'],
  'Безупречная репутация':['100 за задание → 103.','Увеличивает награды за задания и полезные действия на 3% за уровень.'],
@@ -88,17 +88,18 @@ const E={
  'Любимец фортуны':['Шанс 10% → 16%.','Финальный талант добавляет 6 процентных пунктов к вероятности редкой дополнительной награды.']
 };
 
-const addNodeMeanings=()=>{
+function addNodeMeanings(){
  document.querySelectorAll('.nodewrap').forEach(w=>{
   const name=w.querySelector('.name')?.textContent?.trim();
   if(!name||!E[name])return;
   let box=w.querySelector('.meaning');
   if(!box){box=document.createElement('div');box.className='meaning';w.appendChild(box)}
-  box.textContent=E[name][0];
+  const next=E[name][0];
+  if(box.textContent!==next)box.textContent=next;
  });
-};
+}
 
-const updateCardMeaning=()=>{
+function updateCardMeaning(){
  const name=document.querySelector('#cardtitle')?.textContent?.trim();
  const effect=document.querySelector('#cardeffect');
  if(!name||!E[name]||!effect)return;
@@ -107,12 +108,34 @@ const updateCardMeaning=()=>{
   box=document.createElement('div');box.className='card-meaning';
   effect.insertAdjacentElement('afterend',box);
  }
- box.innerHTML='<b>Что изменится</b>'+E[name][1];
+ const next=E[name][1];
+ if(box.dataset.skill!==name){
+  box.replaceChildren();
+  const title=document.createElement('b');
+  title.textContent='Что изменится';
+  box.append(title,document.createTextNode(next));
+  box.dataset.skill=name;
+ }
+}
+
+const originalTree=tree;
+tree=function(...args){
+ const result=originalTree(...args);
+ requestAnimationFrame(addNodeMeanings);
+ return result;
 };
 
-const observer=new MutationObserver(()=>{addNodeMeanings();updateCardMeaning()});
-observer.observe(document.body,{subtree:true,childList:true,characterData:true});
-setTimeout(()=>{addNodeMeanings();updateCardMeaning()},100);
+const originalOpenSkill=openSkill;
+openSkill=function(...args){
+ const result=originalOpenSkill(...args);
+ requestAnimationFrame(updateCardMeaning);
+ return result;
+};
+
+requestAnimationFrame(()=>{
+ addNodeMeanings();
+ updateCardMeaning();
+});
 })();
 </script>
 """
