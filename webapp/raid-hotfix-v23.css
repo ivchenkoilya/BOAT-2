@@ -1,0 +1,187 @@
+/* Reality 56: real dock/scroll/defence fix */
+:root{
+  --nav-h:74px!important;
+  --combat-h:108px!important;
+  --battle-dock:108px!important;
+  --ability-h:52px!important;
+  --combat-gap:0px!important;
+  --fixed-ui-h:calc(var(--nav-h) + var(--combat-h) + var(--ability-h))!important;
+}
+html,body{
+  overflow-y:auto!important;
+  overscroll-behavior-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+body{
+  padding-bottom:calc(var(--fixed-ui-h) + env(safe-area-inset-bottom,0px) + 24px)!important;
+}
+.app{
+  padding-bottom:calc(var(--fixed-ui-h) + env(safe-area-inset-bottom,0px) + 40px)!important;
+}
+
+/* Ability is always directly above the combat cards. */
+.ability-card{
+  position:fixed!important;
+  left:50%!important;
+  right:auto!important;
+  bottom:calc(var(--nav-h) + var(--combat-h) + env(safe-area-inset-bottom,0px))!important;
+  transform:translateX(-50%)!important;
+  width:min(100vw,560px)!important;
+  height:var(--ability-h)!important;
+  min-height:var(--ability-h)!important;
+  margin:0!important;
+  z-index:2147482999!important;
+  display:grid!important;
+  grid-template-columns:40px minmax(0,1fr) 66px!important;
+  align-items:center!important;
+  padding:5px 9px!important;
+  overflow:hidden!important;
+}
+.ability-card .ability-copy b{font-size:11px!important}
+.ability-card .ability-copy small{font-size:6.5px!important}
+.ability-card .ability-cooldown b{font-size:8px!important}
+
+/* Three smaller graphic cards, with defence always visible. */
+.combat{
+  height:var(--combat-h)!important;
+  min-height:var(--combat-h)!important;
+  grid-template-columns:31% 38% 31%!important;
+  gap:0!important;
+  padding:3px 4px 5px!important;
+  align-items:end!important;
+  overflow:visible!important;
+}
+.combat .side-action,.combat .main-action{
+  display:block!important;
+  visibility:visible!important;
+  width:100%!important;
+  height:100px!important;
+  min-height:100px!important;
+  margin:0!important;
+  background-size:auto 98px!important;
+  background-position:center bottom!important;
+  background-repeat:no-repeat!important;
+  transform-origin:center bottom!important;
+}
+.combat [data-action="defend"]{
+  display:block!important;
+  visibility:visible!important;
+  order:1!important;
+  z-index:5!important;
+  background-size:auto 100px!important;
+  filter:drop-shadow(0 0 5px #37a9ff) drop-shadow(0 0 15px #176ee499)!important;
+}
+.combat [data-action="hit"]{order:2!important;z-index:6!important}
+.combat [data-action="heal"]{order:3!important;z-index:5!important}
+.combat button:disabled{
+  display:block!important;
+  visibility:visible!important;
+  opacity:.64!important;
+  filter:saturate(.7) brightness(.72) drop-shadow(0 0 5px #000)!important;
+}
+.combat [data-action="defend"]:disabled{
+  opacity:.72!important;
+  filter:saturate(.78) brightness(.78) drop-shadow(0 0 5px #268cff88)!important;
+}
+.combat .main-action>#attackHint,.combat .side-action>em{
+  bottom:0!important;
+  font-size:5.7px!important;
+  padding:2px 5px!important;
+}
+.bottom-space{height:calc(var(--fixed-ui-h) + 20px)!important}
+
+/* No card/frame around the phase label. */
+.phase-card{
+  top:120px!important;
+  left:8px!important;
+  width:51px!important;
+  min-height:68px!important;
+  padding:3px 2px!important;
+  border:0!important;
+  outline:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  clip-path:none!important;
+  backdrop-filter:none!important;
+  filter:drop-shadow(0 2px 5px #000)!important;
+}
+.phase-card:before,.phase-card:after{display:none!important}
+.phase-card small{font-size:4.8px!important;text-shadow:0 1px 4px #000!important}
+.phase-card b{font-size:17px!important;margin:2px 0!important;text-shadow:0 2px 7px #000!important}
+.phase-card em{font-size:5.3px!important;line-height:1.1!important;text-shadow:0 1px 5px #000!important}
+
+/* Animated coloured energy travels only around the OUTSIDE of each hero card. */
+.squad{
+  overflow-y:visible!important;
+  padding-top:10px!important;
+  padding-bottom:13px!important;
+}
+.fighter{
+  position:relative!important;
+  overflow:visible!important;
+  isolation:isolate!important;
+  --frame-color:var(--role,#9c59bb);
+  filter:drop-shadow(0 0 7px var(--frame-color))!important;
+}
+.fighter::before{
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  z-index:-1!important;
+  inset:-4px!important;
+  pointer-events:none!important;
+  background:
+    linear-gradient(90deg,transparent 0 15%,var(--frame-color) 42%,#fff 50%,var(--frame-color) 58%,transparent 85%) 0 0/220% 2px no-repeat,
+    linear-gradient(180deg,transparent 0 15%,var(--frame-color) 42%,#fff 50%,var(--frame-color) 58%,transparent 85%) 100% 0/2px 220% no-repeat,
+    linear-gradient(270deg,transparent 0 15%,var(--frame-color) 42%,#fff 50%,var(--frame-color) 58%,transparent 85%) 100% 100%/220% 2px no-repeat,
+    linear-gradient(0deg,transparent 0 15%,var(--frame-color) 42%,#fff 50%,var(--frame-color) 58%,transparent 85%) 0 100%/2px 220% no-repeat!important;
+  animation:squadBorderRun 2.3s linear infinite!important;
+  filter:drop-shadow(0 0 4px var(--frame-color))!important;
+}
+.fighter::after{
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  z-index:-2!important;
+  inset:-7px!important;
+  pointer-events:none!important;
+  border:2px solid var(--frame-color)!important;
+  background:transparent!important;
+  opacity:.30!important;
+  filter:blur(7px)!important;
+  animation:squadGlowPulse 1.7s ease-in-out infinite!important;
+}
+.fighter.empty-fighter:nth-child(2){--frame-color:#3278ff!important}
+.fighter.empty-fighter:nth-child(3){--frame-color:#44e58a!important}
+.fighter.empty-fighter:nth-child(4){--frame-color:#c05cff!important}
+.fighter.self{--frame-color:#ff5a62!important}
+.fighter-aura-frame{display:none!important}
+@keyframes squadBorderRun{
+  to{background-position:220% 0,100% 220%, -220% 100%,0 -220%}
+}
+@keyframes squadGlowPulse{
+  0%,100%{opacity:.20;transform:scale(.995)}
+  50%{opacity:.48;transform:scale(1.025)}
+}
+
+/* Transparent layer used only to catch vertical swipes on Telegram Android. */
+.boss-swipe-v23{
+  position:absolute!important;
+  inset:0!important;
+  z-index:90!important;
+  background:transparent!important;
+  touch-action:none!important;
+  -webkit-user-select:none!important;
+  user-select:none!important;
+}
+
+@media(max-width:370px){
+  :root{--combat-h:102px!important;--battle-dock:102px!important;--ability-h:50px!important}
+  .combat .side-action,.combat .main-action{height:94px!important;min-height:94px!important;background-size:auto 92px!important}
+  .combat [data-action="defend"]{background-size:auto 94px!important}
+  .ability-card{grid-template-columns:36px minmax(0,1fr) 58px!important;padding-inline:7px!important}
+  .phase-card{width:48px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .fighter::before,.fighter::after{animation:none!important}
+}
