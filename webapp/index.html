@@ -6,50 +6,24 @@
   <meta name="theme-color" content="#030206">
   <title>Центр Вселенной</title>
   <link rel="preload" href="/boss-app/assets/boss_phase_1.webp" as="image">
-  <link rel="stylesheet" href="/boss-app/style.css?v=6">
-  <link rel="stylesheet" href="/boss-app/raid-polish.css?v=6">
+  <link rel="stylesheet" href="/boss-app/style.css?v=7">
+  <link rel="stylesheet" href="/boss-app/raid-polish.css?v=7">
+  <link rel="stylesheet" href="/boss-app/battle-fx.css?v=7">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root{--battle-dock:96px;--nav-h:74px}
-    .resources{grid-template-columns:1fr 1fr!important;padding-inline:18px!important}
-    .resources .resource{max-width:none!important}
-    .boss-stage{height:min(54vh,470px)!important;min-height:430px!important}
-    .boss-art{top:78px!important;height:calc(100% - 48px)!important;object-position:center 8%!important}
-    .boss-stage:before{animation:auraSpin 9s linear infinite!important}
-    .battle-atmosphere{position:absolute;inset:75px 0 0;z-index:2;pointer-events:none;overflow:hidden}
-    .battle-atmosphere span{position:absolute;width:4px;height:4px;border-radius:50%;background:#ffd579;box-shadow:0 0 8px #ffcb68,0 0 16px #b755ff;opacity:.2;animation:particleFloat var(--d) linear infinite;animation-delay:var(--delay)}
+    .resources{grid-template-columns:1fr 1fr!important;padding-inline:18px!important}.resources .resource{max-width:none!important}
+    .boss-stage{height:min(54vh,470px)!important;min-height:430px!important}.boss-art{top:78px!important;height:calc(100% - 48px)!important;object-position:center 8%!important}.boss-stage:before{animation:auraSpin 9s linear infinite!important}
+    .battle-atmosphere{position:absolute;inset:75px 0 0;z-index:2;pointer-events:none;overflow:hidden}.battle-atmosphere span{position:absolute;width:4px;height:4px;border-radius:50%;background:#ffd579;box-shadow:0 0 8px #ffcb68,0 0 16px #b755ff;opacity:.2;animation:particleFloat var(--d) linear infinite;animation-delay:var(--delay)}
     .battle-atmosphere span:nth-child(1){left:8%;top:84%;--d:7s;--delay:-2s}.battle-atmosphere span:nth-child(2){left:18%;top:62%;--d:9s;--delay:-6s}.battle-atmosphere span:nth-child(3){left:31%;top:91%;--d:8s;--delay:-3s}.battle-atmosphere span:nth-child(4){left:48%;top:72%;--d:6s;--delay:-1s}.battle-atmosphere span:nth-child(5){left:62%;top:88%;--d:10s;--delay:-7s}.battle-atmosphere span:nth-child(6){left:76%;top:67%;--d:7.5s;--delay:-4s}.battle-atmosphere span:nth-child(7){left:90%;top:90%;--d:8.5s;--delay:-5s}.battle-atmosphere span:nth-child(8){left:42%;top:52%;--d:11s;--delay:-8s}
-    @keyframes particleFloat{0%{transform:translateY(35px) scale(.5);opacity:0}20%{opacity:.75}75%{opacity:.35}100%{transform:translateY(-310px) translateX(24px) scale(1.5);opacity:0}}
-    @keyframes auraSpin{0%{transform:translateX(-50%) rotate(0) scale(1)}50%{filter:brightness(1.25)}100%{transform:translateX(-50%) rotate(360deg) scale(1)}}
+    @keyframes particleFloat{0%{transform:translateY(35px) scale(.5);opacity:0}20%{opacity:.75}75%{opacity:.35}100%{transform:translateY(-310px) translateX(24px) scale(1.5);opacity:0}}@keyframes auraSpin{0%{transform:translateX(-50%) rotate(0) scale(1)}50%{filter:brightness(1.25)}100%{transform:translateX(-50%) rotate(360deg) scale(1)}}
     .combat{position:fixed!important;display:grid!important;visibility:visible!important;opacity:1!important;z-index:999!important;left:50%!important;right:auto!important;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px))!important;transform:translateX(-50%)!important;width:min(100%,560px)!important;height:var(--battle-dock)!important;padding:8px!important;grid-template-columns:72px minmax(0,1fr) 72px!important;gap:8px!important;background:linear-gradient(180deg,rgba(20,9,26,.82),rgba(4,2,7,.98) 30%)!important;border-top:1px solid #d39b43!important;box-shadow:0 -16px 38px #000,0 -2px 18px #8f32b744!important;backdrop-filter:blur(13px)!important}
-    .combat .side-action,.combat .main-action{height:80px!important;min-height:80px!important}
-    .main-action{animation:attackPulse 2.4s ease-in-out infinite!important}
-    .main-action:after{content:"";position:absolute;inset:-40% -20%;background:linear-gradient(105deg,transparent 38%,#fff7c477 49%,transparent 59%);transform:translateX(-65%) rotate(3deg);animation:buttonShine 2.8s ease-in-out infinite;pointer-events:none}
-    @keyframes attackPulse{50%{filter:brightness(1.16);box-shadow:inset 0 0 0 2px #9f3f99,0 0 27px #ce59f58a!important}}
-    @keyframes buttonShine{0%,55%{transform:translateX(-70%) rotate(3deg)}85%,100%{transform:translateX(70%) rotate(3deg)}}
-    .app{padding-bottom:calc(var(--battle-dock) + var(--nav-h) + 30px)!important}
-    .bottom-space{height:calc(var(--battle-dock) + var(--nav-h) + 24px)!important}
-    .squad-section{margin-top:0!important;padding-top:12px!important;background:linear-gradient(180deg,#08040c,#050308)!important}
-    .fighter{height:148px!important;flex-basis:108px!important}
-    .fighter-avatar{width:54px!important;height:54px!important}
-    .player-hp{height:13px!important;padding:2px!important;margin-top:8px!important;border-color:#5c4934!important;background:#100b12!important;box-shadow:inset 0 0 7px #000,0 0 8px #45b95238!important}
-    .player-hp i{box-shadow:inset 0 2px 3px #b9ffb6aa,0 0 10px #3fd55088!important}
-    .fighter>em{font-size:9px!important;font-weight:700!important;color:#9bff88!important}
-    .battle-log{padding:10px 9px 0!important}
-    .battle-log .section-title{padding:10px 12px 8px!important;background:linear-gradient(90deg,transparent,#2e102f99,transparent)!important;color:#f0c66f!important}
-    .log-list{position:relative!important;min-height:180px!important;max-height:220px!important;padding:15px 14px!important;border:1px solid #b27a35!important;background:radial-gradient(circle at 50% 0,#26112f 0,#0b0710 42%,#050407 100%)!important;box-shadow:inset 0 0 30px #000,0 0 16px #8f3caf38!important;overflow:auto!important}
-    .log-list:before{content:"СЕЙЧАС  •";position:sticky;top:-15px;display:block;margin:-15px -14px 8px;padding:9px 12px;color:#edc36d;font:700 9px Georgia;background:#0b0710ed;border-bottom:1px solid #5c3829;z-index:2}
-    .log-entry,.log-list>div{padding:8px 4px!important;border-bottom:1px solid #2c1a30!important;animation:logIn .35s ease both}
-    @keyframes logIn{from{opacity:0;transform:translateX(-10px);filter:blur(2px)}to{opacity:1;transform:none;filter:none}}
-    .full-log{margin-top:0!important;box-shadow:0 0 14px #a743c044!important}
-    .boss-health .hp-fill{animation:hpGlow 1.8s ease-in-out infinite alternate}
-    @keyframes hpGlow{to{filter:brightness(1.18);box-shadow:inset 0 2px 7px #ffd0cb,0 0 23px #ef2737}}
-    .boss-stage.hit{animation:stageHit .35s ease}.boss-stage.healed{animation:stageHeal .65s ease}.boss-stage.defended{animation:stageShield .7s ease}
-    @keyframes stageHit{25%{transform:translateX(-4px);filter:brightness(1.35)}55%{transform:translateX(4px)}100%{transform:none}}
-    @keyframes stageHeal{40%{filter:drop-shadow(0 0 35px #59ff74) brightness(1.16)}100%{filter:none}}
-    @keyframes stageShield{40%{box-shadow:inset 0 0 80px #9858ff99}100%{box-shadow:none}}
-    @media(max-height:760px){.boss-stage{height:430px!important;min-height:410px!important}.boss-art{height:390px!important}.phase-card,.boss-attacks{transform:scale(.88);transform-origin:top}.phase-card{left:2px!important}.boss-attacks{right:2px!important}.raid-badge{display:none!important}}
-    @media(max-width:370px){.combat{grid-template-columns:62px minmax(0,1fr) 62px!important;gap:5px!important}.main-action b{font-size:20px!important}.side-action b{font-size:7px!important}}
+    .combat .side-action,.combat .main-action{height:80px!important;min-height:80px!important}.main-action{animation:attackPulse 2.4s ease-in-out infinite!important}.main-action:after{content:"";position:absolute;inset:-40% -20%;background:linear-gradient(105deg,transparent 38%,#fff7c477 49%,transparent 59%);transform:translateX(-65%) rotate(3deg);animation:buttonShine 2.8s ease-in-out infinite;pointer-events:none}
+    @keyframes attackPulse{50%{filter:brightness(1.16);box-shadow:inset 0 0 0 2px #9f3f99,0 0 27px #ce59f58a!important}}@keyframes buttonShine{0%,55%{transform:translateX(-70%) rotate(3deg)}85%,100%{transform:translateX(70%) rotate(3deg)}}
+    .app{padding-bottom:calc(var(--battle-dock) + var(--nav-h) + 30px)!important}.bottom-space{height:calc(var(--battle-dock) + var(--nav-h) + 24px)!important}.squad-section{margin-top:0!important;padding-top:12px!important;background:linear-gradient(180deg,#08040c,#050308)!important}.fighter{height:148px!important;flex-basis:108px!important}.fighter-avatar{width:54px!important;height:54px!important}.player-hp{height:13px!important;padding:2px!important;margin-top:8px!important;border-color:#5c4934!important;background:#100b12!important;box-shadow:inset 0 0 7px #000,0 0 8px #45b95238!important}.player-hp i{box-shadow:inset 0 2px 3px #b9ffb6aa,0 0 10px #3fd55088!important}.fighter>em{font-size:9px!important;font-weight:700!important;color:#9bff88!important}
+    .battle-log{padding:10px 9px 0!important}.battle-log .section-title{padding:10px 12px 8px!important;background:linear-gradient(90deg,transparent,#2e102f99,transparent)!important;color:#f0c66f!important}.log-list{position:relative!important;min-height:180px!important;max-height:220px!important;padding:15px 14px!important;border:1px solid #b27a35!important;background:radial-gradient(circle at 50% 0,#26112f 0,#0b0710 42%,#050407 100%)!important;box-shadow:inset 0 0 30px #000,0 0 16px #8f3caf38!important;overflow:auto!important}.log-list:before{content:"СЕЙЧАС  •";position:sticky;top:-15px;display:block;margin:-15px -14px 8px;padding:9px 12px;color:#edc36d;font:700 9px Georgia;background:#0b0710ed;border-bottom:1px solid #5c3829;z-index:2}.log-entry,.log-list>div{padding:8px 4px!important;border-bottom:1px solid #2c1a30!important;animation:logIn .35s ease both}@keyframes logIn{from{opacity:0;transform:translateX(-10px);filter:blur(2px)}to{opacity:1;transform:none;filter:none}}.full-log{margin-top:0!important;box-shadow:0 0 14px #a743c044!important}.boss-health .hp-fill{animation:hpGlow 1.8s ease-in-out infinite alternate}@keyframes hpGlow{to{filter:brightness(1.18);box-shadow:inset 0 2px 7px #ffd0cb,0 0 23px #ef2737}}
+    .boss-stage.hit{animation:stageHit .35s ease}.boss-stage.healed{animation:stageHeal .65s ease}.boss-stage.defended{animation:stageShield .7s ease}@keyframes stageHit{25%{transform:translateX(-4px);filter:brightness(1.35)}55%{transform:translateX(4px)}100%{transform:none}}@keyframes stageHeal{40%{filter:drop-shadow(0 0 35px #59ff74) brightness(1.16)}100%{filter:none}}@keyframes stageShield{40%{box-shadow:inset 0 0 80px #9858ff99}100%{box-shadow:none}}
+    @media(max-height:760px){.boss-stage{height:430px!important;min-height:410px!important}.boss-art{height:390px!important}.phase-card,.boss-attacks{transform:scale(.88);transform-origin:top}.phase-card{left:2px!important}.boss-attacks{right:2px!important}.raid-badge{display:none!important}}@media(max-width:370px){.combat{grid-template-columns:62px minmax(0,1fr) 62px!important;gap:5px!important}.main-action b{font-size:20px!important}.side-action b{font-size:7px!important}}
   </style>
 </head>
 <body>
@@ -59,47 +33,27 @@
       <div class="resource resource-party"><span class="resource-gem purple"><svg><use href="/boss-app/assets/icons.svg#bolt"/></svg></span><span><b id="partyCount">0/4</b><small>ОТРЯД</small></span></div>
       <div class="resource resource-damage"><span class="resource-gem gold"><svg><use href="/boss-app/assets/icons.svg#crown"/></svg></span><span><b id="score">0</b><small>ВАШ УРОН</small></span></div>
     </header>
-
     <section class="boss-stage" id="bossStage" aria-label="Битва с Центром Вселенной">
       <img class="boss-art" id="bossImage" src="/boss-app/assets/boss_phase_1.webp" alt="Центр Вселенной">
-      <div class="stage-shade" aria-hidden="true"></div>
+      <div class="stage-shade" aria-hidden="true"></div><div class="boss-rings" aria-hidden="true"></div><div class="boss-mist" aria-hidden="true"></div>
       <div class="battle-atmosphere" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
       <div class="boss-title"><i></i><svg><use href="/boss-app/assets/icons.svg#sigil"/></svg><h1>ЦЕНТР ВСЕЛЕННОЙ</h1><i></i></div>
+      <button class="help-button" data-open-help aria-label="Инструкция и об игре">?</button>
       <div class="boss-health"><div class="hp-shell"><div class="hp-fill" id="bossHpFill"></div><strong id="bossHpText">Загрузка боя…</strong><em id="bossPercent">—</em></div><div class="attack-timer">До следующей атаки: <b id="nextAction">—</b></div></div>
       <aside class="phase-card"><small>ФАЗА</small><b id="phaseText">—/4</b><em id="phaseName">Пробуждение</em></aside>
       <aside class="boss-attacks"><strong>АТАКИ БОССА</strong><span><svg><use href="/boss-app/assets/icons.svg#vortex"/></svg><i><b>Сарказм</b><small>Ослабляет удары</small></i></span><span><svg><use href="/boss-app/assets/icons.svg#shield"/></svg><i><b>Щит ЧСВ</b><small id="shieldText">проверка…</small></i></span><span><svg><use href="/boss-app/assets/icons.svg#crossed-swords"/></svg><i><b>Эффект</b><small id="effectText">нет</small></i></span></aside>
-      <div class="battle-clock"><svg><use href="/boss-app/assets/icons.svg#clock"/></svg><span>ДО КОНЦА <b id="battleTimer">--:--</b></span></div>
-      <div class="raid-badge"><svg><use href="/boss-app/assets/icons.svg#skull"/></svg><b>РЕЙДОВЫЙ</b><small>БОСС</small></div>
-      <div class="damage-pop" id="damagePop" aria-live="polite"></div><div class="hit-flash" id="hitFlash" aria-hidden="true"></div>
+      <div class="battle-clock"><svg><use href="/boss-app/assets/icons.svg#clock"/></svg><span>ДО КОНЦА <b id="battleTimer">--:--</b></span></div><div class="raid-badge"><svg><use href="/boss-app/assets/icons.svg#skull"/></svg><b>РЕЙДОВЫЙ</b><small>БОСС</small></div>
+      <div class="boss-warning" id="bossWarning">⚠ БОСС ГОТОВИТ АТАКУ</div><div class="phase-transition" id="phaseTransition">ФАЗА II</div><div class="damage-pop" id="damagePop" aria-live="polite"></div><div class="hit-flash" id="hitFlash" aria-hidden="true"></div>
     </section>
-
     <section class="squad-section" id="squadSection"><div class="section-head"><div class="section-title"><i></i><span>ОТРЯД ГЕРОЕВ</span><i></i></div><button data-modal="heroes">СМОТРЕТЬ ВСЕХ</button></div><div class="squad" id="fighters"><div class="loading-card">Собираем отряд…</div></div></section>
-
-    <section class="combat" aria-label="Действия игрока">
-      <button class="side-action defend" data-action="defend"><span class="action-glyph"><svg><use href="/boss-app/assets/icons.svg#shield"/></svg></span><b>ЗАЩИТА</b><small>Снижает урон</small><em id="defendCooldown">ГОТОВО</em></button>
-      <button class="main-action" data-action="hit"><span class="button-sparks" aria-hidden="true"></span><b>ЗАДЕТЬ ЭГО</b><small id="attackHint">НАНЕСТИ УДАР</small><i class="cooldown-fill" id="attackCooldown"></i></button>
-      <button class="side-action heal" data-action="heal"><span class="action-glyph"><svg><use href="/boss-app/assets/icons.svg#heal"/></svg></span><b>ЛЕЧЕНИЕ</b><small>Восстановить HP</small><em id="healCooldown">ГОТОВО</em></button>
-    </section>
-
+    <section class="combat" aria-label="Действия игрока"><button class="side-action defend" data-action="defend"><span class="action-glyph"><svg><use href="/boss-app/assets/icons.svg#shield"/></svg></span><b>ЗАЩИТА</b><small>Снижает урон</small><em id="defendCooldown">ГОТОВО</em></button><button class="main-action" data-action="hit"><span class="button-sparks" aria-hidden="true"></span><b>ЗАДЕТЬ ЭГО</b><small id="attackHint">НАНЕСТИ УДАР</small><i class="cooldown-fill" id="attackCooldown"></i></button><button class="side-action heal" data-action="heal"><span class="action-glyph"><svg><use href="/boss-app/assets/icons.svg#heal"/></svg></span><b>ЛЕЧЕНИЕ</b><small>Восстановить HP</small><em id="healCooldown">ГОТОВО</em></button></section>
+    <div class="combat-hud"><span class="hud-state"><i></i><span>БОЕВОЙ РЕЖИМ</span></span><span>ЩИТ: <b id="hudShield">по кнопке</b></span><span>СПОСОБНОСТЬ: <b id="hudAbility">готовность</b></span></div>
     <button class="ability-card" data-action="ability"><span class="ability-icon"><svg><use href="/boss-app/assets/icons.svg#vortex"/></svg></span><span class="ability-copy"><small>СПОСОБНОСТЬ РОЛИ</small><b id="abilityName">ПРОБУЖДЕНИЕ ГЕРОЯ</b><em id="abilityHint">Особая атака вашей роли</em></span><span class="ability-cooldown"><small>КУЛДАУН</small><b id="abilityCooldown">ГОТОВО</b></span></button>
-
-    <section class="battle-log" id="battleLog"><div class="section-title"><i></i><span>ХРОНИКА БОЯ</span><i></i></div><div class="log-list" id="logs"><div>Бой загружается…</div></div><button class="full-log" data-scroll="battleLog">ПОЛНАЯ ХРОНИКА</button></section>
-    <div class="bottom-space"></div>
+    <section class="battle-log" id="battleLog"><div class="section-title"><i></i><span>ХРОНИКА БОЯ</span><i></i></div><div class="log-list" id="logs"><div>Бой загружается…</div></div><button class="full-log" data-scroll="battleLog">ПОЛНАЯ ХРОНИКА</button></section><div class="bottom-space"></div>
   </main>
-
+  <div class="fx-shield" aria-hidden="true"></div><div class="fx-heal" aria-hidden="true"></div>
   <nav class="bottom-nav" aria-label="Навигация"><button class="active" data-scroll="bossStage"><svg><use href="/boss-app/assets/icons.svg#crossed-swords"/></svg><small>РЕЙД</small></button><button data-modal="heroes"><svg><use href="/boss-app/assets/icons.svg#helmet"/></svg><small>ГЕРОИ</small></button><button data-modal="inventory"><svg><use href="/boss-app/assets/icons.svg#bag"/></svg><small>ИНВЕНТАРЬ</small></button><button data-modal="shop"><svg><use href="/boss-app/assets/icons.svg#shop"/></svg><small>МАГАЗИН</small><i class="notice"></i></button><button data-modal="rating"><svg><use href="/boss-app/assets/icons.svg#trophy"/></svg><small>РЕЙТИНГ</small></button></nav>
-
-  <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true"><section class="modal-card"><button class="modal-close" id="closeModal" aria-label="Закрыть"><svg><use href="/boss-app/assets/icons.svg#close"/></svg></button><div id="modalContent"></div></section></div>
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <div class="error-screen" id="errorScreen" hidden><svg><use href="/boss-app/assets/icons.svg#skull"/></svg><h2>БИТВА НЕДОСТУПНА</h2><p id="errorText"></p><button id="retryButton">ПОВТОРИТЬ</button></div>
-  <script src="/boss-app/app.js?v=6"></script>
-  <script>
-    (()=>{
-      const stage=document.getElementById('bossStage');
-      const animate=(cls,ms)=>{stage.classList.remove(cls);void stage.offsetWidth;stage.classList.add(cls);setTimeout(()=>stage.classList.remove(cls),ms)};
-      document.addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(!b)return;const a=b.dataset.action;if(a==='hit'||a==='ability')animate('hit',420);if(a==='heal')animate('healed',720);if(a==='defend')animate('defended',760)});
-      const logs=document.getElementById('logs');if(logs)new MutationObserver(m=>{m.forEach(x=>x.addedNodes.forEach(n=>{if(n.nodeType===1){n.style.animation='none';void n.offsetWidth;n.style.animation='logIn .35s ease both'}}))}).observe(logs,{childList:true});
-    })();
-  </script>
+  <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true"><section class="modal-card"><button class="modal-close" id="closeModal" aria-label="Закрыть"><svg><use href="/boss-app/assets/icons.svg#close"/></svg></button><div id="modalContent"></div></section></div><div class="toast" id="toast" role="status" aria-live="polite"></div><div class="error-screen" id="errorScreen" hidden><svg><use href="/boss-app/assets/icons.svg#skull"/></svg><h2>БИТВА НЕДОСТУПНА</h2><p id="errorText"></p><button id="retryButton">ПОВТОРИТЬ</button></div>
+  <script src="/boss-app/app.js?v=7"></script><script src="/boss-app/battle-fx.js?v=7"></script>
 </body>
 </html>
