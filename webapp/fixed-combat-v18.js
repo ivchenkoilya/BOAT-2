@@ -1,6 +1,7 @@
 (()=>{
   'use strict';
 
+  const app=document.getElementById('app');
   const combat=document.querySelector('.combat');
   const ability=document.querySelector('.ability-card');
   const battleLog=document.getElementById('battleLog');
@@ -12,6 +13,19 @@
 
   document.documentElement.classList.add('fixed-combat-v18');
   document.body.classList.add('fixed-combat-v18');
+
+  // The older inline styles use a smaller spacer. Force enough room so the
+  // fixed ability, attack dock and Telegram safe area never cover content.
+  document.body.style.setProperty(
+    'padding-bottom',
+    'calc(var(--fixed-ui-h) + env(safe-area-inset-bottom,0px) + 24px)',
+    'important'
+  );
+  app?.style.setProperty(
+    'padding-bottom',
+    'calc(var(--fixed-ui-h) + env(safe-area-inset-bottom,0px) + 38px)',
+    'important'
+  );
 
   function syncReadyState(){
     [attack,defend,heal,ability].forEach(button=>{
