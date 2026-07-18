@@ -34,6 +34,7 @@ def install_inline_webapp_fix(core: Any) -> None:
         core.WEBAPP_DIR / "raid-final-v25.css",
         core.WEBAPP_DIR / "raid-victory-v59.css",
         core.WEBAPP_DIR / "raid-v60.css",
+        core.WEBAPP_DIR / "raid-v60-stability.css",
     ]
     js_paths = [
         core.WEBAPP_DIR / "fixed-combat-v18.js",
@@ -44,6 +45,7 @@ def install_inline_webapp_fix(core: Any) -> None:
         core.WEBAPP_DIR / "raid-final-v25.js",
         core.WEBAPP_DIR / "raid-victory-v59.js",
         core.WEBAPP_DIR / "raid-v60.js",
+        core.WEBAPP_DIR / "raid-v60-stability.js",
     ]
 
     async def webapp_index_with_inline_combat(request: Any):
@@ -53,13 +55,13 @@ def install_inline_webapp_fix(core: Any) -> None:
             script = "\n\n".join(path.read_text(encoding="utf-8") for path in js_paths)
 
             page = re.sub(
-                r"\s*<link[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|action-card-ego-v21|action-card-defense-v21|action-card-heal-v21|action-cards-layout-v21|raid-hotfix-v22|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60)\.css[^>]*>",
+                r"\s*<link[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|action-card-ego-v21|action-card-defense-v21|action-card-heal-v21|action-cards-layout-v21|raid-hotfix-v22|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability)\.css[^>]*>",
                 "",
                 page,
                 flags=re.IGNORECASE,
             )
             page = re.sub(
-                r"\s*<script[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60)\.js[^>]*></script>",
+                r"\s*<script[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability)\.js[^>]*></script>",
                 "",
                 page,
                 flags=re.IGNORECASE,
