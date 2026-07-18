@@ -1,0 +1,52 @@
+/* Reality 65: заголовок отряда центрируется относительно всего приложения,
+   а не свободного места слева от кнопки выбора героя. */
+.squad-section > .section-head {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  min-height: 52px !important;
+  width: 100% !important;
+}
+
+.squad-section > .section-head > .section-title {
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  width: min(48%, 240px) !important;
+  margin: 0 !important;
+  transform: translate(-50%, -50%) !important;
+  justify-content: center !important;
+  text-align: center !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+
+.squad-section > .section-head > .section-title > span {
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
+}
+
+.squad-section > .section-head > .section-title > i {
+  min-width: 18px !important;
+}
+
+.squad-section > .section-head > button {
+  position: relative !important;
+  z-index: 2 !important;
+  margin-left: auto !important;
+  flex: 0 0 auto !important;
+}
+
+@media (max-width: 390px) {
+  .squad-section > .section-head > .section-title {
+    width: 46% !important;
+    font-size: 10px !important;
+    letter-spacing: 1px !important;
+  }
+
+  .squad-section > .section-head > button {
+    padding-inline: 7px !important;
+    font-size: 6.5px !important;
+  }
+}
