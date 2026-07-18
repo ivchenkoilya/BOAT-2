@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#090713">
   <title>Админ-центр</title>
-  <link rel="stylesheet" href="/admin-app/admin.css?v=62">
+  <link rel="stylesheet" href="/admin-app/admin.css?v=64">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -20,7 +20,7 @@
     <section class="context-card">
       <label class="field-label" for="chatSelect">Текущая беседа</label>
       <div class="select-wrap"><select id="chatSelect"></select><span>⌄</span></div>
-      <div class="context-meta"><span id="connectionState">Подключение…</span><strong id="versionText">Reality 62</strong></div>
+      <div class="context-meta"><span id="connectionState">Подключение…</span><strong id="versionText">Reality 64</strong></div>
     </section>
 
     <section class="target-card" id="targetCard">
@@ -99,21 +99,15 @@
       </section>
 
       <section class="screen" data-screen="knowledge">
-        <div class="section-head"><div><small>ДРЕВО ЗНАНИЙ</small><h2>Осколки и таланты</h2></div></div>
+        <div class="section-head"><div><small>ДРЕВО ЗНАНИЙ</small><h2>Очки древа и таланты</h2></div></div>
         <div class="metric-grid knowledge-metrics" id="knowledgeMetrics"></div>
 
         <article class="panel">
-          <div class="panel-title"><span>💠</span><div><b>Осколки знаний</b><small>Ручное управление кошельком</small></div></div>
-          <div class="step-grid"><button data-action="shards_delta" data-value="-1">−1</button><button data-action="shards_delta" data-value="1">+1</button><button data-action="shards_delta" data-value="5">+5</button><button data-form="shards">Точное</button></div>
-          <button class="wide-button" data-action="knowledge_convert">🌳 Преобразовать накопленные осколки</button>
-        </article>
-
-        <article class="panel">
-          <div class="panel-title"><span>🌳</span><div><b>Очки древа</b><small>Общее количество очков развития</small></div></div>
-          <div class="step-grid"><button data-action="tree_delta" data-value="-1">−1</button><button data-action="tree_delta" data-value="1">+1</button><button data-form="tree">Точное</button><button data-action="knowledge_recalculate">Пересчитать</button></div>
+          <div class="panel-title"><span>🌳</span><div><b>Очки древа</b><small>Прямая валюта для прокачки талантов</small></div></div>
+          <div class="step-grid"><button data-action="tree_delta" data-value="-1">−1</button><button data-action="tree_delta" data-value="1">+1</button><button data-action="tree_delta" data-value="5">+5</button><button data-form="tree">Точное</button></div>
           <div class="action-grid two">
             <button data-confirm-action="tree_refund" data-confirm-title="Вернуть потраченные очки?" data-confirm-text="Все навыки будут сброшены, а потраченные очки вернутся в доступные.">↩ Вернуть очки</button>
-            <button class="danger-soft" data-confirm-action="knowledge_week_reset" data-confirm-title="Сбросить недельный лимит?" data-confirm-text="Участник снова сможет получать рейдовые очки древа на этой неделе.">📅 Сбросить лимит</button>
+            <button class="danger-soft" data-confirm-action="knowledge_week_reset" data-confirm-title="Сбросить недельный лимит?" data-confirm-text="Участник снова сможет получать рейдовые очки древа на этой неделе. Лимит — 12.">📅 Сбросить лимит</button>
           </div>
         </article>
 
@@ -150,6 +144,37 @@
     </div>
   </section>
 
-  <script src="/admin-app/admin.js?v=62"></script>
+  <script src="/admin-app/admin.js?v=64"></script>
+  <script>
+  (()=>{
+    'use strict';
+    const grid=document.getElementById('knowledgeMetrics');
+    if(!grid)return;
+    let patching=false;
+    function patchKnowledgeMetrics(){
+      if(patching)return;
+      const cards=[...grid.children];
+      if(!cards.length)return;
+      if(cards.length===3&&!grid.textContent.includes('Осколки')&&grid.textContent.includes('/ 12'))return;
+      const total=cards.find(card=>card.textContent.includes('Всего очков'));
+      const spent=cards.find(card=>card.textContent.includes('Потрачено'));
+      const weekly=cards.find(card=>card.textContent.includes('За неделю'));
+      if(!total||!spent||!weekly)return;
+      const weeklyValue=weekly.querySelector('b');
+      const weeklyNote=weekly.querySelector('em');
+      if(weeklyValue){
+        const current=(weeklyValue.textContent.match(/-?\d+/)||['0'])[0];
+        weeklyValue.textContent=`${current} / 12`;
+      }
+      if(weeklyNote)weeklyNote.textContent='рейдовые очки · лимит 12';
+      patching=true;
+      grid.replaceChildren(total,spent,weekly);
+      patching=false;
+    }
+    new MutationObserver(patchKnowledgeMetrics).observe(grid,{childList:true,subtree:true,characterData:true});
+    setInterval(patchKnowledgeMetrics,500);
+    patchKnowledgeMetrics();
+  })();
+  </script>
 </body>
 </html>
