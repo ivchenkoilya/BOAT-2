@@ -5,6 +5,7 @@ from about_updates import install_about_updates
 from boss_upgrade_v52 import install_boss_upgrade_v52
 from raid_assets_v58 import install_raid_assets
 from raid_balance_v58 import install_raid_balance_v58
+from raid_v59_fix import install_raid_v59_fix
 from talent_expansion import install_expansion
 from talent_explanations import install_explanations
 from talent_mastery import install_mastery
@@ -31,6 +32,7 @@ install_mastery_ui(core)
 # Сначала задаём базовый диапазон рейдового урона, затем поверх него
 # устанавливаются усиления талантов.
 install_raid_balance_v58(core)
+install_raid_v59_fix(core)
 install_talent_rules(core)
 install_about_updates(core)
 install_inline_webapp_fix(core)
