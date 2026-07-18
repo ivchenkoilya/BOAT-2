@@ -2,6 +2,7 @@ import asyncio
 
 import main as core
 from about_updates import install_about_updates
+from admin_webapp_v62 import install_admin_webapp_v62
 from boss_upgrade_v52 import install_boss_upgrade_v52
 from raid_assets_v58 import install_raid_assets
 from raid_balance_v58 import install_raid_balance_v58
@@ -34,15 +35,18 @@ install_menu(core)
 install_ux(core)
 install_explanations(core)
 install_mastery_ui(core)
-# Сначала задаём базовый урон и механику Reality 60, затем Reality 61
-# повышает здоровье, усложняет давление и заменяет награды рейда.
+# Сначала задаём базовый урон и тактические механики рейда. Reality 61
+# повышает здоровье и заменяет награды, затем Reality 62 добавляет отдельный
+# защищённый админ-центр. Recovery устанавливается после него, чтобы обернуть
+# уже расширенный HTTP-сервер и не потерять новые маршруты.
 install_raid_balance_v58(core)
 install_raid_v59_fix(core)
-install_raid_v59_recovery(core)
 install_raid_v60(core)
 install_raid_v60_guard(core)
 install_raid_v61(core)
 install_raid_v61_safety(core)
+install_admin_webapp_v62(core)
+install_raid_v59_recovery(core)
 install_talent_rules(core)
 install_about_updates(core)
 install_inline_webapp_fix(core)
