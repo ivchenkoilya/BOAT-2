@@ -15,10 +15,10 @@ def install_inline_webapp_fix(core: Any) -> None:
     app.js. Поэтому дополнительные CSS/JS объединяются с HTML на сервере и не
     зависят от ограничений маршрутов или кэша Telegram WebView.
     """
-    if getattr(core, "_inline_webapp_fix_v21_installed", False):
+    if getattr(core, "_inline_webapp_fix_v22_installed", False):
         return
 
-    core._inline_webapp_fix_v21_installed = True
+    core._inline_webapp_fix_v22_installed = True
     original_index = core.webapp_index
     index_path = core.WEBAPP_DIR / "index.html"
     css_paths = [
@@ -29,6 +29,7 @@ def install_inline_webapp_fix(core: Any) -> None:
         core.WEBAPP_DIR / "action-card-defense-v21.css",
         core.WEBAPP_DIR / "action-card-heal-v21.css",
         core.WEBAPP_DIR / "action-cards-layout-v21.css",
+        core.WEBAPP_DIR / "raid-hotfix-v22.css",
     ]
     js_paths = [
         core.WEBAPP_DIR / "fixed-combat-v18.js",
@@ -44,7 +45,7 @@ def install_inline_webapp_fix(core: Any) -> None:
 
             # Убираем ссылки на файлы, которые старый роутер не умеет отдавать.
             page = re.sub(
-                r"\s*<link[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|action-card-ego-v21|action-card-defense-v21|action-card-heal-v21|action-cards-layout-v21)\.css[^>]*>",
+                r"\s*<link[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|action-card-ego-v21|action-card-defense-v21|action-card-heal-v21|action-cards-layout-v21|raid-hotfix-v22)\.css[^>]*>",
                 "",
                 page,
                 flags=re.IGNORECASE,
@@ -57,12 +58,12 @@ def install_inline_webapp_fix(core: Any) -> None:
             )
 
             inline_style = (
-                "\n<style id=\"raid-ui-v21-inline\">\n"
+                "\n<style id=\"raid-ui-v22-inline\">\n"
                 + css
                 + "\n</style>\n"
             )
             inline_script = (
-                "\n<script id=\"raid-ui-v21-inline-script\">\n"
+                "\n<script id=\"raid-ui-v22-inline-script\">\n"
                 + script
                 + "\n</script>\n"
             )
@@ -77,7 +78,7 @@ def install_inline_webapp_fix(core: Any) -> None:
                     "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
                     "Pragma": "no-cache",
                     "Expires": "0",
-                    "X-Mini-App-UI": "raid-ui-v21-inline",
+                    "X-Mini-App-UI": "raid-ui-v22-inline",
                 },
             )
         except Exception:
