@@ -13,6 +13,7 @@ from raid_v60_guard import install_raid_v60_guard
 from raid_v61 import install_raid_v61
 from raid_v61_safety import install_raid_v61_safety
 from raid_v64_direct_tree import install_raid_v64_direct_tree
+from raid_v65_balance import install_raid_v65_balance
 from talent_expansion import install_expansion
 from talent_explanations import install_explanations
 from talent_mastery import install_mastery
@@ -38,7 +39,8 @@ install_ux(core)
 install_explanations(core)
 install_mastery_ui(core)
 # Сначала задаём базовый урон и тактические механики рейда. Reality 61
-# повышает здоровье, Reality 64 заменяет осколки прямыми очками древа.
+# устанавливает предыдущий стабильный слой, Reality 64 выдаёт очки древа,
+# а Reality 65 поднимает HP до 100 000 и усложняет давление отряда.
 # Затем подключается защищённый админ-центр, возвращаются маршруты древа,
 # а recovery устанавливается последним поверх окончательного HTTP-сервера.
 install_raid_balance_v58(core)
@@ -48,6 +50,7 @@ install_raid_v60_guard(core)
 install_raid_v61(core)
 install_raid_v61_safety(core)
 install_raid_v64_direct_tree(core)
+install_raid_v65_balance(core)
 install_admin_webapp_v62(core)
 install_talent_routes_v63(core)
 install_raid_v59_recovery(core)
