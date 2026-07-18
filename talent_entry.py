@@ -10,6 +10,7 @@ from raid_v59_recovery import install_raid_v59_recovery
 from raid_v60 import install_raid_v60
 from raid_v60_guard import install_raid_v60_guard
 from raid_v61 import install_raid_v61
+from raid_v61_safety import install_raid_v61_safety
 from talent_expansion import install_expansion
 from talent_explanations import install_explanations
 from talent_mastery import install_mastery
@@ -41,6 +42,7 @@ install_raid_v59_recovery(core)
 install_raid_v60(core)
 install_raid_v60_guard(core)
 install_raid_v61(core)
+install_raid_v61_safety(core)
 install_talent_rules(core)
 install_about_updates(core)
 install_inline_webapp_fix(core)
