@@ -2,6 +2,7 @@ import asyncio
 
 import main as core
 from about_updates import install_about_updates
+from boss_upgrade_v52 import install_boss_upgrade_v52
 from talent_expansion import install_expansion
 from talent_explanations import install_explanations
 from talent_mastery import install_mastery
@@ -14,6 +15,7 @@ from today_types_expansion import install_today_types
 from today_types_in_roles import install_types_in_roles
 from webapp_inline_fix import install_inline_webapp_fix
 
+install_boss_upgrade_v52(core)
 install_today_types(core)
 install_types_in_roles(core)
 install_expansion(core)
