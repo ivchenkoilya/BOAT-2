@@ -14,10 +14,10 @@ def install_inline_webapp_fix(core: Any) -> None:
     Дополнительные CSS/JS объединяются с HTML на сервере и не зависят от
     ограничений старых маршрутов или кэша Telegram WebView.
     """
-    if getattr(core, "_inline_webapp_fix_v23_installed", False):
+    if getattr(core, "_inline_webapp_fix_v24_installed", False):
         return
 
-    core._inline_webapp_fix_v23_installed = True
+    core._inline_webapp_fix_v24_installed = True
     original_index = core.webapp_index
     index_path = core.WEBAPP_DIR / "index.html"
     css_paths = [
@@ -30,12 +30,14 @@ def install_inline_webapp_fix(core: Any) -> None:
         core.WEBAPP_DIR / "action-cards-layout-v21.css",
         core.WEBAPP_DIR / "raid-hotfix-v22.css",
         core.WEBAPP_DIR / "raid-hotfix-v23.css",
+        core.WEBAPP_DIR / "raid-stability-v24.css",
     ]
     js_paths = [
         core.WEBAPP_DIR / "fixed-combat-v18.js",
         core.WEBAPP_DIR / "raid-ux-v19.js",
         core.WEBAPP_DIR / "raid-pages-v20.js",
         core.WEBAPP_DIR / "raid-hotfix-v23.js",
+        core.WEBAPP_DIR / "raid-stability-v24.js",
     ]
 
     async def webapp_index_with_inline_combat(request: Any):
@@ -45,29 +47,44 @@ def install_inline_webapp_fix(core: Any) -> None:
             script = "\n\n".join(path.read_text(encoding="utf-8") for path in js_paths)
 
             page = re.sub(
-                r"\s*<link[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|action-card-ego-v21|action-card-defense-v21|action-card-heal-v21|action-cards-layout-v21|raid-hotfix-v22|raid-hotfix-v23)\.css[^>]*>",
+                r"\s*<link[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|action-card-ego-v21|action-card-defense-v21|action-card-heal-v21|action-cards-layout-v21|raid-hotfix-v22|raid-hotfix-v23|raid-stability-v24)\.css[^>]*>",
                 "",
                 page,
                 flags=re.IGNORECASE,
             )
             page = re.sub(
-                r"\s*<script[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|raid-hotfix-v23)\.js[^>]*></script>",
+                r"\s*<script[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|raid-hotfix-v23|raid-stability-v24)\.js[^>]*></script>",
                 "",
                 page,
                 flags=re.IGNORECASE,
             )
 
+            # app.js обновлял таймеры пять раз в секунду. Оставляем один тик в
+            # секунду до загрузки основного скрипта — цифры остаются точными,
+            # но весь интерфейс больше не получает лишние перерисовки.
+            prelude = """
+<script id="raid-ui-v24-prelude">
+(function(){
+  var nativeSetInterval=window.setInterval.bind(window);
+  window.setInterval=function(callback,delay){
+    var args=Array.prototype.slice.call(arguments,2);
+    var safeDelay=Number(delay)===200?1000:delay;
+    return nativeSetInterval.apply(window,[callback,safeDelay].concat(args));
+  };
+})();
+</script>
+"""
             inline_style = (
-                "\n<style id=\"raid-ui-v23-inline\">\n"
+                "\n<style id=\"raid-ui-v24-inline\">\n"
                 + css
                 + "\n</style>\n"
             )
             inline_script = (
-                "\n<script id=\"raid-ui-v23-inline-script\">\n"
+                "\n<script id=\"raid-ui-v24-inline-script\">\n"
                 + script
                 + "\n</script>\n"
             )
-            page = page.replace("</head>", inline_style + "</head>", 1)
+            page = page.replace("</head>", prelude + inline_style + "</head>", 1)
             page = page.replace("</body>", inline_script + "</body>", 1)
 
             return core.web.Response(
@@ -78,7 +95,7 @@ def install_inline_webapp_fix(core: Any) -> None:
                     "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
                     "Pragma": "no-cache",
                     "Expires": "0",
-                    "X-Mini-App-UI": "raid-ui-v23-inline",
+                    "X-Mini-App-UI": "raid-ui-v24-inline",
                 },
             )
         except Exception:
