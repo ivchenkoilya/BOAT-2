@@ -69,7 +69,6 @@ html,body,.app{
   height:97px!important;
   min-height:97px!important;
   overflow:visible!important;
-  background-image:none!important;
   background-color:transparent!important;
 }
 .combat .action-card-art{
@@ -83,7 +82,6 @@ html,body,.app{
   pointer-events:none!important;
   user-select:none!important;
   -webkit-user-drag:none!important;
-  filter:inherit!important;
 }
 .combat [data-action="defend"]{
   display:block!important;
@@ -167,7 +165,7 @@ html,body,.app{
 .boss-title h1{
   font-size:clamp(23px,6.5vw,34px)!important;
   letter-spacing:1.4px!important;
-  background:linear-gradient(180deg,#fff6ca 0%,#efc76e 38%,#b87425 74%,#ffe0８a 100%)!important;
+  background:linear-gradient(180deg,#fff6ca 0%,#efc76e 38%,#b87425 74%,#ffe08a 100%)!important;
   -webkit-background-clip:text!important;
   color:transparent!important;
   text-shadow:0 0 15px #c75aff45!important;
