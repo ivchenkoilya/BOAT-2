@@ -1,0 +1,21 @@
+/* UI fixes v10 */
+.boss-warning,.phase-transition{display:none!important;visibility:hidden!important;opacity:0!important}
+.help-button{top:10px!important;right:10px!important}
+/* premium boss health */
+.boss-health{z-index:19!important}
+.hp-shell{height:40px!important;padding:4px!important;border:1px solid #f0c36b!important;clip-path:polygon(18px 0,calc(100% - 18px) 0,100% 50%,calc(100% - 18px) 100%,18px 100%,0 50%)!important;background:linear-gradient(180deg,#2b1420,#09050a 50%,#1a0b12)!important;box-shadow:inset 0 0 0 2px #5f3427,inset 0 0 18px #000,0 0 18px #d7a34855!important}
+.hp-shell:before{content:"";position:absolute;inset:3px;clip-path:inherit;border:1px solid #ffd98966;pointer-events:none;z-index:3}
+.hp-fill{height:100%!important;border-radius:0!important;background:linear-gradient(180deg,#ff7784 0,#e72f48 28%,#a80620 64%,#5e0010 100%)!important;box-shadow:inset 0 3px 5px #ffd5d8cc,inset 0 -4px 7px #42000e,0 0 20px #ff274faa!important;position:relative;overflow:hidden}
+.hp-fill:after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 20%,#fff8 45%,transparent 70%);transform:translateX(-120%);animation:hpSweep 3s ease-in-out infinite}
+@keyframes hpSweep{0%,60%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+.hp-shell strong{font-size:15px!important;letter-spacing:.4px!important;text-shadow:0 2px 3px #000,0 0 8px #fff4!important}.hp-shell em{right:16px!important;font-size:10px!important;color:#ffe9d1!important}
+.attack-timer{font-size:10px!important;color:#cdbfcf!important}
+/* Make main attack button closer to supplied purple artwork */
+.main-action{overflow:hidden!important;border:2px solid #c96cff!important;background:radial-gradient(ellipse at 50% 50%,#6f18b9 0,#381064 45%,#170523 100%)!important;clip-path:polygon(12% 0,88% 0,100% 50%,88% 100%,12% 100%,0 50%)!important;box-shadow:inset 0 0 0 3px #5e1d8f,inset 0 0 28px #d546ff88,0 0 20px #b82cff99!important}
+.main-action:before{content:""!important;position:absolute!important;inset:4px!important;clip-path:inherit!important;border:2px solid #eb8dff!important;box-shadow:inset 0 0 18px #bf2cff99!important;background:linear-gradient(90deg,transparent,#8e24c933,transparent)!important}
+.main-action b{position:relative;z-index:3;color:#fff0ff!important;text-shadow:0 2px 0 #612078,0 0 8px #fff,0 0 16px #df55ff!important}
+.main-action small{position:relative;z-index:3;color:#ead5ef!important}
+.main-action .button-sparks:before,.main-action .button-sparks:after{background:#fff0ff!important;box-shadow:0 0 10px #fff,0 0 20px #d23cff!important}
+/* hero skin slots */
+.skin-picker-title{font:700 22px Georgia;color:#f0cd77;text-align:center;margin:4px 0 6px}.skin-picker-sub{color:#ab9caf;text-align:center;font-size:10px;margin-bottom:14px}.skin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.skin-slot{min-height:138px;padding:10px;border:1px solid #654271;background:linear-gradient(180deg,#1d1027,#09060d);box-shadow:inset 0 0 18px #000;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}.skin-slot.selected{border-color:#e7b75d;box-shadow:inset 0 0 20px #7d337c,0 0 15px #ca59e866}.skin-slot .skin-avatar{width:66px;height:66px;border-radius:50%;display:grid;place-items:center;border:2px solid #8d55a2;background:radial-gradient(circle,#5b2570,#170b20 70%);font-size:30px;margin-bottom:8px}.skin-slot b{font:700 11px Georgia;color:#ead9ec}.skin-slot small{font-size:8px;color:#978a9a;margin-top:4px}.skin-slot.locked{opacity:.55}.skin-slot.locked:after{content:"СКОРО";position:absolute;top:7px;right:7px;padding:3px 5px;border:1px solid #6b506f;color:#a999ad;font-size:6px;background:#09060c}
+@media(max-width:370px){.skin-grid{gap:7px}.skin-slot{min-height:126px}.hp-shell{height:36px!important}.hp-shell strong{font-size:13px!important}}
