@@ -3,6 +3,8 @@ import asyncio
 import main as core
 from talent_expansion import install_expansion
 from talent_explanations import install_explanations
+from talent_mastery import install_mastery
+from talent_mastery_ui import install_mastery_ui
 from talent_menu import install_menu
 from talent_system import install
 from talent_ux import install_ux
@@ -13,14 +15,23 @@ install_today_types(core)
 install_types_in_roles(core)
 install_expansion(core)
 install(core)
+install_mastery(core)
 install_menu(core)
 install_ux(core)
 install_explanations(core)
+install_mastery_ui(core)
 
-# В main.py есть общий обработчик F.text, зарегистрированный раньше расширения.
-# Переносим новые команды в начало списка, чтобы /talents, /buffs и
-# /chat_buffs не поглощались общим обработчиком сообщений.
-_priority_names = {"cmd_talents", "cmd_buffs", "cmd_chat_buffs"}
+# В main.py есть общий обработчик F.text, зарегистрированный раньше расширений.
+# Переносим команды древа и мастерства в начало списка, чтобы общий обработчик
+# обычного текста не перехватывал их раньше специальных обработчиков.
+_priority_names = {
+    "cmd_talents",
+    "cmd_buffs",
+    "cmd_chat_buffs",
+    "cmd_builds",
+    "cmd_active_talents",
+    "cmd_community_tree",
+}
 _handlers = core.router.message.handlers
 _priority = [
     handler
