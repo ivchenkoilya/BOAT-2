@@ -10,9 +10,21 @@
   const attack=document.querySelector('[data-action="hit"]');
   const defend=document.querySelector('[data-action="defend"]');
   const heal=document.querySelector('[data-action="heal"]');
+  const modal=document.getElementById('modal');
+  const errorScreen=document.getElementById('errorScreen');
 
   document.documentElement.classList.add('fixed-combat-v18');
   document.body.classList.add('fixed-combat-v18');
+
+  const runtimeStyle=document.createElement('style');
+  runtimeStyle.id='fixed-combat-v18-runtime';
+  runtimeStyle.textContent=`
+    .combat .main-action:not(:disabled){animation:attackReadyScaleV18 1.55s ease-in-out infinite!important}
+    @keyframes attackReadyScaleV18{0%,100%{scale:1}50%{scale:1.018}}
+    body.combat-overlay-open .combat,
+    body.combat-overlay-open .ability-card{visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+  `;
+  document.head.appendChild(runtimeStyle);
 
   // The older inline styles use a smaller spacer. Force enough room so the
   // fixed ability, attack dock and Telegram safe area never cover content.
@@ -36,6 +48,12 @@
     if(combat){
       combat.classList.toggle('attack-ready',Boolean(attack&&!attack.disabled));
     }
+  }
+
+  function syncOverlayState(){
+    const modalOpen=Boolean(modal?.classList.contains('open'));
+    const errorOpen=Boolean(errorScreen&&!errorScreen.hidden);
+    document.body.classList.toggle('combat-overlay-open',modalOpen||errorOpen);
   }
 
   function visibleLogCount(){
@@ -75,6 +93,11 @@
   if(ability)observer.observe(ability,{subtree:true,attributes:true,attributeFilter:['disabled','class'],childList:true,characterData:true});
   if(logs)observer.observe(logs,{subtree:true,childList:true,characterData:true});
 
+  const overlayObserver=new MutationObserver(syncOverlayState);
+  if(modal)overlayObserver.observe(modal,{attributes:true,attributeFilter:['class','aria-hidden']});
+  if(errorScreen)overlayObserver.observe(errorScreen,{attributes:true,attributeFilter:['hidden']});
+
   syncReadyState();
+  syncOverlayState();
   syncLogButton();
 })();
