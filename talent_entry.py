@@ -7,8 +7,10 @@ from talent_menu import install_menu
 from talent_system import install
 from talent_ux import install_ux
 from today_types_expansion import install_today_types
+from today_types_in_roles import install_types_in_roles
 
 install_today_types(core)
+install_types_in_roles(core)
 install_expansion(core)
 install(core)
 install_menu(core)
