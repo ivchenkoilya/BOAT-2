@@ -6,17 +6,17 @@
   <meta name="theme-color" content="#030206">
   <title>Центр Вселенной</title>
   <link rel="preload" href="/boss-app/assets/boss_phase_1.webp" as="image">
-  <link rel="stylesheet" href="/boss-app/style.css?v=16">
-  <link rel="stylesheet" href="/boss-app/raid-polish.css?v=16">
-  <link rel="stylesheet" href="/boss-app/battle-fx.css?v=16">
-  <link rel="stylesheet" href="/boss-app/attack-button-image.css?v=8">
-  <link rel="stylesheet" href="/boss-app/ui-fixes-v10.css?v=7">
-  <link rel="stylesheet" href="/boss-app/premium-v11.css?v=6">
-  <link rel="stylesheet" href="/boss-app/hero-skins-v12.css?v=5">
-  <link rel="stylesheet" href="/boss-app/combat-static-v13.css?v=4">
-  <link rel="stylesheet" href="/boss-app/combat-dock-v14.css?v=3">
-  <link rel="stylesheet" href="/boss-app/combat-effects-v15.css?v=2">
-  <link rel="stylesheet" href="/boss-app/welcome-v16.css?v=1">
+  <link rel="stylesheet" href="/boss-app/style.css?v=17">
+  <link rel="stylesheet" href="/boss-app/raid-polish.css?v=17">
+  <link rel="stylesheet" href="/boss-app/battle-fx.css?v=17">
+  <link rel="stylesheet" href="/boss-app/attack-button-image.css?v=9">
+  <link rel="stylesheet" href="/boss-app/ui-fixes-v10.css?v=8">
+  <link rel="stylesheet" href="/boss-app/premium-v11.css?v=7">
+  <link rel="stylesheet" href="/boss-app/hero-skins-v12.css?v=6">
+  <link rel="stylesheet" href="/boss-app/combat-static-v13.css?v=5">
+  <link rel="stylesheet" href="/boss-app/combat-dock-v14.css?v=4">
+  <link rel="stylesheet" href="/boss-app/combat-effects-v15.css?v=3">
+  <link rel="stylesheet" href="/boss-app/welcome-v16.css?v=2">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root{--battle-dock:104px;--nav-h:74px}
@@ -24,6 +24,7 @@
     .resources{grid-template-columns:1fr 1fr!important;height:62px!important}.resources .resource{max-width:none!important;height:48px!important}
     .boss-stage{height:min(50vh,430px)!important;min-height:400px!important}.boss-art{top:74px!important;height:calc(100% - 40px)!important;object-position:center 5%!important}.boss-title{top:8px!important}.boss-health{top:45px!important}.phase-card{top:102px!important}.boss-attacks{top:102px!important}.battle-clock{top:208px!important}
     .app{padding-bottom:calc(var(--battle-dock) + var(--nav-h) + 34px)!important}.bottom-nav{height:calc(var(--nav-h) + env(safe-area-inset-bottom,0px))!important}
+    .welcome-overlay.force-show{position:fixed!important;inset:0!important;z-index:2147483647!important;display:grid!important;place-items:center!important;padding:20px!important;background:rgba(2,1,5,.9)!important;opacity:1!important;visibility:visible!important}
     @media(max-height:780px){.boss-stage{height:400px!important;min-height:390px!important}.boss-art{height:355px!important}.phase-card,.boss-attacks{transform:scale(.82)!important;transform-origin:top}.phase-card{left:1px!important}.boss-attacks{right:1px!important}.raid-badge{display:none!important}}
     @media(max-width:370px){.resources{padding-inline:8px!important}.boss-title h1{font-size:20px!important}.boss-stage{min-height:385px!important}}
   </style>
@@ -52,9 +53,19 @@
     <section class="battle-log" id="battleLog"><div class="section-title"><i></i><span>ХРОНИКА БОЯ</span><i></i></div><div class="log-list" id="logs"><div>Бой загружается…</div></div><button class="full-log" data-scroll="battleLog">ПОЛНАЯ ХРОНИКА</button></section><div class="bottom-space"></div>
   </main>
   <div class="fx-shield" aria-hidden="true"></div><div class="fx-heal" aria-hidden="true"></div>
-  <div class="welcome-overlay" id="welcomeOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle"><section class="welcome-card"><div class="welcome-goat" aria-hidden="true">🐐</div><h2 class="welcome-title" id="welcomeTitle">КОЗЁЛ ВОНЮЧИЙ!</h2><p class="welcome-text">Приложение <strong>сырее погоды в Конаково</strong>, а ты всё равно зашёл в него.<br><br>Оно ещё будет пилиться <strong>2–3 дня</strong>.</p><button class="welcome-button" id="welcomeClose" type="button">ПОНЯЛ 🐐</button></section></div>
+  <div class="welcome-overlay show force-show" id="welcomeOverlay" aria-hidden="false" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle"><section class="welcome-card"><div class="welcome-goat" aria-hidden="true">🐐</div><h2 class="welcome-title" id="welcomeTitle">КОЗЁЛ ВОНЮЧИЙ!</h2><p class="welcome-text">Приложение <strong>сырее погоды в Конаково</strong>, а ты всё равно зашёл в него.<br><br>Оно ещё будет пилиться <strong>2–3 дня</strong>.</p><button class="welcome-button" id="welcomeClose" type="button">ПОНЯЛ 🐐</button></section></div>
   <nav class="bottom-nav" aria-label="Навигация"><button class="active" data-scroll="bossStage"><svg><use href="/boss-app/assets/icons.svg#crossed-swords"/></svg><small>РЕЙД</small></button><button data-modal="heroes"><svg><use href="/boss-app/assets/icons.svg#helmet"/></svg><small>ГЕРОИ</small></button><button data-modal="inventory"><svg><use href="/boss-app/assets/icons.svg#bag"/></svg><small>ИНВЕНТАРЬ</small></button><button data-modal="shop"><svg><use href="/boss-app/assets/icons.svg#shop"/></svg><small>МАГАЗИН</small><i class="notice"></i></button><button data-modal="heroes"><svg><use href="/boss-app/assets/icons.svg#crown"/></svg><small>ОБРАЗЫ</small></button></nav>
   <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true"><section class="modal-card"><button class="modal-close" id="closeModal" aria-label="Закрыть"><svg><use href="/boss-app/assets/icons.svg#close"/></svg></button><div id="modalContent"></div></section></div><div class="toast" id="toast" role="status" aria-live="polite"></div><div class="error-screen" id="errorScreen" hidden><svg><use href="/boss-app/assets/icons.svg#skull"/></svg><h2>БИТВА НЕДОСТУПНА</h2><p id="errorText"></p><button id="retryButton">ПОВТОРИТЬ</button></div>
-  <script src="/boss-app/app.js?v=16"></script><script src="/boss-app/battle-fx.js?v=16"></script><script src="/boss-app/ui-fixes-v10.js?v=7"></script><script src="/boss-app/premium-v11.js?v=6"></script><script src="/boss-app/hero-skins-v12.js?v=5"></script><script src="/boss-app/combat-effects-v15.js?v=2"></script><script src="/boss-app/welcome-v16.js?v=1"></script>
+  <script src="/boss-app/app.js?v=17"></script><script src="/boss-app/battle-fx.js?v=17"></script><script src="/boss-app/ui-fixes-v10.js?v=8"></script><script src="/boss-app/premium-v11.js?v=7"></script><script src="/boss-app/hero-skins-v12.js?v=6"></script><script src="/boss-app/combat-effects-v15.js?v=3"></script>
+  <script>
+    (function(){
+      var overlay=document.getElementById('welcomeOverlay');
+      var close=document.getElementById('welcomeClose');
+      if(!overlay||!close)return;
+      document.body.style.overflow='hidden';
+      close.onclick=function(){overlay.classList.remove('show','force-show');overlay.setAttribute('aria-hidden','true');overlay.style.display='none';document.body.style.overflow='';};
+      try{window.Telegram&&Telegram.WebApp&&Telegram.WebApp.HapticFeedback&&Telegram.WebApp.HapticFeedback.notificationOccurred('warning');}catch(e){}
+    })();
+  </script>
 </body>
 </html>
