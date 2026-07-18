@@ -17,6 +17,7 @@ from talent_explanations import install_explanations
 from talent_mastery import install_mastery
 from talent_mastery_ui import install_mastery_ui
 from talent_menu import install_menu
+from talent_routes_v63 import install_talent_routes_v63
 from talent_rules_patch import install_talent_rules
 from talent_system import install
 from talent_ux import install_ux
@@ -37,8 +38,8 @@ install_explanations(core)
 install_mastery_ui(core)
 # Сначала задаём базовый урон и тактические механики рейда. Reality 61
 # повышает здоровье и заменяет награды, затем Reality 62 добавляет отдельный
-# защищённый админ-центр. Recovery устанавливается после него, чтобы обернуть
-# уже расширенный HTTP-сервер и не потерять новые маршруты.
+# защищённый админ-центр. После него возвращаем маршруты древа, а recovery
+# устанавливается последним поверх уже окончательного HTTP-сервера.
 install_raid_balance_v58(core)
 install_raid_v59_fix(core)
 install_raid_v60(core)
@@ -46,6 +47,7 @@ install_raid_v60_guard(core)
 install_raid_v61(core)
 install_raid_v61_safety(core)
 install_admin_webapp_v62(core)
+install_talent_routes_v63(core)
 install_raid_v59_recovery(core)
 install_talent_rules(core)
 install_about_updates(core)
