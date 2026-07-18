@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#090713">
+  <title>Админ-центр</title>
+  <link rel="stylesheet" href="/admin-app/admin.css?v=62">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <div class="bg-orb orb-a"></div><div class="bg-orb orb-b"></div>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand-mark">👁</div>
+      <div class="brand-copy"><small>ГЛАВНЫЙ ГЕРОЙ</small><h1>Админ-центр</h1></div>
+      <button class="icon-button" id="refreshButton" aria-label="Обновить">↻</button>
+    </header>
+
+    <section class="context-card">
+      <label class="field-label" for="chatSelect">Текущая беседа</label>
+      <div class="select-wrap"><select id="chatSelect"></select><span>⌄</span></div>
+      <div class="context-meta"><span id="connectionState">Подключение…</span><strong id="versionText">Reality 62</strong></div>
+    </section>
+
+    <section class="target-card" id="targetCard">
+      <div class="avatar" id="targetAvatar">?</div>
+      <div class="target-copy"><small>ВЫБРАННЫЙ УЧАСТНИК</small><b id="targetName">Не выбран</b><span id="targetMeta">—</span></div>
+      <button class="mini-button" data-tab-open="participant">Изменить</button>
+    </section>
+
+    <div class="screen-stack">
+      <section class="screen active" data-screen="home">
+        <div class="section-head"><div><small>ОБЗОР</small><h2>Состояние системы</h2></div></div>
+        <div class="metric-grid" id="homeMetrics"></div>
+
+        <article class="panel">
+          <div class="panel-title"><span>💬</span><div><b>Управление беседой</b><small>Общие действия для выбранного чата</small></div></div>
+          <div class="action-grid two">
+            <button data-action="chat_cooldowns_reset">⏱ Сбросить все КД</button>
+            <button data-action="chat_profiles_recalculate">🧮 Пересчитать профили</button>
+            <button data-action="database_check">🩺 Проверить базу</button>
+            <button class="danger-soft" data-confirm-action="chat_stats_reset" data-confirm-title="Сбросить статистику беседы?" data-confirm-text="Активность всех участников будет обнулена. Очки влияния останутся.">🧹 Сбросить статистику</button>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title"><span>👥</span><div><b>Быстрый выбор</b><small>Самые заметные участники беседы</small></div></div>
+          <div class="user-list compact" id="quickUsers"></div>
+        </article>
+      </section>
+
+      <section class="screen" data-screen="participant">
+        <div class="section-head"><div><small>УЧАСТНИК</small><h2>Влияние и права</h2></div></div>
+        <article class="panel search-panel">
+          <label class="field-label" for="userSearch">Найти по имени, username или ID</label>
+          <div class="search-row"><input id="userSearch" type="search" placeholder="Начни вводить…"><button id="searchButton">Найти</button></div>
+          <div class="user-list" id="searchResults"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title"><span>⭐</span><div><b>Очки влияния</b><small id="pointsSubtitle">Текущий баланс: —</small></div></div>
+          <div class="step-grid">
+            <button data-action="points_delta" data-value="-1000">−1000</button><button data-action="points_delta" data-value="-100">−100</button>
+            <button data-action="points_delta" data-value="100">+100</button><button data-action="points_delta" data-value="1000">+1000</button>
+          </div>
+          <button class="wide-button" data-form="points">✍️ Установить точное значение</button>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title"><span>🎭</span><div><b>Роль участника</b><small>Роль устанавливается через порог влияния</small></div></div>
+          <div class="role-grid">
+            <button data-role="decoration">🪑<span>Декорация</span></button><button data-role="dust">🌫<span>Пыль</span></button>
+            <button data-role="extras">👥<span>Массовка</span></button><button data-role="secondary">🎭<span>Второстепенная</span></button>
+            <button data-role="hero" class="role-hero">👑<span>Главный герой</span></button>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title"><span>🔇</span><div><b>Ограничения</b><small>Бот должен иметь права администратора</small></div></div>
+          <div class="action-grid three"><button data-mute="5">5 минут</button><button data-mute="10">10 минут</button><button data-mute="15">15 минут</button></div>
+          <button class="wide-button positive" data-action="unmute">🔊 Снять мут</button>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title"><span>🧰</span><div><b>Обслуживание участника</b><small>Кулдауны и статистика</small></div></div>
+          <div class="action-grid two">
+            <button data-action="cooldown_user_chat">⏱ КД в этой беседе</button>
+            <button data-action="cooldown_user_global">🌐 КД во всех беседах</button>
+            <button class="danger-soft full" data-confirm-action="stats_user_reset" data-confirm-title="Сбросить статистику участника?" data-confirm-text="Сообщения, реакции и показатели активности будут обнулены.">🧹 Сбросить статистику</button>
+          </div>
+        </article>
+      </section>
+
+      <section class="screen" data-screen="raid">
+        <div class="section-head"><div><small>ЦЕНТР ВСЕЛЕННОЙ</small><h2>Управление рейдом</h2></div></div>
+        <div id="raidContent"></div>
+      </section>
+
+      <section class="screen" data-screen="knowledge">
+        <div class="section-head"><div><small>ДРЕВО ЗНАНИЙ</small><h2>Осколки и таланты</h2></div></div>
+        <div class="metric-grid knowledge-metrics" id="knowledgeMetrics"></div>
+
+        <article class="panel">
+          <div class="panel-title"><span>💠</span><div><b>Осколки знаний</b><small>Ручное управление кошельком</small></div></div>
+          <div class="step-grid"><button data-action="shards_delta" data-value="-1">−1</button><button data-action="shards_delta" data-value="1">+1</button><button data-action="shards_delta" data-value="5">+5</button><button data-form="shards">Точное</button></div>
+          <button class="wide-button" data-action="knowledge_convert">🌳 Преобразовать накопленные осколки</button>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title"><span>🌳</span><div><b>Очки древа</b><small>Общее количество очков развития</small></div></div>
+          <div class="step-grid"><button data-action="tree_delta" data-value="-1">−1</button><button data-action="tree_delta" data-value="1">+1</button><button data-form="tree">Точное</button><button data-action="knowledge_recalculate">Пересчитать</button></div>
+          <div class="action-grid two">
+            <button data-confirm-action="tree_refund" data-confirm-title="Вернуть потраченные очки?" data-confirm-text="Все навыки будут сброшены, а потраченные очки вернутся в доступные.">↩ Вернуть очки</button>
+            <button class="danger-soft" data-confirm-action="knowledge_week_reset" data-confirm-title="Сбросить недельный лимит?" data-confirm-text="Участник снова сможет получать рейдовые очки древа на этой неделе.">📅 Сбросить лимит</button>
+          </div>
+        </article>
+
+        <article class="panel"><div class="panel-title"><span>✨</span><div><b>Активные таланты</b><small>Текущая прокачка выбранного участника</small></div></div><div id="talentList" class="talent-list"></div></article>
+        <article class="panel"><div class="panel-title"><span>📊</span><div><b>Суммарные баффы</b><small>Рассчитанные эффекты древа</small></div></div><div id="buffList" class="buff-list"></div></article>
+      </section>
+
+      <section class="screen" data-screen="history">
+        <div class="section-head"><div><small>ЖУРНАЛ</small><h2>История действий</h2></div><button class="mini-button" data-action="undo">↩ Отменить последнее</button></div>
+        <div class="history-list" id="historyList"></div>
+      </section>
+    </div>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="active" data-tab="home"><span>⌂</span><small>Главная</small></button>
+    <button data-tab="participant"><span>👤</span><small>Участник</small></button>
+    <button data-tab="raid"><span>🌌</span><small>Рейд</small></button>
+    <button data-tab="knowledge"><span>🌳</span><small>Знания</small></button>
+    <button data-tab="history"><span>☷</span><small>История</small></button>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+  <div class="loading" id="loading"><div class="spinner"></div><b>Загрузка админ-центра</b></div>
+
+  <section class="modal" id="modal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" data-modal-close>×</button>
+      <div class="modal-icon" id="modalIcon">⚙</div>
+      <h3 id="modalTitle">Подтверждение</h3>
+      <p id="modalText"></p>
+      <div id="modalField"></div>
+      <div class="modal-actions"><button data-modal-close>Отмена</button><button id="modalConfirm">Подтвердить</button></div>
+    </div>
+  </section>
+
+  <script src="/admin-app/admin.js?v=62"></script>
+</body>
+</html>
