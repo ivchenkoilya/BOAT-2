@@ -1,0 +1,72 @@
+/* Reality 52: scrolling, help, skins and stronger raid feedback */
+html,body{overflow-y:auto!important;overscroll-behavior-y:auto!important;touch-action:pan-y!important;-webkit-overflow-scrolling:touch!important}
+body{min-height:100dvh!important}
+.app,.resources,.boss-stage,.squad-section,.battle-log{touch-action:pan-y!important}
+.boss-art,.stage-shade,.boss-rings,.boss-mist,.battle-atmosphere,.boss-stage:before,.boss-stage:after{-webkit-user-drag:none!important;user-select:none!important;pointer-events:none!important}
+.boss-stage{overscroll-behavior:contain!important}
+
+/* Raise the magic circle so it frames the head instead of the chest. */
+.boss-rings{top:35%!important}
+.boss-stage:before{top:82px!important;width:78%!important}
+
+/* Help button */
+.raid-help-button{position:absolute;z-index:90;right:9px;top:7px;width:35px;height:35px;border-radius:50%;border:1px solid #e1b85f;background:radial-gradient(circle at 38% 30%,#8c42ae,#32113f 52%,#0a0610 76%);color:#ffe3a0;font:900 18px Georgia,"Times New Roman",serif;display:grid;place-items:center;box-shadow:inset 0 0 12px #d86cff55,0 0 15px #b34fe477;animation:v19HelpPulse 2.4s ease-in-out infinite;touch-action:manipulation!important}
+.raid-help-button:active{transform:scale(.92)}
+@keyframes v19HelpPulse{50%{filter:brightness(1.22);box-shadow:inset 0 0 18px #e684ff77,0 0 25px #dc72ff99}}
+.boss-title{padding-inline:48px!important}
+
+/* Animated squad frames */
+.fighter{isolation:isolate!important;overflow:hidden!important}
+.fighter>*:not(.fighter-aura-frame){position:relative;z-index:3}
+.fighter-aura-frame{position:absolute!important;z-index:2!important;inset:1px!important;padding:2px!important;pointer-events:none!important;background:conic-gradient(from 0deg,transparent 0 10%,var(--role,#a758d3) 18%,#f3ca6d 30%,transparent 44% 56%,#c45df2 70%,var(--role,#a758d3) 84%,transparent 94%);animation:v19FrameSpin 4.8s linear infinite;filter:drop-shadow(0 0 5px var(--role,#a758d3));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.fighter:nth-child(2) .fighter-aura-frame{animation-delay:-1.2s}.fighter:nth-child(3) .fighter-aura-frame{animation-delay:-2.4s}.fighter:nth-child(4) .fighter-aura-frame{animation-delay:-3.6s}
+.fighter.self .fighter-aura-frame{background:conic-gradient(from 0deg,#f1c76b,#a648db,#f8e2a2,#c05cf1,#f1c76b);animation-duration:3.2s;filter:drop-shadow(0 0 8px #e1b95f)}
+@keyframes v19FrameSpin{to{transform:rotate(360deg)}}
+
+/* Strong healing and defence animations */
+.v19-effect-layer{position:fixed;inset:0;z-index:2147483500;pointer-events:none;overflow:hidden}
+.v19-effect-layer .v19-screen{position:absolute;inset:0;opacity:0;animation:v19ScreenFlash .9s ease forwards}
+.v19-effect-layer.heal .v19-screen{background:radial-gradient(circle at 50% 58%,#73ff9b99 0,#3eea7040 22%,transparent 62%)}
+.v19-effect-layer.shield .v19-screen{background:radial-gradient(circle at 50% 58%,transparent 17%,#8d6dff5e 34%,#5732b53b 48%,transparent 70%)}
+.v19-effect-title{position:absolute;left:50%;top:47%;transform:translate(-50%,-50%) scale(.7);padding:10px 18px;border:1px solid currentColor;background:#08050dd9;font:900 18px Georgia,"Times New Roman",serif;letter-spacing:1.4px;text-shadow:0 2px 6px #000,0 0 18px currentColor;animation:v19EffectTitle 1s cubic-bezier(.2,.8,.2,1) forwards}
+.v19-effect-layer.heal .v19-effect-title{color:#76ff9c}.v19-effect-layer.shield .v19-effect-title{color:#b892ff}
+.v19-shield-ring{position:absolute;left:50%;top:55%;width:180px;height:180px;border-radius:50%;border:3px solid #a77cff;transform:translate(-50%,-50%) scale(.35);box-shadow:0 0 20px #9b62ff,inset 0 0 35px #7142db88;animation:v19ShieldRing .9s ease-out forwards}
+.v19-shield-ring:before,.v19-shield-ring:after{content:"";position:absolute;inset:17px;border-radius:50%;border:1px dashed #eadfff;animation:v19RingTurn 1.2s linear infinite}.v19-shield-ring:after{inset:42px;animation-direction:reverse}
+.v19-heal-particle{--x:0px;--y:-120px;position:absolute;left:50%;top:58%;width:24px;height:24px;margin:-12px;border-radius:50%;display:grid;place-items:center;color:#d9ffe3;background:#15933f;border:1px solid #a8ffc0;font:900 20px Arial;box-shadow:0 0 16px #54ff80;animation:v19HealParticle 1.05s ease-out forwards}
+.v19-effect-layer.heal .v19-heal-particle:before{content:"+"}
+.fighter.v19-healed{animation:v19CardHeal 1s ease!important}.fighter.v19-defended{animation:v19CardShield 1s ease!important}
+@keyframes v19ScreenFlash{20%,45%{opacity:1}100%{opacity:0}}
+@keyframes v19EffectTitle{25%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-85%) scale(.95)}}
+@keyframes v19ShieldRing{35%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.45)}}
+@keyframes v19RingTurn{to{transform:rotate(360deg)}}
+@keyframes v19HealParticle{35%{opacity:1;transform:translate(var(--x),var(--y)) scale(1.15)}100%{opacity:0;transform:translate(var(--x),calc(var(--y) - 45px)) scale(.6)}}
+@keyframes v19CardHeal{40%{filter:brightness(1.55) saturate(1.35);box-shadow:inset 0 0 28px #30d65a88,0 0 28px #5dff7f!important}}
+@keyframes v19CardShield{40%{filter:brightness(1.35);box-shadow:inset 0 0 32px #7554df99,0 0 30px #9f76ff!important}}
+
+/* Active bottom navigation */
+.bottom-nav button.active{color:#e7bd69!important;background:linear-gradient(180deg,#2b1235,#100817)!important;box-shadow:inset 0 0 22px #8d3ebd55!important}
+.bottom-nav button.active svg{color:#d66fff!important;filter:drop-shadow(0 0 8px #c357f0)!important}
+.bottom-nav button.active small{color:#f0cc7a!important;text-shadow:0 0 8px #ca62ed!important}
+
+/* Future skins */
+.future-skin-title{margin:0 0 5px;text-align:center;color:#f4d486;font:700 23px Georgia,"Times New Roman",serif;letter-spacing:1px}
+.future-skin-sub{margin:0 8px 15px;text-align:center;color:#aa9daf;font-size:10px;line-height:1.5}
+.future-skin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.future-skin-slot{position:relative;min-height:145px;padding:12px 8px;border:1px solid #58405f;background:radial-gradient(circle at 50% 18%,#2b173566,#100a16 55%,#07050b);clip-path:polygon(11px 0,calc(100% - 11px) 0,100% 11px,100% calc(100% - 11px),calc(100% - 11px) 100%,11px 100%,0 calc(100% - 11px),0 11px);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;color:#b7a9bb}
+.future-skin-slot:before{content:"";position:absolute;inset:-45%;background:conic-gradient(transparent,#8f4ab244,transparent 28%,#d8aa5940,transparent 58%,#8f4ab244);animation:v19SlotSpin 8s linear infinite}
+.future-skin-slot>*{position:relative;z-index:2}.future-skin-slot:active{filter:brightness(1.25)}
+.future-skin-lock{width:68px;height:68px;margin-bottom:9px;border-radius:50%;display:grid;place-items:center;border:1px solid #765680;background:radial-gradient(circle,#392045,#100917 70%);font-size:30px;color:#d8b4e1;box-shadow:inset 0 0 18px #000,0 0 15px #8c3da24d}
+.future-skin-slot b{font:700 11px Georgia,"Times New Roman",serif;color:#dfd1e2}.future-skin-slot small{margin-top:5px;font-size:8px;color:#8e8192}.future-skin-number{position:absolute!important;right:7px;top:7px;padding:3px 6px;border:1px solid #6a4b71;background:#0a0610;color:#d1b4d7;font:700 7px Georgia}
+@keyframes v19SlotSpin{to{transform:rotate(360deg)}}
+
+/* Detailed help */
+.v19-help-title{margin:0 0 12px;text-align:center;color:#f2cf7a;font:700 23px Georgia,"Times New Roman",serif}
+.v19-help-intro{margin:0 0 14px;color:#b7aabc;font-size:10px;line-height:1.55;text-align:center}
+.v19-help-heading{margin:17px 0 8px;color:#d9b86f;font:700 13px Georgia,"Times New Roman",serif;letter-spacing:.7px;border-bottom:1px solid #4a304d;padding-bottom:6px}
+.v19-help-grid{display:grid;gap:7px}.v19-help-card{display:grid;grid-template-columns:38px 1fr;gap:10px;align-items:start;padding:10px;border:1px solid #412b47;background:linear-gradient(180deg,#150d1c,#09060d)}
+.v19-help-icon{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#693080,#170b20);border:1px solid #865398;color:#f0cf81;font-size:18px;box-shadow:0 0 10px #8d3dad55}
+.v19-help-card b{display:block;color:#eaddea;font:700 11px Georgia,"Times New Roman",serif}.v19-help-card small{display:block;margin-top:4px;color:#9f92a3;font-size:9px;line-height:1.4}
+.v19-help-card.boss{border-color:#67402e;background:linear-gradient(180deg,#1b1017,#0a060a)}.v19-help-card.boss .v19-help-icon{background:radial-gradient(circle,#7c2439,#220910);border-color:#a54a5e;color:#ffbdc8}
+
+@media(max-width:370px){.future-skin-grid{gap:7px}.future-skin-slot{min-height:132px}.future-skin-lock{width:58px;height:58px}.raid-help-button{width:32px;height:32px;font-size:16px}.boss-title{padding-inline:43px!important}}
+@media(prefers-reduced-motion:reduce){.fighter-aura-frame,.raid-help-button,.future-skin-slot:before{animation-duration:.01ms!important;animation-iteration-count:1!important}}
