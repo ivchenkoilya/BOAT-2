@@ -1,0 +1,12 @@
+/* Welcome notice v16 */
+.welcome-overlay{position:fixed;inset:0;z-index:5000;display:grid;place-items:center;padding:20px;background:rgba(2,1,5,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);opacity:0;visibility:hidden;transition:opacity .28s ease,visibility .28s ease}
+.welcome-overlay.show{opacity:1;visibility:visible}
+.welcome-card{width:min(100%,420px);padding:22px 18px 18px;border:1px solid #e1ad54;background:radial-gradient(circle at 50% 0,#3a1649 0,#160b1f 42%,#07050a 100%);box-shadow:inset 0 0 0 2px #5b2b68,inset 0 0 34px #000,0 20px 60px #000,0 0 30px #a846d566;clip-path:polygon(18px 0,calc(100% - 18px) 0,100% 18px,100% calc(100% - 18px),calc(100% - 18px) 100%,18px 100%,0 calc(100% - 18px),0 18px);text-align:center;transform:translateY(18px) scale(.96);transition:transform .35s cubic-bezier(.2,.85,.25,1)}
+.welcome-overlay.show .welcome-card{transform:none}
+.welcome-goat{font-size:54px;line-height:1;margin-bottom:8px;filter:drop-shadow(0 0 16px #d26aff)}
+.welcome-title{margin:0 0 12px;color:#f2cf78;font:700 26px/1 Georgia,serif;letter-spacing:.4px;text-shadow:0 2px 3px #000,0 0 14px #a93ed0}
+.welcome-text{margin:0;color:#eaddeb;font:600 15px/1.45 Georgia,serif;text-shadow:0 2px 2px #000}
+.welcome-text strong{color:#fff1b0}
+.welcome-button{margin-top:18px;width:100%;height:50px;border:1px solid #e1ad54;background:linear-gradient(180deg,#7a2a91,#431052 58%,#22072b);color:#ffe39b;font:700 15px Georgia,serif;letter-spacing:.6px;box-shadow:inset 0 0 0 2px #6a2875,inset 0 0 18px #19031f,0 0 14px #a13fc555}
+.welcome-button:active{filter:brightness(.9)}
+@media(max-width:370px){.welcome-card{padding:18px 14px 15px}.welcome-title{font-size:23px}.welcome-text{font-size:14px}.welcome-goat{font-size:48px}}
