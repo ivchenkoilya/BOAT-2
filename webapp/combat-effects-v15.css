@@ -1,0 +1,25 @@
+/* Combat button feedback v15: static at rest, animated only on use */
+.combat .side-action,.combat .main-action{position:relative;isolation:isolate;overflow:hidden!important}
+.combat .side-action::after,.combat .main-action::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;z-index:0}
+.combat button>*{position:relative;z-index:2}
+.combat .main-action{background:linear-gradient(180deg,#8b2cab 0%,#521568 46%,#250731 100%)!important;border:2px solid #e2b85f!important;box-shadow:inset 0 0 0 3px #6d2a7c,inset 0 0 24px #17051f,0 0 14px #000!important}
+.combat .defend{background:linear-gradient(180deg,#302058 0%,#17102d 55%,#08050e 100%)!important;border-color:#a278e6!important;box-shadow:inset 0 0 0 2px #352254,inset 0 0 20px #07030b,0 0 10px #000!important}
+.combat .heal{background:linear-gradient(180deg,#205a31 0%,#12331d 55%,#07110a 100%)!important;border-color:#69c77d!important;box-shadow:inset 0 0 0 2px #234a2d,inset 0 0 20px #030905,0 0 10px #000!important}
+.combat .action-glyph{box-shadow:inset 0 0 14px #000,0 0 10px currentColor!important}
+.combat .main-action.fx-hit{animation:fxHitButton .34s ease both!important}
+.combat .main-action.fx-hit::after{background:radial-gradient(circle at 50% 50%,#fff6 0,#f1b85b55 24%,#b634e544 48%,transparent 72%);animation:fxHitFlash .42s ease both!important}
+.combat .defend.fx-defend{animation:fxDefendButton .58s ease both!important}
+.combat .defend.fx-defend::after{background:radial-gradient(circle at 50% 45%,#d9c8ff88 0,#7f4cff55 32%,transparent 68%);animation:fxShieldPulse .65s ease both!important}
+.combat .heal.fx-heal{animation:fxHealButton .66s ease both!important}
+.combat .heal.fx-heal::after{background:radial-gradient(circle at 50% 70%,#d9ffe488 0,#54f67a66 35%,transparent 72%);animation:fxHealPulse .72s ease both!important}
+.combat .defend.fx-defend .action-glyph{animation:fxShieldIcon .6s ease both!important}
+.combat .heal.fx-heal .action-glyph{animation:fxHealIcon .7s ease both!important}
+@keyframes fxHitButton{0%{transform:scale(1)}35%{transform:scale(.95);filter:brightness(1.35)}70%{transform:scale(1.025)}100%{transform:scale(1);filter:none}}
+@keyframes fxHitFlash{0%{opacity:0;transform:scale(.5)}35%{opacity:1;transform:scale(1.15)}100%{opacity:0;transform:scale(1.45)}}
+@keyframes fxDefendButton{0%{transform:scale(1)}28%{transform:scale(.97)}55%{transform:scale(1.02);filter:brightness(1.35)}100%{transform:scale(1);filter:none}}
+@keyframes fxShieldPulse{0%{opacity:0;transform:scale(.4)}35%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.5)}}
+@keyframes fxShieldIcon{0%{transform:scale(1)}45%{transform:scale(1.22);filter:drop-shadow(0 0 10px #b98cff)}100%{transform:scale(1);filter:none}}
+@keyframes fxHealButton{0%{transform:translateY(0)}35%{transform:translateY(2px);filter:brightness(1.25)}70%{transform:translateY(-2px)}100%{transform:translateY(0);filter:none}}
+@keyframes fxHealPulse{0%{opacity:0;transform:translateY(20px) scale(.7)}40%{opacity:1}100%{opacity:0;transform:translateY(-26px) scale(1.25)}}
+@keyframes fxHealIcon{0%{transform:scale(1) rotate(0)}45%{transform:scale(1.2) rotate(6deg);filter:drop-shadow(0 0 10px #6dff8b)}100%{transform:scale(1) rotate(0);filter:none}}
+@media(prefers-reduced-motion:reduce){.combat .fx-hit,.combat .fx-defend,.combat .fx-heal,.combat .fx-hit::after,.combat .fx-defend::after,.combat .fx-heal::after{animation:none!important}}
