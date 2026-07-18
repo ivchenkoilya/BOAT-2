@@ -1,0 +1,3 @@
+/* Показываем статус соединения даже на первых попытках переподключения. */
+.raid-v60-connection:not(:empty){opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+.raid-v60-connection:empty{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
