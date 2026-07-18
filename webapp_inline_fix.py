@@ -11,14 +11,13 @@ LOGGER = logging.getLogger(__name__)
 def install_inline_webapp_fix(core: Any) -> None:
     """Встраивает актуальный боевой интерфейс прямо в HTML Mini App.
 
-    Старый сервер Mini App разрешает отдельными маршрутами только style.css и
-    app.js. Поэтому дополнительные CSS/JS объединяются с HTML на сервере и не
-    зависят от ограничений маршрутов или кэша Telegram WebView.
+    Дополнительные CSS/JS объединяются с HTML на сервере и не зависят от
+    ограничений старых маршрутов или кэша Telegram WebView.
     """
-    if getattr(core, "_inline_webapp_fix_v22_installed", False):
+    if getattr(core, "_inline_webapp_fix_v23_installed", False):
         return
 
-    core._inline_webapp_fix_v22_installed = True
+    core._inline_webapp_fix_v23_installed = True
     original_index = core.webapp_index
     index_path = core.WEBAPP_DIR / "index.html"
     css_paths = [
@@ -30,11 +29,13 @@ def install_inline_webapp_fix(core: Any) -> None:
         core.WEBAPP_DIR / "action-card-heal-v21.css",
         core.WEBAPP_DIR / "action-cards-layout-v21.css",
         core.WEBAPP_DIR / "raid-hotfix-v22.css",
+        core.WEBAPP_DIR / "raid-hotfix-v23.css",
     ]
     js_paths = [
         core.WEBAPP_DIR / "fixed-combat-v18.js",
         core.WEBAPP_DIR / "raid-ux-v19.js",
         core.WEBAPP_DIR / "raid-pages-v20.js",
+        core.WEBAPP_DIR / "raid-hotfix-v23.js",
     ]
 
     async def webapp_index_with_inline_combat(request: Any):
@@ -43,27 +44,26 @@ def install_inline_webapp_fix(core: Any) -> None:
             css = "\n\n".join(path.read_text(encoding="utf-8") for path in css_paths)
             script = "\n\n".join(path.read_text(encoding="utf-8") for path in js_paths)
 
-            # Убираем ссылки на файлы, которые старый роутер не умеет отдавать.
             page = re.sub(
-                r"\s*<link[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|action-card-ego-v21|action-card-defense-v21|action-card-heal-v21|action-cards-layout-v21|raid-hotfix-v22)\.css[^>]*>",
+                r"\s*<link[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|action-card-ego-v21|action-card-defense-v21|action-card-heal-v21|action-cards-layout-v21|raid-hotfix-v22|raid-hotfix-v23)\.css[^>]*>",
                 "",
                 page,
                 flags=re.IGNORECASE,
             )
             page = re.sub(
-                r"\s*<script[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20)\.js[^>]*></script>",
+                r"\s*<script[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|raid-hotfix-v23)\.js[^>]*></script>",
                 "",
                 page,
                 flags=re.IGNORECASE,
             )
 
             inline_style = (
-                "\n<style id=\"raid-ui-v22-inline\">\n"
+                "\n<style id=\"raid-ui-v23-inline\">\n"
                 + css
                 + "\n</style>\n"
             )
             inline_script = (
-                "\n<script id=\"raid-ui-v22-inline-script\">\n"
+                "\n<script id=\"raid-ui-v23-inline-script\">\n"
                 + script
                 + "\n</script>\n"
             )
@@ -78,7 +78,7 @@ def install_inline_webapp_fix(core: Any) -> None:
                     "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
                     "Pragma": "no-cache",
                     "Expires": "0",
-                    "X-Mini-App-UI": "raid-ui-v22-inline",
+                    "X-Mini-App-UI": "raid-ui-v23-inline",
                 },
             )
         except Exception:
