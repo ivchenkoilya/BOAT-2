@@ -2,7 +2,6 @@
   'use strict';
 
   const tg=window.Telegram?.WebApp;
-  const stage=document.getElementById('bossStage');
 
   function effectLayer(type){
     document.querySelector('.v19-effect-layer')?.remove();
@@ -26,48 +25,6 @@
     }
     document.body.appendChild(layer);
     setTimeout(()=>layer.remove(),1250);
-  }
-
-  /* Telegram Android иногда не передаёт нативную прокрутку, когда жест начинается
-     прямо на большой сцене босса. Перехватываем жест в capture-фазе и прокручиваем
-     настоящий scrollingElement. Так работает и по лицу босса, и по пустой области. */
-  if(stage){
-    let gesture=null;
-    const interactive='button,a,input,textarea,select,[role="button"]';
-    const scrollRoot=()=>document.scrollingElement||document.documentElement||document.body;
-
-    document.addEventListener('touchstart',event=>{
-      if(event.touches.length!==1)return;
-      const target=event.target instanceof Element?event.target:null;
-      if(!target||!target.closest('#bossStage')||target.closest(interactive)){
-        gesture=null;
-        return;
-      }
-      const touch=event.touches[0];
-      gesture={x:touch.clientX,y:touch.clientY,locked:false};
-    },{capture:true,passive:true});
-
-    document.addEventListener('touchmove',event=>{
-      if(!gesture||event.touches.length!==1)return;
-      const touch=event.touches[0];
-      const dx=gesture.x-touch.clientX;
-      const dy=gesture.y-touch.clientY;
-      if(!gesture.locked){
-        if(Math.abs(dx)<3&&Math.abs(dy)<3)return;
-        if(Math.abs(dx)>Math.abs(dy)*1.15){gesture=null;return;}
-        gesture.locked=true;
-      }
-      const root=scrollRoot();
-      root.scrollTop+=dy;
-      gesture.x=touch.clientX;
-      gesture.y=touch.clientY;
-      event.preventDefault();
-      event.stopPropagation();
-    },{capture:true,passive:false});
-
-    const clearGesture=()=>{gesture=null;};
-    document.addEventListener('touchend',clearGesture,{capture:true,passive:true});
-    document.addEventListener('touchcancel',clearGesture,{capture:true,passive:true});
   }
 
   document.addEventListener('click',event=>{
