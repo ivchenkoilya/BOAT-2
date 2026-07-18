@@ -14,10 +14,10 @@ def install_inline_webapp_fix(core: Any) -> None:
     Дополнительные CSS/JS объединяются с HTML на сервере и не зависят от
     ограничений старых маршрутов или кэша Telegram WebView.
     """
-    if getattr(core, "_inline_webapp_fix_v64_installed", False):
+    if getattr(core, "_inline_webapp_fix_v65_installed", False):
         return
 
-    core._inline_webapp_fix_v64_installed = True
+    core._inline_webapp_fix_v65_installed = True
     original_index = core.webapp_index
     index_path = core.WEBAPP_DIR / "index.html"
     css_paths = [
@@ -34,6 +34,9 @@ def install_inline_webapp_fix(core: Any) -> None:
         core.WEBAPP_DIR / "raid-final-v25.css",
         core.WEBAPP_DIR / "raid-victory-v59.css",
         core.WEBAPP_DIR / "raid-v61.css",
+        # Reality 65 загружен последним, чтобы заголовок отряда оставался
+        # геометрически по центру независимо от кнопки выбора героя.
+        core.WEBAPP_DIR / "raid-v65-balance-layout.css",
     ]
     js_paths = [
         core.WEBAPP_DIR / "fixed-combat-v18.js",
@@ -49,6 +52,8 @@ def install_inline_webapp_fix(core: Any) -> None:
         # Reality 64 заменяет осколки прямой выдачей очков древа и исправляет
         # справку и победное окно поверх стабильного интерфейса Reality 61.
         core.WEBAPP_DIR / "raid-v64-direct-tree.js",
+        # Reality 65 актуализирует в справке 100 000 HP и новый баланс давления.
+        core.WEBAPP_DIR / "raid-v65-balance-layout.js",
     ]
 
     async def webapp_index_with_inline_combat(request: Any):
@@ -58,13 +63,13 @@ def install_inline_webapp_fix(core: Any) -> None:
             script = "\n\n".join(path.read_text(encoding="utf-8") for path in js_paths)
 
             page = re.sub(
-                r"\s*<link[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|action-card-ego-v21|action-card-defense-v21|action-card-heal-v21|action-cards-layout-v21|raid-hotfix-v22|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61)\.css[^>]*>",
+                r"\s*<link[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|action-card-ego-v21|action-card-defense-v21|action-card-heal-v21|action-cards-layout-v21|raid-hotfix-v22|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v65-balance-layout)\.css[^>]*>",
                 "",
                 page,
                 flags=re.IGNORECASE,
             )
             page = re.sub(
-                r"\s*<script[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v64-direct-tree)\.js[^>]*></script>",
+                r"\s*<script[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v64-direct-tree|raid-v65-balance-layout)\.js[^>]*></script>",
                 "",
                 page,
                 flags=re.IGNORECASE,
@@ -73,7 +78,7 @@ def install_inline_webapp_fix(core: Any) -> None:
             # app.js обновлял таймеры пять раз в секунду. Оставляем один тик в
             # секунду: цифры точные, но интерфейс не получает лишних обновлений.
             prelude = """
-<script id="raid-ui-v64-prelude">
+<script id="raid-ui-v65-prelude">
 (function(){
   var nativeSetInterval=window.setInterval.bind(window);
   window.setInterval=function(callback,delay){
@@ -85,12 +90,12 @@ def install_inline_webapp_fix(core: Any) -> None:
 </script>
 """
             inline_style = (
-                "\n<style id=\"raid-ui-v64-inline\">\n"
+                "\n<style id=\"raid-ui-v65-inline\">\n"
                 + css
                 + "\n</style>\n"
             )
             inline_script = (
-                "\n<script id=\"raid-ui-v64-inline-script\">\n"
+                "\n<script id=\"raid-ui-v65-inline-script\">\n"
                 + script
                 + "\n</script>\n"
             )
@@ -105,7 +110,7 @@ def install_inline_webapp_fix(core: Any) -> None:
                     "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
                     "Pragma": "no-cache",
                     "Expires": "0",
-                    "X-Mini-App-UI": "raid-ui-v64-inline",
+                    "X-Mini-App-UI": "raid-ui-v65-inline",
                 },
             )
         except Exception:
