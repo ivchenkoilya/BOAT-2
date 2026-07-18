@@ -6,7 +6,9 @@ from talent_explanations import install_explanations
 from talent_menu import install_menu
 from talent_system import install
 from talent_ux import install_ux
+from today_types_expansion import install_today_types
 
+install_today_types(core)
 install_expansion(core)
 install(core)
 install_menu(core)
