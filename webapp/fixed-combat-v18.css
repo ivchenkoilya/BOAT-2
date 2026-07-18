@@ -1,0 +1,194 @@
+/* Reality 51: fixed compact combat controls */
+:root{
+  --nav-h:74px;
+  --combat-h:88px;
+  --ability-h:50px;
+  --combat-gap:6px;
+  --fixed-ui-h:calc(var(--nav-h) + var(--combat-h) + var(--ability-h) + var(--combat-gap));
+}
+
+html,body{overflow-x:hidden!important}
+body{
+  padding-bottom:calc(var(--fixed-ui-h) + env(safe-area-inset-bottom,0px) + 24px)!important;
+}
+.app{
+  padding-bottom:calc(var(--fixed-ui-h) + env(safe-area-inset-bottom,0px) + 38px)!important;
+}
+
+/* Compact fixed role ability. It always stays directly above the attack dock. */
+.ability-card{
+  position:fixed!important;
+  left:50%!important;
+  right:auto!important;
+  bottom:calc(var(--nav-h) + var(--combat-h) + var(--combat-gap) + env(safe-area-inset-bottom,0px))!important;
+  transform:translateX(-50%)!important;
+  z-index:2147482999!important;
+  width:min(100vw,560px)!important;
+  height:var(--ability-h)!important;
+  min-height:var(--ability-h)!important;
+  margin:0!important;
+  padding:5px 10px!important;
+  display:grid!important;
+  grid-template-columns:40px minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:8px!important;
+  overflow:hidden!important;
+  border:1px solid #76518c!important;
+  border-left:0!important;
+  border-right:0!important;
+  border-radius:0!important;
+  clip-path:none!important;
+  background:linear-gradient(180deg,#21142d 0%,#0d0813 100%)!important;
+  box-shadow:0 -8px 22px #000b,inset 0 1px #ffffff12!important;
+}
+.ability-card .ability-icon{
+  width:38px!important;
+  height:38px!important;
+  min-width:38px!important;
+  display:grid!important;
+  place-items:center!important;
+  border:1px solid #8c55a7!important;
+  background:radial-gradient(circle,#5b2772,#160c20 72%)!important;
+}
+.ability-card .ability-icon svg{width:23px!important;height:23px!important;color:#d479f1!important}
+.ability-card .ability-copy{min-width:0!important;text-align:left!important}
+.ability-card .ability-copy small{
+  display:block!important;
+  margin:0 0 2px!important;
+  font-size:7px!important;
+  letter-spacing:1px!important;
+  color:#a991b0!important;
+}
+.ability-card .ability-copy b{
+  display:block!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  font:700 12px Georgia,"Times New Roman",serif!important;
+  color:#f0d79c!important;
+}
+.ability-card .ability-copy em{display:none!important}
+.ability-card .ability-cooldown{
+  min-width:64px!important;
+  padding-left:8px!important;
+  border-left:1px solid #ffffff12!important;
+  text-align:center!important;
+}
+.ability-card .ability-cooldown small{display:block!important;font-size:6px!important;color:#8d7b94!important}
+.ability-card .ability-cooldown b{display:block!important;margin-top:3px!important;font-size:9px!important;color:#d9cadf!important}
+.ability-card:not(:disabled){box-shadow:0 -8px 22px #000b,0 0 17px #9c4acb55,inset 0 1px #ffffff17!important}
+.ability-card:disabled{opacity:.72!important;filter:saturate(.55)!important}
+
+/* Main fixed combat dock. */
+.combat{
+  position:fixed!important;
+  left:50%!important;
+  right:auto!important;
+  bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px))!important;
+  transform:translateX(-50%)!important;
+  z-index:2147483000!important;
+  width:min(100vw,560px)!important;
+  height:var(--combat-h)!important;
+  min-height:var(--combat-h)!important;
+  margin:0!important;
+  padding:6px 8px!important;
+  display:grid!important;
+  grid-template-columns:72px minmax(0,1fr) 72px!important;
+  align-items:stretch!important;
+  gap:7px!important;
+  overflow:visible!important;
+  border:0!important;
+  border-top:1px solid #b9823c!important;
+  background:linear-gradient(180deg,#160b1c 0%,#08040b 36%,#030204 100%)!important;
+  box-shadow:0 -12px 30px #000e,inset 0 1px #ffd78d1c!important;
+}
+.combat::before{background:linear-gradient(180deg,#160b1c,#030204)!important}
+.combat .side-action,.combat .main-action{
+  height:76px!important;
+  min-height:76px!important;
+  margin:0!important;
+  padding:5px!important;
+  transition:transform .12s ease,filter .18s ease,box-shadow .2s ease!important;
+}
+.combat .side-action{
+  border:1px solid #765184!important;
+  background:linear-gradient(180deg,#24152f,#0b0710)!important;
+}
+.combat .side-action.defend{border-color:#765aa0!important;background:linear-gradient(180deg,#2d1b4a,#100a1c)!important}
+.combat .side-action.heal{border-color:#4f8d60!important;background:linear-gradient(180deg,#1d4829,#09140d)!important}
+.combat .side-action .action-glyph{margin:0 0 2px!important}
+.combat .side-action .action-glyph svg{width:24px!important;height:24px!important}
+.combat .side-action b{font-size:8px!important;letter-spacing:.35px!important}
+.combat .side-action small{display:none!important}
+.combat .side-action em{margin-top:4px!important;font-size:7px!important}
+.combat .main-action{
+  transform:translateY(-3px)!important;
+  border:2px solid #e1b458!important;
+  background:radial-gradient(circle at 50% 8%,#ad4dca,#601773 48%,#270a32)!important;
+  box-shadow:inset 0 0 0 2px #6f2b7c,inset 0 -16px 24px #180520,0 0 18px #b852d06b!important;
+}
+.combat .main-action b{
+  font:700 clamp(16px,4.7vw,22px)/1 Georgia,"Times New Roman",serif!important;
+  letter-spacing:.4px!important;
+  text-shadow:0 2px 5px #000!important;
+}
+.combat .main-action small{margin-top:6px!important;font-size:7px!important;letter-spacing:.8px!important}
+.combat .main-action:not(:disabled){animation:attackReadyV18 1.55s ease-in-out infinite!important}
+.combat .main-action:active,.combat .side-action:active{transform:translateY(0) scale(.97)!important;filter:brightness(1.2)!important}
+.combat .main-action:disabled{animation:none!important;filter:saturate(.42) brightness(.68)!important}
+.combat button:disabled::after{background:rgba(0,0,0,.30)!important}
+.combat .cooldown-fill{display:block!important;position:absolute!important;left:0!important;right:auto!important;bottom:0!important;height:4px!important;background:linear-gradient(90deg,#a747d0,#f3c765)!important;opacity:.95!important;z-index:6!important}
+@keyframes attackReadyV18{
+  0%,100%{box-shadow:inset 0 0 0 2px #6f2b7c,inset 0 -16px 24px #180520,0 0 14px #b852d05c!important}
+  50%{box-shadow:inset 0 0 0 2px #8f3aa0,inset 0 -16px 24px #180520,0 0 28px #d76ff0b0!important}
+}
+
+.bottom-nav{
+  z-index:2147483001!important;
+  height:calc(var(--nav-h) + env(safe-area-inset-bottom,0px))!important;
+}
+
+/* The squad remains useful, but no longer consumes most of a screen. */
+.squad-section{margin-top:-18px!important;padding-inline:8px!important}
+.squad-section .section-head{min-height:28px!important}
+.squad{gap:6px!important;margin-top:6px!important;padding-bottom:2px!important}
+.fighter{
+  flex:0 0 86px!important;
+  width:86px!important;
+  height:112px!important;
+  min-height:112px!important;
+  padding:6px 4px!important;
+}
+.fighter-avatar{width:42px!important;height:42px!important;margin:1px auto 4px!important}
+.fighter-avatar svg{width:23px!important;height:23px!important}
+.fighter-avatar i{width:16px!important;height:16px!important;font-size:7px!important}
+.fighter>strong{font-size:9px!important}
+.fighter>small{font-size:6px!important;margin:2px 0!important}
+.fighter>em{font-size:7px!important}
+.player-hp{height:6px!important;margin-top:4px!important}
+.fighter-damage{font-size:6px!important;margin-top:3px!important}
+.empty-fighter .fighter-damage{display:none!important}
+
+/* Only the last three events are visible by default. */
+.battle-log{margin-bottom:10px!important}
+.battle-log:not(.expanded) #logs .log-entry:nth-child(n+4),
+.battle-log:not(.expanded) #logs>div:nth-child(n+4){display:none!important}
+.battle-log #logs{max-height:none!important;overflow:visible!important}
+.battle-log .log-entry{padding:8px 9px 8px 31px!important;margin-bottom:4px!important;font-size:9px!important;line-height:1.35!important}
+.full-log{min-height:36px!important;margin-top:5px!important}
+
+@media(max-width:370px){
+  :root{--combat-h:84px;--ability-h:48px}
+  .combat{grid-template-columns:64px minmax(0,1fr) 64px!important;gap:5px!important;padding-inline:6px!important}
+  .combat .side-action,.combat .main-action{height:72px!important;min-height:72px!important}
+  .combat .main-action b{font-size:15px!important}
+  .ability-card{grid-template-columns:36px minmax(0,1fr) 58px!important;padding-inline:7px!important}
+  .ability-card .ability-icon{width:34px!important;height:34px!important;min-width:34px!important}
+}
+
+@media(max-height:690px){
+  :root{--combat-h:82px;--ability-h:46px}
+  .combat .side-action,.combat .main-action{height:70px!important;min-height:70px!important}
+  .ability-card .ability-copy small{display:none!important}
+}
