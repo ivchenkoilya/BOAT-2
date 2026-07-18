@@ -1,6 +1,7 @@
 import asyncio
 
 import main as core
+from about_updates import install_about_updates
 from talent_expansion import install_expansion
 from talent_explanations import install_explanations
 from talent_mastery import install_mastery
@@ -22,6 +23,7 @@ install_ux(core)
 install_explanations(core)
 install_mastery_ui(core)
 install_talent_rules(core)
+install_about_updates(core)
 
 # В main.py есть общий обработчик F.text, зарегистрированный раньше расширений.
 # Переносим команды древа и мастерства в начало списка, чтобы общий обработчик
