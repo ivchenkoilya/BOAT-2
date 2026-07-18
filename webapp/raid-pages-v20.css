@@ -1,0 +1,54 @@
+/* Reality 53: full raid pages and compact boss HUD */
+
+/* Top bar: party | information | damage */
+.resources{grid-template-columns:minmax(0,1fr) 72px minmax(0,1fr)!important;gap:7px!important}
+.resource-info-top{height:48px!important;min-width:0!important;padding:4px!important;border:1px solid #8b6634!important;background:linear-gradient(180deg,#21142b,#09060e)!important;color:#f2d287!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:2px!important;clip-path:polygon(10px 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,10px 100%,0 50%)!important;box-shadow:inset 0 0 15px #000,0 0 12px #a24ed34b!important}
+.resource-info-top .info-orb{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;border:1px solid #d7ae59;background:radial-gradient(circle,#763496,#1a0c22 72%);font:900 15px Georgia;color:#ffe4a1;box-shadow:0 0 11px #b952da88}
+.resource-info-top small{font-size:6px!important;letter-spacing:.7px!important;color:#b9a6bd!important;margin:0!important}
+
+/* Boss HUD cleanup */
+.attack-timer{display:none!important}
+.phase-card{top:112px!important;left:8px!important;width:68px!important;padding:7px 4px!important;transform:none!important}
+.phase-card small{font-size:6px!important}.phase-card b{font-size:22px!important;margin:3px 0!important}.phase-card em{font-size:7px!important}
+.boss-attacks{top:132px!important;right:7px!important;width:116px!important;padding:7px!important;transform:none!important}
+.boss-attacks>strong{font-size:7px!important;margin-bottom:4px!important}.boss-attacks>span{grid-template-columns:23px 1fr!important;gap:5px!important;padding:4px 0!important}.boss-attacks svg{width:21px!important;height:21px!important}.boss-attacks b{font-size:8px!important}.boss-attacks small{font-size:6px!important;margin-top:2px!important}
+.battle-clock{top:auto!important;bottom:15px!important;left:50%!important;right:auto!important;transform:translateX(-50%)!important;width:158px!important;min-height:38px!important;padding:6px 12px!important;justify-content:center!important;background:linear-gradient(180deg,#17101de8,#07050be8)!important;border-color:#916936!important;box-shadow:inset 0 0 15px #000,0 0 15px #000b!important}
+.battle-clock svg{width:22px!important;height:22px!important}.battle-clock span{font-size:7px!important}.battle-clock b{font-size:11px!important}
+.raid-help-button{display:none!important}
+
+/* Static role-coloured glow instead of a rotating inner frame. */
+.fighter-aura-frame{display:none!important}
+.fighter{overflow:visible!important;animation:none!important;filter:drop-shadow(0 0 4px color-mix(in srgb,var(--role,#9555b3) 88%,transparent)) drop-shadow(0 0 11px color-mix(in srgb,var(--role,#9555b3) 58%,transparent))!important;box-shadow:inset 0 0 20px #000,0 0 0 1px color-mix(in srgb,var(--role,#9555b3) 75%,#fff 10%)!important}
+.fighter::after{display:none!important;animation:none!important}
+.fighter.self{filter:drop-shadow(0 0 5px #e6bc62) drop-shadow(0 0 15px color-mix(in srgb,var(--role,#d6a34e) 72%,transparent))!important;box-shadow:inset 0 0 23px #000,0 0 0 2px #e1b85f!important}
+.fighter.empty-fighter{filter:drop-shadow(0 0 5px #46324f)!important;opacity:.48!important}
+
+/* Separate full pages. Bottom navigation stays visible. */
+.raid-page{position:fixed;z-index:2147483000;left:50%;top:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));width:min(100vw,560px);transform:translateX(-50%) translateY(18px);display:flex;flex-direction:column;background:radial-gradient(circle at 50% 0,#281431 0,#0b0710 34%,#040306 100%);border-top:1px solid #8e6535;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s ease,transform .24s ease;overflow:hidden}
+.raid-page.open{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+.raid-page-head{height:64px;flex:0 0 64px;display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;padding:8px 10px;background:linear-gradient(180deg,#1b1022,#08050c);border-bottom:1px solid #6d482f;box-shadow:0 10px 24px #000a}
+.raid-page-back{width:38px;height:38px;border:1px solid #805c37;background:#120b17;color:#f0cb78;font:900 26px/1 Georgia;display:grid;place-items:center;clip-path:polygon(8px 0,100% 0,100% 100%,8px 100%,0 50%)}
+.raid-page-title{text-align:center;color:#f1cf7b;font:700 18px Georgia,"Times New Roman",serif;letter-spacing:1px;text-shadow:0 0 12px #a64cce66}
+.raid-page-mark{font-size:20px;text-align:center;color:#b65adc}
+.raid-page-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;padding:14px 12px 28px;touch-action:pan-y}
+body.raid-subpage-open .combat,body.raid-subpage-open .ability-card{visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+body.raid-subpage-open{overflow:hidden!important}
+
+.page-intro{margin:0 4px 14px;text-align:center;color:#b4a7b7;font-size:10px;line-height:1.5}
+.page-section-title{margin:18px 0 9px;padding-bottom:6px;border-bottom:1px solid #503451;color:#dfbd70;font:700 13px Georgia;letter-spacing:.8px}
+.page-placeholder{min-height:64vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;border:1px solid #54365d;background:radial-gradient(circle,#271330,#0b0710 58%,#050307);box-shadow:inset 0 0 35px #000}
+.page-placeholder-icon{font-size:64px;filter:drop-shadow(0 0 16px #a953cc)}.page-placeholder h2{margin:16px 0 7px;color:#f0ce7d;font:700 25px Georgia}.page-placeholder p{margin:0;color:#9f92a3;font-size:11px;line-height:1.55}.page-placeholder b{color:#d3b269}
+
+.page-heroes-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:3px}
+.page-heroes-grid .fighter{width:100%!important;min-width:0!important;max-width:none!important;height:168px!important;min-height:168px!important;flex:none!important;padding:10px 6px!important}
+.page-heroes-grid .fighter-avatar{width:62px!important;height:62px!important;margin:4px auto 7px!important}.page-heroes-grid .fighter-avatar svg{width:33px!important;height:33px!important}.page-heroes-grid .fighter>strong{font-size:12px!important}.page-heroes-grid .fighter>small{font-size:8px!important;min-height:18px!important}.page-heroes-grid .fighter>em{font-size:10px!important}.page-heroes-grid .player-hp{height:11px!important}.page-heroes-grid .fighter-damage{font-size:8px!important}
+
+.page-skin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.page-skin-slot{position:relative;min-height:155px;padding:12px 8px;border:1px solid #5b4162;background:radial-gradient(circle at 50% 20%,#2a173466,#100a16 55%,#07050b);clip-path:polygon(11px 0,calc(100% - 11px) 0,100% 11px,100% calc(100% - 11px),calc(100% - 11px) 100%,11px 100%,0 calc(100% - 11px),0 11px);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#b7a9bb;box-shadow:inset 0 0 24px #000,0 0 12px #783b8e33}
+.page-skin-slot .slot-orb{width:72px;height:72px;margin-bottom:10px;border-radius:50%;display:grid;place-items:center;border:1px solid #74537c;background:radial-gradient(circle,#382044,#100917 70%);font-size:30px;color:#d7b5df;box-shadow:inset 0 0 18px #000,0 0 14px #8b41a04d}.page-skin-slot b{font:700 11px Georgia;color:#ddcfe0}.page-skin-slot small{margin-top:5px;font-size:8px;color:#8f8293}.page-skin-slot em{position:absolute;right:7px;top:7px;font:normal 7px Georgia;color:#cdb0d3}
+
+.page-help-grid{display:grid;gap:8px}.page-help-card{display:grid;grid-template-columns:40px 1fr;gap:10px;padding:10px;border:1px solid #432d49;background:linear-gradient(180deg,#160e1d,#09060d)}.page-help-card .help-icon{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;border:1px solid #865399;background:radial-gradient(circle,#6b3181,#170b20);color:#f0ce80;font-size:18px;box-shadow:0 0 10px #8d3dad55}.page-help-card b{display:block;color:#e9dce9;font:700 11px Georgia}.page-help-card small{display:block;margin-top:4px;color:#a194a5;font-size:9px;line-height:1.45}
+.page-help-card.phase{border-color:#68472f;background:linear-gradient(180deg,#1c1118,#0a0609)}.page-help-card.phase .help-icon{border-color:#a86f35;background:radial-gradient(circle,#7b3c25,#250d0b);color:#ffd285}
+.reward-board{display:grid;gap:8px}.reward-row{display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:center;gap:9px;padding:11px;border:1px solid #594044;background:linear-gradient(90deg,#1d101d,#0a070d)}.reward-row span{font-size:25px;text-align:center}.reward-row b{color:#eadde9;font:700 11px Georgia}.reward-row small{display:block;margin-top:3px;color:#9e91a1;font-size:8px}.reward-row strong{color:#f1c76d;font:700 15px Georgia}.reward-note{padding:10px;border-left:3px solid #b57b36;background:#160e14;color:#aa9dac;font-size:9px;line-height:1.5}
+
+@media(max-width:370px){.resources{grid-template-columns:minmax(0,1fr) 62px minmax(0,1fr)!important;gap:5px!important}.resource-info-top{padding-inline:2px!important}.resource-info-top .info-orb{width:23px;height:23px}.phase-card{width:62px!important}.boss-attacks{width:108px!important}.page-heroes-grid,.page-skin-grid{gap:8px}.page-heroes-grid .fighter{height:158px!important;min-height:158px!important}.raid-page-scroll{padding-inline:9px}}
