@@ -28,7 +28,9 @@ function bootFinish(){applyFinish();setInterval(applyFinish,500)}
 function applyFinish(){
  const unlocked=(state.cosmetics||[]).filter(x=>x.unlocked).sort((a,b)=>Number(b.unlocked_at||0)-Number(a.unlocked_at||0));
  const latest=unlocked[0];
- const signature=JSON.stringify({build:state.builds?.reset_mode,cosmetic:latest?.branch,points:state.points?.available});
+ const overlay=document.querySelector('.master-overlay.show');
+ const title=overlay?.querySelector('#masterTitle')?.textContent||'';
+ const signature=JSON.stringify({build:state.builds?.reset_mode,cosmetic:latest?.branch,points:state.points?.available,title});
  if(signature===lastSignature)return;lastSignature=signature;
  const brand=document.querySelector('.brand');
  let chip=document.getElementById('v66TitleChip');
@@ -37,8 +39,6 @@ function applyFinish(){
   chip.textContent=`${latest.emoji||'🏆'} ${latest.title||'Герой'}`;
   document.body.dataset.talentCosmetic=latest.branch||'';
  }else{chip?.remove();delete document.body.dataset.talentCosmetic}
- const overlay=document.querySelector('.master-overlay.show');
- const title=overlay?.querySelector('#masterTitle')?.textContent||'';
  if(title.includes('Билды')){
   const note=overlay.querySelector('.master-note');
   if(note){
