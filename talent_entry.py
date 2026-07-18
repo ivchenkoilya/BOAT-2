@@ -6,6 +6,7 @@ from talent_explanations import install_explanations
 from talent_mastery import install_mastery
 from talent_mastery_ui import install_mastery_ui
 from talent_menu import install_menu
+from talent_rules_patch import install_talent_rules
 from talent_system import install
 from talent_ux import install_ux
 from today_types_expansion import install_today_types
@@ -20,6 +21,7 @@ install_menu(core)
 install_ux(core)
 install_explanations(core)
 install_mastery_ui(core)
+install_talent_rules(core)
 
 # В main.py есть общий обработчик F.text, зарегистрированный раньше расширений.
 # Переносим команды древа и мастерства в начало списка, чтобы общий обработчик
