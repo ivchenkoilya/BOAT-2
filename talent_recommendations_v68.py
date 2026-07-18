@@ -109,7 +109,9 @@ function patchCardsV68(){
  }else{
   clear?.remove();
   body.querySelectorAll('.v66-card.active').forEach(card=>card.classList.remove('active'));
-  buttons.forEach(button=>{button.textContent='ВЫБРАТЬ И ПОКАЗАТЬ'});
+  buttons.forEach(button=>{
+   if(button.textContent!=='ВЫБРАТЬ И ПОКАЗАТЬ')button.textContent='ВЫБРАТЬ И ПОКАЗАТЬ';
+  });
   if(!body.querySelector('.v68-free-note')){
    const note=document.createElement('div');
    note.className='v68-free-note';
