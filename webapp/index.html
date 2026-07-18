@@ -6,9 +6,10 @@
   <meta name="theme-color" content="#030206">
   <title>Центр Вселенной</title>
   <link rel="preload" href="/boss-app/assets/boss_phase_1.webp" as="image">
-  <link rel="stylesheet" href="/boss-app/style.css?v=8">
-  <link rel="stylesheet" href="/boss-app/raid-polish.css?v=8">
-  <link rel="stylesheet" href="/boss-app/battle-fx.css?v=8">
+  <link rel="stylesheet" href="/boss-app/style.css?v=9">
+  <link rel="stylesheet" href="/boss-app/raid-polish.css?v=9">
+  <link rel="stylesheet" href="/boss-app/battle-fx.css?v=9">
+  <link rel="stylesheet" href="/boss-app/attack-button-image.css?v=1">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root{--battle-dock:92px;--nav-h:74px}
@@ -49,6 +50,6 @@
   <div class="fx-shield" aria-hidden="true"></div><div class="fx-heal" aria-hidden="true"></div>
   <nav class="bottom-nav" aria-label="Навигация"><button class="active" data-scroll="bossStage"><svg><use href="/boss-app/assets/icons.svg#crossed-swords"/></svg><small>РЕЙД</small></button><button data-modal="heroes"><svg><use href="/boss-app/assets/icons.svg#helmet"/></svg><small>ГЕРОИ</small></button><button data-modal="inventory"><svg><use href="/boss-app/assets/icons.svg#bag"/></svg><small>ИНВЕНТАРЬ</small></button><button data-modal="shop"><svg><use href="/boss-app/assets/icons.svg#shop"/></svg><small>МАГАЗИН</small><i class="notice"></i></button><button data-modal="rating"><svg><use href="/boss-app/assets/icons.svg#trophy"/></svg><small>РЕЙТИНГ</small></button></nav>
   <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true"><section class="modal-card"><button class="modal-close" id="closeModal" aria-label="Закрыть"><svg><use href="/boss-app/assets/icons.svg#close"/></svg></button><div id="modalContent"></div></section></div><div class="toast" id="toast" role="status" aria-live="polite"></div><div class="error-screen" id="errorScreen" hidden><svg><use href="/boss-app/assets/icons.svg#skull"/></svg><h2>БИТВА НЕДОСТУПНА</h2><p id="errorText"></p><button id="retryButton">ПОВТОРИТЬ</button></div>
-  <script src="/boss-app/app.js?v=8"></script><script src="/boss-app/battle-fx.js?v=8"></script>
+  <script src="/boss-app/app.js?v=9"></script><script src="/boss-app/battle-fx.js?v=9"></script>
 </body>
 </html>
