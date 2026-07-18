@@ -24,6 +24,7 @@ from talent_routes_v63 import install_talent_routes_v63
 from talent_rules_patch import install_talent_rules
 from talent_system import install
 from talent_ux import install_ux
+from talent_v66_finish import install_talent_v66_finish
 from today_types_expansion import install_today_types
 from today_types_in_roles import install_types_in_roles
 from webapp_inline_fix import install_inline_webapp_fix
@@ -43,6 +44,7 @@ install_mastery_ui(core)
 # их билды, предпросмотр и особые таланты, а затем добавляет специализацию,
 # недельный прогресс, косметические награды и исправление кнопки прокачки.
 install_talent_improvements_v66(core)
+install_talent_v66_finish(core)
 
 # Сначала задаём базовый урон и тактические механики рейда. Reality 61
 # устанавливает предыдущий стабильный слой, Reality 64 выдаёт очки древа,
