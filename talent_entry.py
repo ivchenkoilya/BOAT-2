@@ -3,6 +3,8 @@ import asyncio
 import main as core
 from about_updates import install_about_updates
 from boss_upgrade_v52 import install_boss_upgrade_v52
+from raid_assets_v58 import install_raid_assets
+from raid_balance_v58 import install_raid_balance_v58
 from talent_expansion import install_expansion
 from talent_explanations import install_explanations
 from talent_mastery import install_mastery
@@ -16,6 +18,7 @@ from today_types_in_roles import install_types_in_roles
 from webapp_inline_fix import install_inline_webapp_fix
 
 install_boss_upgrade_v52(core)
+install_raid_assets(core)
 install_today_types(core)
 install_types_in_roles(core)
 install_expansion(core)
@@ -25,6 +28,9 @@ install_menu(core)
 install_ux(core)
 install_explanations(core)
 install_mastery_ui(core)
+# Сначала задаём базовый диапазон рейдового урона, затем поверх него
+# устанавливаются усиления талантов.
+install_raid_balance_v58(core)
 install_talent_rules(core)
 install_about_updates(core)
 install_inline_webapp_fix(core)
