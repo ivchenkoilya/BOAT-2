@@ -14,10 +14,10 @@ def install_inline_webapp_fix(core: Any) -> None:
     Дополнительные CSS/JS объединяются с HTML на сервере и не зависят от
     ограничений старых маршрутов или кэша Telegram WebView.
     """
-    if getattr(core, "_inline_webapp_fix_v61_installed", False):
+    if getattr(core, "_inline_webapp_fix_v64_installed", False):
         return
 
-    core._inline_webapp_fix_v61_installed = True
+    core._inline_webapp_fix_v64_installed = True
     original_index = core.webapp_index
     index_path = core.WEBAPP_DIR / "index.html"
     css_paths = [
@@ -46,6 +46,9 @@ def install_inline_webapp_fix(core: Any) -> None:
         # raid-v60.js содержал пересекающиеся MutationObserver и мог зависать
         # при открытии справки. Reality 61 реализует эти функции без него.
         core.WEBAPP_DIR / "raid-v61.js",
+        # Reality 64 заменяет осколки прямой выдачей очков древа и исправляет
+        # справку и победное окно поверх стабильного интерфейса Reality 61.
+        core.WEBAPP_DIR / "raid-v64-direct-tree.js",
     ]
 
     async def webapp_index_with_inline_combat(request: Any):
@@ -61,7 +64,7 @@ def install_inline_webapp_fix(core: Any) -> None:
                 flags=re.IGNORECASE,
             )
             page = re.sub(
-                r"\s*<script[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61)\.js[^>]*></script>",
+                r"\s*<script[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v64-direct-tree)\.js[^>]*></script>",
                 "",
                 page,
                 flags=re.IGNORECASE,
@@ -70,7 +73,7 @@ def install_inline_webapp_fix(core: Any) -> None:
             # app.js обновлял таймеры пять раз в секунду. Оставляем один тик в
             # секунду: цифры точные, но интерфейс не получает лишних обновлений.
             prelude = """
-<script id="raid-ui-v61-prelude">
+<script id="raid-ui-v64-prelude">
 (function(){
   var nativeSetInterval=window.setInterval.bind(window);
   window.setInterval=function(callback,delay){
@@ -82,12 +85,12 @@ def install_inline_webapp_fix(core: Any) -> None:
 </script>
 """
             inline_style = (
-                "\n<style id=\"raid-ui-v61-inline\">\n"
+                "\n<style id=\"raid-ui-v64-inline\">\n"
                 + css
                 + "\n</style>\n"
             )
             inline_script = (
-                "\n<script id=\"raid-ui-v61-inline-script\">\n"
+                "\n<script id=\"raid-ui-v64-inline-script\">\n"
                 + script
                 + "\n</script>\n"
             )
@@ -102,7 +105,7 @@ def install_inline_webapp_fix(core: Any) -> None:
                     "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
                     "Pragma": "no-cache",
                     "Expires": "0",
-                    "X-Mini-App-UI": "raid-ui-v61-inline",
+                    "X-Mini-App-UI": "raid-ui-v64-inline",
                 },
             )
         except Exception:
