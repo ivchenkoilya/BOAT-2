@@ -28,26 +28,46 @@
     setTimeout(()=>layer.remove(),1250);
   }
 
-  /* Telegram Android иногда воспринимает изображение босса как перетаскиваемый
-     объект. Преобразуем вертикальный жест по сцене в обычную прокрутку страницы. */
+  /* Telegram Android иногда не передаёт нативную прокрутку, когда жест начинается
+     прямо на большой сцене босса. Перехватываем жест в capture-фазе и прокручиваем
+     настоящий scrollingElement. Так работает и по лицу босса, и по пустой области. */
   if(stage){
-    let lastY=null;
-    let blocked=false;
-    stage.addEventListener('touchstart',event=>{
-      blocked=Boolean(event.target.closest('button,a,input,textarea,select'));
-      lastY=!blocked&&event.touches.length===1?event.touches[0].clientY:null;
-    },{passive:true});
-    stage.addEventListener('touchmove',event=>{
-      if(blocked||lastY===null||event.touches.length!==1)return;
-      const nextY=event.touches[0].clientY;
-      const delta=lastY-nextY;
-      lastY=nextY;
-      if(Math.abs(delta)>1){
-        window.scrollBy(0,delta);
-        event.preventDefault();
+    let gesture=null;
+    const interactive='button,a,input,textarea,select,[role="button"]';
+    const scrollRoot=()=>document.scrollingElement||document.documentElement||document.body;
+
+    document.addEventListener('touchstart',event=>{
+      if(event.touches.length!==1)return;
+      const target=event.target instanceof Element?event.target:null;
+      if(!target||!target.closest('#bossStage')||target.closest(interactive)){
+        gesture=null;
+        return;
       }
-    },{passive:false});
-    stage.addEventListener('touchend',()=>{lastY=null;blocked=false},{passive:true});
+      const touch=event.touches[0];
+      gesture={x:touch.clientX,y:touch.clientY,locked:false};
+    },{capture:true,passive:true});
+
+    document.addEventListener('touchmove',event=>{
+      if(!gesture||event.touches.length!==1)return;
+      const touch=event.touches[0];
+      const dx=gesture.x-touch.clientX;
+      const dy=gesture.y-touch.clientY;
+      if(!gesture.locked){
+        if(Math.abs(dx)<3&&Math.abs(dy)<3)return;
+        if(Math.abs(dx)>Math.abs(dy)*1.15){gesture=null;return;}
+        gesture.locked=true;
+      }
+      const root=scrollRoot();
+      root.scrollTop+=dy;
+      gesture.x=touch.clientX;
+      gesture.y=touch.clientY;
+      event.preventDefault();
+      event.stopPropagation();
+    },{capture:true,passive:false});
+
+    const clearGesture=()=>{gesture=null;};
+    document.addEventListener('touchend',clearGesture,{capture:true,passive:true});
+    document.addEventListener('touchcancel',clearGesture,{capture:true,passive:true});
   }
 
   document.addEventListener('click',event=>{
