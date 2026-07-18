@@ -3,9 +3,11 @@ import asyncio
 import main as core
 from talent_menu import install_menu
 from talent_system import install
+from talent_ux import install_ux
 
 install(core)
 install_menu(core)
+install_ux(core)
 
 # В main.py есть общий обработчик F.text, зарегистрированный раньше расширения.
 # Переносим новые команды в начало списка, чтобы /talents, /buffs и
