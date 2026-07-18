@@ -1,0 +1,82 @@
+/* Opaque static combat controls v13 */
+.combat{
+  background:#050308!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  border-top:1px solid #b68443!important;
+  box-shadow:0 -10px 26px #000!important;
+}
+.combat .side-action,
+.combat .main-action{
+  opacity:1!important;
+  filter:none!important;
+  animation:none!important;
+  transition:none!important;
+  transform:none;
+}
+.combat .side-action::before,
+.combat .side-action::after,
+.combat .main-action::before,
+.combat .main-action::after,
+.combat .button-sparks,
+.combat .button-sparks::before,
+.combat .button-sparks::after{
+  animation:none!important;
+}
+.side-action{
+  background:linear-gradient(180deg,#1a1023 0%,#0b0710 58%,#050308 100%)!important;
+  border:1px solid #705072!important;
+  box-shadow:inset 0 0 0 2px #24132d,inset 0 0 18px #000,0 0 10px #000!important;
+}
+.side-action.defend{
+  background:linear-gradient(180deg,#261441 0%,#120a20 58%,#06040a 100%)!important;
+  border-color:#8a5ac6!important;
+}
+.side-action.heal{
+  background:linear-gradient(180deg,#16331f 0%,#0b1a10 58%,#050906 100%)!important;
+  border-color:#4c8f5d!important;
+}
+.side-action .action-glyph{
+  background:#0a0710!important;
+  box-shadow:inset 0 0 12px #000!important;
+  animation:none!important;
+}
+.side-action.defend .action-glyph{border-color:#8a5ac6!important;background:#160d25!important}
+.side-action.heal .action-glyph{border-color:#4c8f5d!important;background:#0c1d11!important}
+.main-action{
+  background:linear-gradient(180deg,#7b2597 0%,#4a125f 44%,#23072f 100%)!important;
+  border:2px solid #d7a24d!important;
+  box-shadow:inset 0 0 0 3px #6f287d,inset 0 0 20px #16041f,0 0 12px #000!important;
+  clip-path:polygon(12% 0,88% 0,100% 50%,88% 100%,12% 100%,0 50%)!important;
+}
+.main-action::before{
+  content:""!important;
+  position:absolute!important;
+  inset:5px!important;
+  border:1px solid #f0c66f!important;
+  clip-path:inherit!important;
+  background:none!important;
+  box-shadow:none!important;
+  opacity:1!important;
+}
+.main-action::after{display:none!important}
+.main-action b{
+  color:#f5d47c!important;
+  text-shadow:0 2px 2px #26052f!important;
+}
+.main-action small{color:#ead9ee!important;text-shadow:none!important}
+.combat button:disabled{
+  opacity:.48!important;
+  filter:grayscale(.2)!important;
+}
+.combat button:active{
+  transform:none!important;
+  filter:brightness(.92)!important;
+}
+.cooldown-fill{
+  animation:none!important;
+  transition:width .15s linear!important;
+}
+@media(prefers-reduced-motion:no-preference){
+  .combat .side-action,.combat .main-action,.combat .action-glyph{animation:none!important}
+}
