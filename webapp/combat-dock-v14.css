@@ -1,0 +1,115 @@
+/* Final combat dock override v14 */
+:root{--battle-dock:104px;--nav-h:74px}
+html,body{overflow-x:hidden}
+body{padding-bottom:calc(var(--battle-dock) + var(--nav-h) + env(safe-area-inset-bottom,0px))!important}
+.app{padding-bottom:calc(var(--battle-dock) + var(--nav-h) + 34px)!important}
+.combat{
+  position:fixed!important;
+  left:50%!important;
+  right:auto!important;
+  bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px))!important;
+  transform:translateX(-50%)!important;
+  width:min(100vw,560px)!important;
+  height:var(--battle-dock)!important;
+  min-height:var(--battle-dock)!important;
+  padding:8px 10px!important;
+  margin:0!important;
+  display:grid!important;
+  grid-template-columns:78px minmax(0,1fr) 78px!important;
+  gap:8px!important;
+  z-index:2147483000!important;
+  isolation:isolate!important;
+  overflow:hidden!important;
+  visibility:visible!important;
+  opacity:1!important;
+  background:#050308!important;
+  background-image:linear-gradient(180deg,#170c1d 0%,#08040b 36%,#030204 100%)!important;
+  border-top:2px solid #c4924a!important;
+  box-shadow:0 -14px 34px rgba(0,0,0,.95),inset 0 1px 0 rgba(255,220,150,.16)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+.combat::before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:-1!important;
+  background:#050308!important;
+  opacity:1!important;
+}
+.combat .side-action,.combat .main-action{
+  position:relative!important;
+  height:88px!important;
+  min-height:88px!important;
+  margin:0!important;
+  opacity:1!important;
+  visibility:visible!important;
+  filter:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  animation:none!important;
+  transition:none!important;
+}
+.combat .side-action{
+  background:#0d0911!important;
+  background-image:linear-gradient(180deg,#25152f 0%,#100a16 54%,#07050a 100%)!important;
+  border:1px solid #805888!important;
+  box-shadow:inset 0 0 0 2px #26142e,inset 0 0 20px #000,0 3px 10px #000!important;
+}
+.combat .side-action.defend{
+  background:#130c20!important;
+  background-image:linear-gradient(180deg,#35205a 0%,#171027 54%,#09060f 100%)!important;
+  border-color:#9d6ed9!important;
+}
+.combat .side-action.heal{
+  background:#0a160d!important;
+  background-image:linear-gradient(180deg,#245231 0%,#102519 54%,#071009 100%)!important;
+  border-color:#63a774!important;
+}
+.combat .main-action{
+  background:#431052!important;
+  background-image:linear-gradient(180deg,#8c31a8 0%,#59196d 48%,#2b0b38 100%)!important;
+  border:2px solid #d9a84e!important;
+  clip-path:polygon(11% 0,89% 0,100% 50%,89% 100%,11% 100%,0 50%)!important;
+  box-shadow:inset 0 0 0 3px #6d287c,inset 0 0 24px #1c0626,0 3px 12px #000!important;
+}
+.combat .main-action::before{
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  inset:5px!important;
+  clip-path:inherit!important;
+  border:1px solid #f2cb72!important;
+  background:transparent!important;
+  opacity:1!important;
+  animation:none!important;
+}
+.combat .main-action::after,.combat .button-sparks,.combat .button-sparks::before,.combat .button-sparks::after{display:none!important;animation:none!important}
+.combat button:disabled{
+  opacity:1!important;
+  filter:none!important;
+}
+.combat button:disabled::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.48);
+  pointer-events:none;
+  z-index:4;
+}
+.combat button b,.combat button small,.combat button em,.combat button .action-glyph{position:relative!important;z-index:5!important;opacity:1!important}
+.combat button:active{transform:none!important;filter:none!important}
+.bottom-nav{
+  position:fixed!important;
+  left:50%!important;
+  bottom:0!important;
+  transform:translateX(-50%)!important;
+  width:min(100vw,560px)!important;
+  z-index:2147483001!important;
+  opacity:1!important;
+  background:#050308!important;
+}
+@media(max-width:370px){
+  .combat{grid-template-columns:68px minmax(0,1fr) 68px!important;gap:6px!important;padding-inline:7px!important}
+  .combat .side-action,.combat .main-action{height:86px!important;min-height:86px!important}
+}
