@@ -1,0 +1,66 @@
+/* Reality 54: transparent generated action cards */
+:root{--battle-dock:158px!important}
+.combat{
+  height:var(--battle-dock)!important;
+  min-height:var(--battle-dock)!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:2px!important;
+  align-items:end!important;
+  padding:5px 7px 7px!important;
+  overflow:visible!important;
+  background:linear-gradient(180deg,rgba(5,3,8,.12),rgba(3,2,6,.96) 26%,#030206)!important;
+  border-top:1px solid #6c432d!important
+}
+.combat .side-action,.combat .main-action{
+  position:relative!important;width:100%!important;height:146px!important;min-height:146px!important;
+  margin:0!important;padding:0!important;border:0!important;border-radius:0!important;clip-path:none!important;
+  overflow:visible!important;background-color:transparent!important;background-repeat:no-repeat!important;
+  background-position:center!important;background-size:contain!important;box-shadow:none!important;
+  isolation:isolate!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;
+  transition:transform .16s ease,filter .22s ease,opacity .22s ease!important
+}
+.combat .main-action{filter:drop-shadow(0 0 4px #c94aff) drop-shadow(0 0 13px #8d2acb88)!important}
+.combat .side-action.defend{filter:drop-shadow(0 0 4px #2f9dff) drop-shadow(0 0 13px #176ee488)!important}
+.combat .side-action.heal{filter:drop-shadow(0 0 4px #55f16e) drop-shadow(0 0 13px #20b94488)!important}
+.combat button>.action-glyph,.combat button>.button-sparks,.combat button>b,
+.combat button>small:not(#attackHint),.combat .cooldown-fill{
+  opacity:0!important;visibility:hidden!important;pointer-events:none!important
+}
+.combat .main-action>#attackHint,.combat .side-action>em{
+  position:absolute!important;z-index:5!important;left:50%!important;right:auto!important;bottom:3px!important;
+  width:max-content!important;max-width:94%!important;min-height:0!important;margin:0!important;padding:3px 7px!important;
+  transform:translateX(-50%)!important;border:1px solid rgba(238,202,112,.56)!important;border-radius:8px!important;
+  background:rgba(3,2,7,.88)!important;color:#f5dda0!important;
+  font:700 6.5px/1.15 Georgia,"Times New Roman",serif!important;letter-spacing:.45px!important;
+  text-align:center!important;white-space:nowrap!important;opacity:1!important;visibility:visible!important;
+  box-shadow:0 0 9px rgba(0,0,0,.88),inset 0 0 8px rgba(255,255,255,.04)!important
+}
+.combat .side-action.defend>em{border-color:#55b6ff99!important;color:#bfe6ff!important}
+.combat .side-action.heal>em{border-color:#65f17f99!important;color:#c9ffd3!important}
+.combat button:not(:disabled):active{transform:scale(.955)!important;filter:brightness(1.24) saturate(1.12)!important}
+.combat button:disabled{opacity:.43!important;filter:grayscale(.32) brightness(.67) drop-shadow(0 0 3px #000)!important}
+.combat .main-action:not(:disabled){animation:egoCardReady 2.3s ease-in-out infinite}
+.combat .side-action.defend:not(:disabled){animation:defenseCardReady 3.2s ease-in-out infinite}
+.combat .side-action.heal:not(:disabled){animation:healCardReady 3.2s ease-in-out infinite}
+@keyframes egoCardReady{
+  0%,100%{filter:drop-shadow(0 0 4px #c94aff) drop-shadow(0 0 12px #8d2acb77)}
+  50%{filter:brightness(1.12) drop-shadow(0 0 7px #ed82ff) drop-shadow(0 0 21px #b138e5bb)}
+}
+@keyframes defenseCardReady{
+  0%,100%{filter:drop-shadow(0 0 4px #2f9dff) drop-shadow(0 0 12px #176ee477)}
+  50%{filter:brightness(1.1) drop-shadow(0 0 7px #79c9ff) drop-shadow(0 0 19px #2388ffbb)}
+}
+@keyframes healCardReady{
+  0%,100%{filter:drop-shadow(0 0 4px #55f16e) drop-shadow(0 0 12px #20b94477)}
+  50%{filter:brightness(1.1) drop-shadow(0 0 7px #91ffa3) drop-shadow(0 0 19px #3ee965bb)}
+}
+.bottom-space{height:calc(var(--battle-dock) + var(--nav-h) + 22px)!important}
+@media(max-width:370px){
+  :root{--battle-dock:148px!important}
+  .combat{padding-inline:4px!important;gap:0!important}
+  .combat .side-action,.combat .main-action{height:136px!important;min-height:136px!important}
+  .combat .main-action>#attackHint,.combat .side-action>em{font-size:5.8px!important;padding:3px 5px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .combat .main-action:not(:disabled),.combat .side-action:not(:disabled){animation:none!important}
+}
