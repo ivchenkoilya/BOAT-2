@@ -3,15 +3,15 @@ from __future__ import annotations
 from typing import Any
 
 
-ABOUT_VERSION = "Reality 51 · Боевой интерфейс"
+ABOUT_VERSION = "Reality 52 · Исправление Mini App"
 
 
 def install_about_updates(core: Any) -> None:
     """Обновляет раздел «О боте» без изменения большого основного файла."""
-    if getattr(core, "_about_updates_v51_installed", False):
+    if getattr(core, "_about_updates_v52_installed", False):
         return
 
-    core._about_updates_v51_installed = True
+    core._about_updates_v52_installed = True
     core.BOT_VERSION = ABOUT_VERSION
 
     def about_bot_text() -> str:
@@ -36,6 +36,11 @@ def install_about_updates(core: Any) -> None:
             "🌌 рейд против босса «Центр Вселенной»;\n"
             "🌳 синхронизированное древо развития.\n\n"
             "🆕 <b>ПОСЛЕДНЕЕ ОБНОВЛЕНИЕ · 18 ИЮЛЯ 2026</b>\n\n"
+            "🔧 <b>ИСПРАВЛЕНИЕ MINI APP</b>\n"
+            "• исправлена ошибка, из-за которой новые файлы боевой панели не загружались с сервера;\n"
+            "• стили и логика фиксированных кнопок теперь встраиваются прямо в страницу;\n"
+            "• для страницы отключён старый кэш Telegram WebView;\n"
+            "• атака, лечение, защита и способность роли гарантированно загружаются вместе с Mini App.\n\n"
             "🎮 <b>НОВЫЙ БОЕВОЙ ИНТЕРФЕЙС</b>\n"
             "• атака «Задеть эго» теперь всегда закреплена над нижним меню;\n"
             "• для удара больше не нужно прокручивать страницу вниз;\n"
@@ -66,6 +71,7 @@ def install_about_updates(core: Any) -> None:
             "• магазин и инвентарь добавлены в интерфейс и пока отмечены как «В разработке»;\n"
             "• обновлены RPG-визуал, анимации ударов, эффекты, хроника боя и мобильная адаптация.\n\n"
             "📜 <b>ИСТОРИЯ ОБНОВЛЕНИЙ</b>\n"
+            "Reality 51 — добавлен фиксированный боевой интерфейс.\n"
             "Reality 50 — добавлено синхронизированное древо развития.\n"
             "Reality 49 — запущено Mini App битвы с боссом.\n"
             "Reality 48 — разделены Временный, Саботажный и Честный Главные герои.\n"
