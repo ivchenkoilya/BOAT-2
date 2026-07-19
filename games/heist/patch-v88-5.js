@@ -24,7 +24,28 @@
     source=replaceFunction(source,"updateActionButton","burst",`  function updateActionButton(){const button=$("interact"),term=nearestTerminal(),safe=nearestSafe();button.classList.remove("ready","exit","search");if(term){button.disabled=false;button.classList.add("ready");button.textContent=term.type==="disable"?"💻 ОТКЛЮЧИТЬ ОХРАНУ":"🗺 СКАЧАТЬ КАРТУ";setHint(term.type==="disable"?"Рядом терминал охраны":"Рядом картографический терминал");return;}if(safe){button.disabled=false;button.classList.add("ready");button.textContent=safe.tier===4?"🏛 ВСКРЫТЬ ХРАНИЛИЩЕ":safe.tier===3?"💎 ВЗЛОМАТЬ ЭЛИТНЫЙ СЕЙФ":safe.tier===2?"🧰 ВСКРЫТЬ УСИЛЕННЫЙ СЕЙФ":"🔓 ВСКРЫТЬ СЕЙФ";setHint("Рядом "+SAFE_META[safe.tier].label.toLowerCase()+" сейф — начинай взлом");return;}if(nearExit()){button.disabled=false;button.classList.add("exit","ready");button.textContent=loot?"🚪 УЙТИ С ДОБЫЧЕЙ":"🚪 СНАЧАЛА НАЙДИ ДОБЫЧУ";return;}button.disabled=true;button.classList.add("search");button.textContent=idleTime>=7?"🧭 МАРШРУТ К ЦЕЛИ":"🔎 ПОДОЙДИ К ЦЕЛИ";}`);
 
     source=replaceFunction(source,"updateCameras","updateCamera",`  function updateCameras(dt){
-    let detected=0,suspicious=0;const modeMult=escapeMode?1.28:1,disabled=performance.now()<securityDisabledUntil;for(const cam of cameras){if(!cam.baseX){cam.baseX=cam.x;cam.baseY=cam.y;cam.railAxis=rng()<.5?"x":"y";cam.railPhase=rand(0,6);}if(disabled){cam.alert=0;cam.state="search";continue;}const lure=baitTime>0&&Math.hypot(cam.x-baitX,cam.y-baitY)<380&&!segmentBlocked(cam.x,cam.y,baitX,baitY),seen=!lure&&cameraSeesPlayer(cam);cam.pause-=dt;if(lure){const target=Math.atan2(baitY-cam.y,baitX-cam.x);cam.angle+=normAngle(target-cam.angle)*Math.min(1,dt*5.4);cam.alert=Math.max(0,cam.alert-dt*.9);}else if(seen){const target=Math.atan2(player.y-cam.y,player.x-cam.x);cam.angle+=normAngle(target-cam.angle)*Math.min(1,dt*(cam.state==="detected"?5.2:3.4));}else if(cam.pause<=0){cam.angle+=cam.speed*dt*modeMult;if(rng()<dt*.09){cam.pause=rand(.12,.42);cam.speed*=-1;}}if(!seen&&cam.state!=="detected"){const rail=Math.sin(performance.now()/900+cam.railPhase)*18;cam.x=cam.baseX+(cam.railAxis==="x"?rail:0);cam.y=cam.baseY+(cam.railAxis==="y"?rail:0);}cam.alert=clamp(cam.alert+(seen?dt*4.15:-dt*.54),0,1);const prev=cam.state;cam.state=cam.alert>.34?"detected":cam.alert>.055?"suspicious":"search";if(cam.state==="detected")detected++;else if(cam.state==="suspicious")suspicious++;if(prev!==cam.state&&cam.state==="suspicious"){showBanner("КАМЕРА ЗАМЕТИЛА ДВИЖЕНИЕ",.85);tg?.HapticFeedback?.impactOccurred?.("light");}if(prev!==cam.state&&cam.state==="detected"){showBanner("КАМЕРА ЗАХВАТИЛА ЦЕЛЬ",1.25);shake=Math.max(shake,.38);tg?.HapticFeedback?.notificationOccurred?.("warning");}}if(detected)alarm+=dt*(40+detected*15)*modeMult;else if(suspicious)alarm+=dt*(10+suspicious*4.5)*modeMult;else alarm-=dt*(escapeMode?1.3:2.2);alarm=clamp(alarm,0,100);maxAlarm=Math.max(maxAlarm,alarm);if(alarm>=100)finishGame("Система безопасности тебя поймала",.2);
+    let detectedVisible=0,suspiciousVisible=0;const modeMult=escapeMode?1.12:1,disabled=performance.now()<securityDisabledUntil;
+    for(const cam of cameras){
+      if(!cam.baseX){cam.baseX=cam.x;cam.baseY=cam.y;cam.railAxis=rng()<.5?"x":"y";cam.railPhase=rand(0,6);}
+      if(disabled){cam.alert=0;cam.state="search";continue;}
+      const lure=baitTime>0&&Math.hypot(cam.x-baitX,cam.y-baitY)<380&&!segmentBlocked(cam.x,cam.y,baitX,baitY);
+      const seen=!lure&&cameraSeesPlayer(cam);
+      cam.pause-=dt;
+      if(lure){const target=Math.atan2(baitY-cam.y,baitX-cam.x);cam.angle+=normAngle(target-cam.angle)*Math.min(1,dt*4.2);cam.alert=Math.max(0,cam.alert-dt*2.4);}
+      else if(seen){const target=Math.atan2(player.y-cam.y,player.x-cam.x);cam.angle+=normAngle(target-cam.angle)*Math.min(1,dt*(cam.state==="detected"?3.6:2.6));}
+      else if(cam.pause<=0){cam.angle+=cam.speed*dt*modeMult;if(rng()<dt*.065){cam.pause=rand(.2,.55);cam.speed*=-1;}}
+      if(!seen&&cam.state!=="detected"){const rail=Math.sin(performance.now()/1100+cam.railPhase)*14;cam.x=cam.baseX+(cam.railAxis==="x"?rail:0);cam.y=cam.baseY+(cam.railAxis==="y"?rail:0);}
+      cam.alert=clamp(cam.alert+(seen?dt*1.55:-dt*2.8),0,1);
+      const prev=cam.state;
+      cam.state=seen?(cam.alert>.72?"detected":cam.alert>.18?"suspicious":"search"):(cam.alert>.22?"suspicious":"search");
+      if(seen&&cam.state==="detected")detectedVisible++;else if(seen&&cam.state==="suspicious")suspiciousVisible++;
+      if(prev!==cam.state&&cam.state==="suspicious"&&seen){showBanner("КАМЕРА ЗАМЕТИЛА ДВИЖЕНИЕ",.85);tg?.HapticFeedback?.impactOccurred?.("light");}
+      if(prev!==cam.state&&cam.state==="detected"&&seen){showBanner("КАМЕРА ЗАХВАТИЛА ЦЕЛЬ",1.1);shake=Math.max(shake,.24);tg?.HapticFeedback?.notificationOccurred?.("warning");}
+    }
+    if(detectedVisible)alarm+=dt*(18+detectedVisible*6.5)*modeMult;
+    else if(suspiciousVisible)alarm+=dt*(4+suspiciousVisible*1.4)*modeMult;
+    else alarm-=dt*(escapeMode?2.5:5.5);
+    alarm=clamp(alarm,0,100);maxAlarm=Math.max(maxAlarm,alarm);if(alarm>=100)finishGame("Система безопасности тебя поймала",.2);
   }`);
 
     source=source.replace('  function drawExit(t){',`  function drawSecuritySystems(t){
