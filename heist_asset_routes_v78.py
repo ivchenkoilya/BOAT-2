@@ -24,7 +24,7 @@ def install_heist_asset_routes_v78(core: Any) -> None:
                 "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
                 "Pragma": "no-cache",
                 "Expires": "0",
-                "X-Heist-Assets": "reality-91",
+                "X-Heist-Assets": "reality-92",
             },
         )
 
@@ -115,6 +115,33 @@ def install_heist_asset_routes_v78(core: Any) -> None:
     async def heist_v91_polish_script(_: web.Request) -> web.StreamResponse:
         return file_response(HEIST_DIR / "polish-v91.js")
 
+    async def heist_v92_loader(_: web.Request) -> web.StreamResponse:
+        return file_response(HEIST_DIR / "loader-v92.js")
+
+    async def heist_v92_patch(_: web.Request) -> web.StreamResponse:
+        return file_response(HEIST_DIR / "patch-v92-safe-sprites.js")
+
+    async def heist_v92_polish_style(_: web.Request) -> web.StreamResponse:
+        return file_response(HEIST_DIR / "polish-v92.css")
+
+    async def heist_v92_polish_script(_: web.Request) -> web.StreamResponse:
+        return file_response(HEIST_DIR / "polish-v92.js")
+
+    async def safe_common_v92(_: web.Request) -> web.StreamResponse:
+        return file_response(HEIST_DIR / "assets" / "safe-common-v92.js")
+
+    async def safe_reinforced_v92(_: web.Request) -> web.StreamResponse:
+        return file_response(HEIST_DIR / "assets" / "safe-reinforced-v92.js")
+
+    async def safe_electronic_v92(_: web.Request) -> web.StreamResponse:
+        return file_response(HEIST_DIR / "assets" / "safe-electronic-v92.js")
+
+    async def safe_elite_v92(_: web.Request) -> web.StreamResponse:
+        return file_response(HEIST_DIR / "assets" / "safe-elite-v92.js")
+
+    async def safe_vault_v92(_: web.Request) -> web.StreamResponse:
+        return file_response(HEIST_DIR / "assets" / "safe-vault-v92.js")
+
     async def start_server_with_heist_assets(bot: Any):
         previous_application = core.web.Application
 
@@ -149,6 +176,15 @@ def install_heist_asset_routes_v78(core: Any) -> None:
             app.router.add_get("/games/heist/patch-v91-visual.js", heist_v91_visual_patch)
             app.router.add_get("/games/heist/polish-v91.css", heist_v91_polish_style)
             app.router.add_get("/games/heist/polish-v91.js", heist_v91_polish_script)
+            app.router.add_get("/games/heist/loader-v92.js", heist_v92_loader)
+            app.router.add_get("/games/heist/patch-v92-safe-sprites.js", heist_v92_patch)
+            app.router.add_get("/games/heist/polish-v92.css", heist_v92_polish_style)
+            app.router.add_get("/games/heist/polish-v92.js", heist_v92_polish_script)
+            app.router.add_get("/games/heist/assets/safe-common-v92.js", safe_common_v92)
+            app.router.add_get("/games/heist/assets/safe-reinforced-v92.js", safe_reinforced_v92)
+            app.router.add_get("/games/heist/assets/safe-electronic-v92.js", safe_electronic_v92)
+            app.router.add_get("/games/heist/assets/safe-elite-v92.js", safe_elite_v92)
+            app.router.add_get("/games/heist/assets/safe-vault-v92.js", safe_vault_v92)
             return app
 
         core.web.Application = application_factory
