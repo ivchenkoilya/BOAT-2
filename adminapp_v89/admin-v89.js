@@ -2,7 +2,7 @@
   'use strict';
   const tg=window.Telegram?.WebApp;
   const originalFetch=window.fetch.bind(window);
-  const runtime={state:null,renderTimer:null,busy:false};
+  const runtime={state:null,renderTimer:null,busy:false,renderRetries:0};
   window.AdminV89=runtime;
 
   function sourceUrl(input){
@@ -18,13 +18,13 @@
   function bodyAction(init){
     try{return JSON.parse(String(init?.body||'{}')).action||''}catch{return ''}
   }
-  function scheduleRender(){
+  function scheduleRender(delay=90){
     clearTimeout(runtime.renderTimer);
-    runtime.renderTimer=setTimeout(renderUpgrade,90);
+    runtime.renderTimer=setTimeout(renderUpgrade,delay);
   }
 
   window.fetch=async(input,init={})=>{
-    let url=sourceUrl(input);
+    const url=sourceUrl(input);
     let changed=url;
     if(url.includes('/admin-v76/api/state')){
       changed=url.replace('/admin-v76/api/state','/admin-v89/api/state');
@@ -34,7 +34,11 @@
     const response=await originalFetch(replaceInput(input,changed),init);
     if(changed.includes('/admin-v89/api/state')){
       response.clone().json().then(data=>{
-        if(data?.ok){runtime.state=data;scheduleRender()}
+        if(data?.ok){
+          runtime.state=data;
+          runtime.renderRetries=0;
+          scheduleRender();
+        }
       }).catch(()=>{});
     }
     return response;
@@ -94,9 +98,8 @@
   }
 
   function ensureAttemptPanel(){
-    const screen=document.querySelector('[data-screen="games"]');
     const cards=document.getElementById('gameCards');
-    if(!screen||!cards||document.getElementById('v89AttemptPanel'))return;
+    if(!cards||document.getElementById('v89AttemptPanel'))return Boolean(cards);
     const panel=document.createElement('article');
     panel.className='panel requires-user';
     panel.id='v89AttemptPanel';
@@ -120,17 +123,18 @@
       <button class="wide-button positive" id="v89ApplyAttempts" type="button">🎟 ВЫДАТЬ ПАКЕТ</button>
       <p class="v89-note">После выдачи будет показано, например, <b>1000/1000</b>. Использованные попытки обнулятся, но рекорды, результаты и уже выданное влияние сохранятся.</p>`;
     cards.parentNode.insertBefore(panel,cards);
+    return true;
   }
 
   function ensureEconomyPanel(){
-    const screen=document.querySelector('[data-screen="knowledge"]');
     const metrics=document.getElementById('knowledgeMetrics');
-    if(!screen||!metrics||document.getElementById('v89EconomyPanel'))return;
+    if(!metrics||document.getElementById('v89EconomyPanel'))return Boolean(metrics);
     const panel=document.createElement('article');
     panel.className='panel requires-user';
     panel.id='v89EconomyPanel';
     panel.innerHTML='<div class="panel-title"><span>📈</span><div><b>Источники прогресса</b><small>Откуда игрок получает очки Древа и карьерное влияние</small></div></div><div id="v89EconomyGrid" class="v89-source-grid"></div>';
     metrics.insertAdjacentElement('afterend',panel);
+    return true;
   }
 
   function renderGameLimits(){
@@ -140,14 +144,16 @@
       const card=cards[index];
       if(!card)return;
       const value=card.querySelector('.game-stat b');
-      if(value)value.textContent=`${fmt(game.attempts_left)}/${fmt(game.attempt_limit||3)}`;
+      const label=`${fmt(game.attempts_left)}/${fmt(game.attempt_limit||3)}`;
+      if(value&&value.textContent!==label)value.textContent=label;
       let badge=card.querySelector('.v89-limit-badge');
       if(game.custom_attempts){
         if(!badge){
           badge=document.createElement('span');badge.className='v89-limit-badge';
           card.querySelector('.game-head>div')?.appendChild(badge);
         }
-        badge.textContent=`АДМИН-ПАКЕТ ${fmt(game.attempt_limit)}`;
+        const badgeText=`АДМИН-ПАКЕТ ${fmt(game.attempt_limit)}`;
+        if(badge.textContent!==badgeText)badge.textContent=badgeText;
       }else badge?.remove();
     });
   }
@@ -166,16 +172,22 @@
       ['🌌','Побед над боссом',fmt(source.boss_wins||0),'всего'],
       ['🕹','Победных игр',fmt(source.game_wins||0),'всего']
     ];
-    grid.innerHTML=items.map(([icon,label,value,note])=>`<div class="v89-source"><span>${icon}</span><small>${esc(label)}</small><b>${esc(value)}</b><em>${esc(note)}</em></div>`).join('');
+    const markup=items.map(([icon,label,value,note])=>`<div class="v89-source"><span>${icon}</span><small>${esc(label)}</small><b>${esc(value)}</b><em>${esc(note)}</em></div>`).join('');
+    if(grid.innerHTML!==markup)grid.innerHTML=markup;
   }
 
   function renderUpgrade(){
-    ensureAttemptPanel();
-    ensureEconomyPanel();
+    const attemptsReady=ensureAttemptPanel();
+    const economyReady=ensureEconomyPanel();
     renderGameLimits();
     renderSources();
     const version=document.getElementById('versionText');
-    if(version)version.textContent=runtime.state?.version||'Reality 89';
+    const versionText=runtime.state?.version||'Reality 89';
+    if(version&&version.textContent!==versionText)version.textContent=versionText;
+    if((!attemptsReady||!economyReady)&&runtime.renderRetries<12){
+      runtime.renderRetries+=1;
+      scheduleRender(120);
+    }
   }
 
   document.addEventListener('click',event=>{
@@ -191,9 +203,5 @@
     }
   },true);
 
-  const observer=new MutationObserver(()=>scheduleRender());
-  document.addEventListener('DOMContentLoaded',()=>{
-    observer.observe(document.body,{childList:true,subtree:true});
-    scheduleRender();
-  });
+  document.addEventListener('DOMContentLoaded',()=>scheduleRender());
 })();
