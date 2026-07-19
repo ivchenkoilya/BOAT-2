@@ -26,7 +26,7 @@ BOSS_FINISHER_TREE = 1
 GAME_WORDS = ("coin", "dice", "roulette", "game", "fate", "heist", "rooftop", "roof", "casino", "bet")
 TASK_WORDS = ("task", "mission", "action")
 ACTIVITY_WORDS = ("message", "reaction", "voice", "reply", "activity", "media", "sticker")
-EXCLUDED_WORDS = ("admin", "transfer", "restore", "refund", "compensation", "hero_day", "stake", "sabotage", "impeachment", "rebellion", "boss")
+EXCLUDED_WORDS = ("admin", "transfer", "restore", "refund", "compensation", "hero_day", "sabotage", "impeachment", "rebellion", "boss")
 _guard: contextvars.ContextVar[bool] = contextvars.ContextVar("knowledge_v85_guard", default=False)
 
 
@@ -91,6 +91,9 @@ async def _schema(db: Any) -> None:
             CREATE TABLE IF NOT EXISTS knowledge_boss_events_v85(
                 boss_id TEXT NOT NULL,user_id INTEGER NOT NULL,chat_id INTEGER NOT NULL,
                 created_at INTEGER NOT NULL,PRIMARY KEY(boss_id,user_id));
+            CREATE TABLE IF NOT EXISTS knowledge_finisher_events_v85(
+                boss_id TEXT NOT NULL,user_id INTEGER NOT NULL,created_at INTEGER NOT NULL,
+                PRIMARY KEY(boss_id,user_id));
             CREATE TABLE IF NOT EXISTS knowledge_weekly(
                 chat_id INTEGER NOT NULL,user_id INTEGER NOT NULL,week_key TEXT NOT NULL,
                 tree_points INTEGER NOT NULL DEFAULT 0,updated_at INTEGER NOT NULL,
@@ -269,6 +272,12 @@ async def _finisher_point(db: Any, boss_id: str, chat_id: int, user_id: int) -> 
         )
         reward = await cursor.fetchone()
         if reward is None or not int(reward["is_finisher"]):
+            return 0
+        cursor = await conn.execute(
+            "INSERT OR IGNORE INTO knowledge_finisher_events_v85(boss_id,user_id,created_at) VALUES(?,?,?)",
+            (boss_id, user_id, now),
+        )
+        if cursor.rowcount <= 0:
             return 0
         cursor = await conn.execute(
             "SELECT tree_points FROM knowledge_weekly WHERE chat_id=? AND user_id=? AND week_key=?",
