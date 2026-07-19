@@ -14,6 +14,7 @@ from about_recommendations_v68 import install_about_recommendations_v68
 from about_updates import install_about_updates
 from admin_center_v76 import install_admin_center_v76
 from admin_game_attempts_v89 import install_admin_game_attempts_v89
+from admin_open_v89 import install_admin_open_v89
 from admin_webapp_v62 import install_admin_webapp_v62
 from boss_upgrade_v52 import install_boss_upgrade_v52
 from economy_fate_ui_v74 import install_economy_fate_ui_v74
@@ -154,6 +155,8 @@ install_influence_reward_v88(core)
 # Reality 89 добавляет персональные пакеты игровых попыток любого размера,
 # расширенную статистику источников Древа и новый слой админ-центра.
 install_admin_game_attempts_v89(core)
+# Финальный слой меняет карточку и кнопку /admin на актуальную Reality 89.
+install_admin_open_v89(core)
 
 # В main.py есть общий обработчик F.text, зарегистрированный раньше расширений.
 # Переносим команды древа, мастерства и игр в начало списка, чтобы общий
