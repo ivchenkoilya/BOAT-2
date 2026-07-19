@@ -24,7 +24,6 @@ from influence_reward_v88 import install_influence_reward_v88
 from knowledge_economy_v85 import install_knowledge_economy_v85
 from raid_assets_v58 import install_raid_assets
 from raid_balance_v58 import install_raid_balance_v58
-from raid_ui_runtime_v89 import install_raid_ui_runtime_v89
 from raid_v59_fix import install_raid_v59_fix
 from raid_v59_recovery import install_raid_v59_recovery
 from raid_v60 import install_raid_v60
@@ -129,8 +128,6 @@ install_about_games_v75(core)
 # Reality 76 добавляет в «О боте» новый админ-центр и его игровые инструменты.
 install_about_admin_v76(core)
 install_inline_webapp_fix(core)
-# Reality 89 гарантирует загрузку всех CSS/JS рейда через production entrypoint.
-install_raid_ui_runtime_v89(core)
 # Reality 73 видит итоговое начисление после старых талантов.
 install_talent_bonus_display_v73(core)
 # Reality 74 ставится после начислений: меняет пороги ролей, переносит старые
