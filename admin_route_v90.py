@@ -13,27 +13,26 @@ def install_admin_route_v90(core: Any) -> None:
         return
     core._admin_route_v90_installed = True
 
-    def response(path: Path, content_type: str | None = None):
-        headers = {
-            "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
-            "Pragma": "no-cache",
-            "Expires": "0",
-            "X-Admin-Center": "reality-90",
-            "Clear-Site-Data": '"cache"',
-        }
-        kwargs = {"headers": headers}
-        if content_type:
-            kwargs["content_type"] = content_type
-        return core.web.FileResponse(path, **kwargs)
+    def response(path: Path):
+        return core.web.FileResponse(
+            path,
+            headers={
+                "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+                "Pragma": "no-cache",
+                "Expires": "0",
+                "X-Admin-Center": "reality-90",
+                "Clear-Site-Data": '"cache"',
+            },
+        )
 
     async def index(_: Any):
-        return response(ADMIN_DIR / "index.html", "text/html")
+        return response(ADMIN_DIR / "index.html")
 
     async def base_css(_: Any):
-        return response(ADMIN_DIR / "admin.css", "text/css")
+        return response(ADMIN_DIR / "admin.css")
 
     async def base_js(_: Any):
-        return response(ADMIN_DIR / "admin.js", "application/javascript")
+        return response(ADMIN_DIR / "admin.js")
 
     original_start_server = core.start_webapp_server
 
