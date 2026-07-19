@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#090710">
   <title>Ограбление хранилища</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="/games/heist/style.css?v=82">
+  <link rel="stylesheet" href="/games/heist/style.css?v=83">
 </head>
 <body>
 <div class="app" id="app">
@@ -35,6 +35,7 @@
     <div class="alertBanner" id="alertBanner">КАМЕРА ФИКСИРУЕТ ДВИЖЕНИЕ</div>
     <div class="zoneBanner" id="zoneBanner">ЗОЛОТОЙ СЕКТОР</div>
     <div class="smokeStatus hidden" id="smokeStatus"><span>🌫 ДЫМ</span><b id="smokeTimer">5.5</b></div>
+    <button class="audioToggle" id="audioToggle" type="button" aria-label="Включить или выключить звук">🔊</button>
     <button class="minimapWrap" id="minimapWrap" type="button" aria-label="Развернуть мини-карту">
       <span>КАРТА</span><canvas class="minimap" id="miniMap"></canvas>
     </button>
@@ -56,11 +57,11 @@
   <section class="card introCard">
     <div class="icon">🏛</div>
     <h1>Большое ограбление</h1>
-    <div class="notice"><b>Каждая попытка — новое хранилище.</b><br>Сейфы доступны, камеры не видят сквозь стены, а у каждого класса сейфов свой способ взлома.</div>
+    <div class="notice"><b>Каждая попытка — новое хранилище.</b><br>Сейфы доступны, камеры не видят сквозь стены, а музыка и звуки реагируют на уровень тревоги.</div>
     <div class="featureGrid">
-      <div class="feature"><b>🔐 РЕАЛЬНЫЙ ВЗЛОМ</b>Отмычка, штифты, кодовый диск и многоэтапное главное хранилище.</div>
-      <div class="feature"><b>📹 ЧЕСТНЫЕ КАМЕРЫ</b>Луч останавливается стеной. Сначала подозрение, затем обнаружение.</div>
-      <div class="feature"><b>🗺 БОЛЬШАЯ КАРТА</b>Туман войны, разные сектора, декор и подсказка маршрута.</div>
+      <div class="feature"><b>🔐 РЕАЛЬНЫЙ ВЗЛОМ</b>Отмычка, штифты, улучшенный кодовый диск и многоэтапное хранилище.</div>
+      <div class="feature"><b>🎧 ЖИВОЙ ЗВУК</b>Атмосферная музыка, щелчки замков, сирена, дым и награды.</div>
+      <div class="feature"><b>🏛 ТЕМАТИЧЕСКИЕ ЗОНЫ</b>Золото, серверные, пост охраны, лазеры и аварийные помещения.</div>
       <div class="feature"><b>💰 РАЗНАЯ ДОБЫЧА</b>Обычные, усиленные, элитные и главный легендарный сейф.</div>
     </div>
     <button id="start" type="button">НАЧАТЬ ОГРАБЛЕНИЕ</button>
@@ -114,6 +115,6 @@
   </section>
 </div>
 
-<script src="/games/heist/game.js?v=82"></script>
+<script src="/games/heist/game.js?v=83"></script>
 </body>
 </html>
