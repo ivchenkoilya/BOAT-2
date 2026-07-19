@@ -1,6 +1,7 @@
 import asyncio
 
 import main as core
+from about_bonus_v73 import install_about_bonus_v73
 from about_compact_v72 import install_about_compact_v72
 from about_optimizer_v69 import install_about_optimizer_v69
 from about_optimizer_v70 import install_about_optimizer_v70
@@ -20,6 +21,7 @@ from raid_v61 import install_raid_v61
 from raid_v61_safety import install_raid_v61_safety
 from raid_v64_direct_tree import install_raid_v64_direct_tree
 from raid_v65_balance import install_raid_v65_balance
+from talent_bonus_display_v73 import install_talent_bonus_display_v73
 from talent_expansion import install_expansion
 from talent_explanations import install_explanations
 from talent_improvements_v66 import install_talent_improvements_v66
@@ -93,10 +95,15 @@ install_about_recommendations_v68(core)
 install_about_optimizer_v69(core)
 install_about_optimizer_v70(core)
 install_about_optimizer_v71(core)
-# Reality 72 ставится последним и заменяет разросшуюся цепочку «О боте»
-# одной компактной карточкой с безопасным запасом до лимита Telegram.
+# Reality 72 заменяет разросшуюся цепочку «О боте» компактной карточкой.
 install_about_compact_v72(core)
+# Reality 73 добавляет актуальное описание видимых бонусов древа.
+install_about_bonus_v73(core)
 install_inline_webapp_fix(core)
+# Слой Reality 73 ставится последним: он видит уже итоговое начисление после
+# всех талантов, дописывает прозрачный расчёт в карточку и переименовывает
+# ветку «Награды» в «Удача».
+install_talent_bonus_display_v73(core)
 
 # В main.py есть общий обработчик F.text, зарегистрированный раньше расширений.
 # Переносим команды древа и мастерства в начало списка, чтобы общий обработчик
