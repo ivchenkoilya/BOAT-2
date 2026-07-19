@@ -25,6 +25,7 @@ from hero_day_v77 import install_hero_day_v77
 from influence_balance_v87 import install_influence_balance_v87
 from influence_reward_v88 import install_influence_reward_v88
 from knowledge_economy_v85 import install_knowledge_economy_v85
+from night_hunter_v93 import install_night_hunter_v93
 from raid_assets_v58 import install_raid_assets
 from raid_balance_v58 import install_raid_balance_v58
 from raid_v59_fix import install_raid_v59_fix
@@ -101,8 +102,8 @@ install_talent_optimizer_v71(core)
 # устанавливает предыдущий стабильный слой, Reality 64 выдаёт очки древа,
 # а Reality 65 поднимает HP до 100 000 и усложняет давление отряда.
 # Reality 62 оставляет совместимые старые API админки, Reality 75 добавляет
-# игровой центр, а Reality 76 поверх них подключает новый интерфейс и игровые
-# инструменты. Reality 63 затем финально добавляет маршруты древа.
+# игровой центр, Reality 93 подключает третью хоррор-игру, а Reality 76 поверх
+# них подключает новый интерфейс и игровые инструменты.
 install_raid_balance_v58(core)
 install_raid_v59_fix(core)
 install_raid_v60(core)
@@ -113,6 +114,7 @@ install_raid_v64_direct_tree(core)
 install_raid_v65_balance(core)
 install_admin_webapp_v62(core)
 install_game_center_runtime_v75(core)
+install_night_hunter_v93(core)
 install_heist_asset_routes_v78(core)
 # Reality 91 подменяет только финал игры: ограбление начисляет всю сохранённую
 # добычу, а повторная отправка той же сессии не выдаёт очки второй раз.
@@ -133,7 +135,7 @@ install_about_compact_v72(core)
 install_about_bonus_v73(core)
 # Reality 74 финально заменяет карточку актуальной экономикой.
 install_about_balance_v74(core)
-# Reality 75 добавляет две игровые Mini App и серверные награды.
+# Reality 75 добавляет игровой центр и серверные награды.
 install_about_games_v75(core)
 # Reality 76 добавляет в «О боте» новый админ-центр и его игровые инструменты.
 install_about_admin_v76(core)
