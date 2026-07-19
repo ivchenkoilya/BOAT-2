@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#080411">
   <title>Бег по крышам</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="/boss-app/assets/rooftop_v76/game.css?v=76">
+  <link rel="stylesheet" href="/boss-app/assets/rooftop_v76/game.css?v=78">
 </head>
 <body>
 <div class="app">
@@ -31,7 +31,7 @@
   <section class="card">
     <div class="intro-art" id="introArt"><img class="intro-boss" id="introBoss" alt=""><img class="intro-hero" id="introHero" alt=""></div>
     <h1>Бег по крышам</h1>
-    <div class="notice"><b>⚠️ Игра находится в стадии разработки.</b><br>Она уже полностью запускается, начисляет влияние и использует новый визуальный набор. Анимации героя и новые районы будут расширяться.</div>
+    <div class="notice"><b>✨ Новый чёткий визуал.</b><br>Город, крыши, герой, босс и игровые объекты теперь рисуются прямо на Canvas без растягивания фоновых фотографий.</div>
     <p>Центр Вселенной наблюдает за трассой и периодически перекрывает две полосы энергетической атакой. Выбирай безопасный путь, собирай осколки и удерживай серию.</p>
     <div class="guide">
       <div><b>↔ Свайп</b>смена полосы</div><div><b>↑ Вверх</b>прыжок</div>
@@ -56,8 +56,22 @@
     <button class="secondary" id="toGames" type="button">В ИГРОВОЙ ЦЕНТР</button>
   </section>
 </div>
-<script src="/boss-app/assets/rooftop_v76/prelude.js?v=76"></script>
-<script src="/boss-app/assets/rooftop_v76/game-core.js?v=76"></script>
-<script src="/boss-app/assets/rooftop_v76/game-render.js?v=76"></script>
+<script src="/boss-app/assets/rooftop_v76/prelude.js?v=78"></script>
+<script src="/boss-app/assets/rooftop_v76/game-core.js?v=78"></script>
+<script>
+(()=>{
+  const sharpen=()=>{
+    const rect=canvas.getBoundingClientRect();
+    const nextDpr=Math.min(3,window.devicePixelRatio||1);
+    W=Math.max(1,rect.width);H=Math.max(1,rect.height);dpr=nextDpr;
+    canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);ctx.imageSmoothingEnabled=true;
+    if(!running&&typeof drawIdle==='function')drawIdle();
+  };
+  requestAnimationFrame(sharpen);
+  addEventListener('resize',()=>requestAnimationFrame(sharpen));
+})();
+</script>
+<script src="/boss-app/assets/rooftop_v76/game-render.js?v=78"></script>
 </body>
 </html>
