@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#080612">
   <title>Охота за влиянием</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="/games/game-attempts-v89.js?v=89"></script>
   <style>
     :root{color-scheme:dark;--bg:#080612;--panel:#151126;--line:#302557;--violet:#a76cff;--gold:#ffd365;--text:#f8f3ff;--muted:#a89cbe}
     *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% -20%,#43257b 0,#17102b 34%,#080612 70%);color:var(--text);font-family:Inter,system-ui,sans-serif}body{padding:calc(18px + env(safe-area-inset-top)) 16px calc(30px + env(safe-area-inset-bottom));overflow-x:hidden}
@@ -44,7 +45,7 @@
         <button class="play" id="heistPlay" type="button">ВОЙТИ В ХРАНИЛИЩЕ</button>
       </article>
     </section>
-    <div class="footer">Reality 75 · Игры находятся в активной разработке</div>
+    <div class="footer">Reality 89 · Персональные пакеты попыток</div>
   </main>
   <script>
     (()=>{
@@ -55,7 +56,7 @@
       async function api(path,body={}){const res=await fetch('/games/api/'+path,{method:'POST',headers,body:JSON.stringify({...body,chat_id:chatId})});const data=await res.json().catch(()=>({ok:false,reason:'Сервер вернул непонятный ответ.'}));if(!res.ok||!data.ok)throw new Error(data.reason||'Не удалось загрузить игровой центр.');return data}
       function go(game){const target=`/games/${game}/?${new URLSearchParams({...Object.fromEntries(params),chat_id:chatId}).toString()}`;location.href=target}
       $('roofPlay').addEventListener('click',()=>go('rooftop'));$('heistPlay').addEventListener('click',()=>go('heist'));
-      (async()=>{try{const state=await api('state');$('balance').textContent=fmt(state.player.points);$('gameBonus').textContent='+'+Math.round((state.buffs.game_reward||0)*100)+'%';$('rareBonus').textContent='+'+Math.round((state.buffs.rare_reward||0)*100)+'%';$('rule').textContent=state.daily_rule;const r=state.games.rooftop,h=state.games.heist;$('roofAttempts').textContent=`Попытки: ${r.attempts_left}/3`;$('roofBest').textContent=`Рекорд: ${r.best_score}`;$('heistAttempts').textContent=`Попытки: ${h.attempts_left}/3`;$('heistBest').textContent=`Рекорд: ${h.best_score}`;$('roofPlay').disabled=r.attempts_left<=0;$('heistPlay').disabled=h.attempts_left<=0;if(r.attempts_left<=0)$('roofPlay').textContent='ПОПЫТКИ ЗАКОНЧИЛИСЬ';if(h.attempts_left<=0)$('heistPlay').textContent='ПОПЫТКИ ЗАКОНЧИЛИСЬ'}catch(e){$('error').style.display='block';$('error').textContent=e.message;$('rule').textContent='В демонстрационном режиме можно открыть игры, но влияние начисляется только при запуске из Telegram-беседы.'}})();
+      (async()=>{try{const state=await api('state');$('balance').textContent=fmt(state.player.points);$('gameBonus').textContent='+'+Math.round((state.buffs.game_reward||0)*100)+'%';$('rareBonus').textContent='+'+Math.round((state.buffs.rare_reward||0)*100)+'%';$('rule').textContent=state.daily_rule;const r=state.games.rooftop,h=state.games.heist;$('roofAttempts').textContent=`Попытки: ${fmt(r.attempts_left)}/${fmt(r.attempt_limit||state.attempts_per_day||3)}`;$('roofBest').textContent=`Рекорд: ${r.best_score}`;$('heistAttempts').textContent=`Попытки: ${fmt(h.attempts_left)}/${fmt(h.attempt_limit||state.attempts_per_day||3)}`;$('heistBest').textContent=`Рекорд: ${h.best_score}`;$('roofPlay').disabled=r.attempts_left<=0;$('heistPlay').disabled=h.attempts_left<=0;if(r.attempts_left<=0)$('roofPlay').textContent='ПОПЫТКИ ЗАКОНЧИЛИСЬ';if(h.attempts_left<=0)$('heistPlay').textContent='ПОПЫТКИ ЗАКОНЧИЛИСЬ'}catch(e){$('error').style.display='block';$('error').textContent=e.message;$('rule').textContent='В демонстрационном режиме можно открыть игры, но влияние начисляется только при запуске из Telegram-беседы.'}})();
     })();
   </script>
 </body>
