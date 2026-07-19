@@ -19,6 +19,7 @@ from economy_fate_ui_v74 import install_economy_fate_ui_v74
 from game_center_runtime_v75 import install_game_center_runtime_v75
 from heist_asset_routes_v78 import install_heist_asset_routes_v78
 from hero_day_v77 import install_hero_day_v77
+from knowledge_economy_v85 import install_knowledge_economy_v85
 from raid_assets_v58 import install_raid_assets
 from raid_balance_v58 import install_raid_balance_v58
 from raid_v59_fix import install_raid_v59_fix
@@ -134,6 +135,9 @@ install_economy_fate_ui_v74(core)
 # навсегда, снимается только звание, а временная боевая роль работает до
 # следующих выборов.
 install_hero_day_v77(core)
+# Reality 85 ставится последним: он видит итоговые игровые начисления, отделяет
+# карьерное влияние от ставок и ускоряет полную прокачку древа до 6–8 недель.
+install_knowledge_economy_v85(core)
 
 # В main.py есть общий обработчик F.text, зарегистрированный раньше расширений.
 # Переносим команды древа, мастерства и игр в начало списка, чтобы общий
