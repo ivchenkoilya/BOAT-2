@@ -8,11 +8,11 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="/games/game-attempts-v89.js?v=89"></script>
   <style>
-    :root{color-scheme:dark;--bg:#080612;--panel:#151126;--line:#302557;--violet:#a76cff;--gold:#ffd365;--text:#f8f3ff;--muted:#a89cbe}
+    :root{color-scheme:dark;--bg:#080612;--panel:#151126;--line:#302557;--violet:#a76cff;--gold:#ffd365;--text:#f8f3ff;--muted:#a89cbe;--cyan:#75ffe6}
     *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% -20%,#43257b 0,#17102b 34%,#080612 70%);color:var(--text);font-family:Inter,system-ui,sans-serif}body{padding:calc(18px + env(safe-area-inset-top)) 16px calc(30px + env(safe-area-inset-bottom));overflow-x:hidden}
-    .app{max-width:680px;margin:auto}.eyebrow{font-size:12px;letter-spacing:.22em;color:var(--gold);font-weight:800}.hero h1{font-size:30px;line-height:1.05;margin:8px 0 10px}.hero p{color:var(--muted);line-height:1.5;margin:0 0 18px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}.stat{background:#130f21cc;border:1px solid #302657;border-radius:16px;padding:12px;text-align:center}.stat b{display:block;font-size:18px}.stat small{color:var(--muted);font-size:10px;letter-spacing:.08em}
-    .rule{padding:13px 14px;border:1px solid #48366d;border-radius:16px;background:#24183d99;color:#d8c9ef;font-size:13px;line-height:1.45;margin-bottom:14px}.games{display:grid;gap:14px}.game{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:24px;background:linear-gradient(145deg,#1d1631,#100d1c);padding:20px;min-height:245px}.game:before{content:"";position:absolute;inset:auto -60px -90px auto;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,#9f67ff55,transparent 68%)}.game.heist:before{background:radial-gradient(circle,#ffd36544,transparent 68%)}.icon{font-size:44px}.badge{display:inline-flex;margin-left:8px;padding:5px 8px;border-radius:999px;background:#2d2145;color:#d9c5ff;font-size:10px;font-weight:800;vertical-align:top}.game h2{margin:12px 0 6px;font-size:22px}.game p{margin:0 0 14px;color:var(--muted);line-height:1.45}.meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.chip{padding:7px 9px;border:1px solid #3a2d58;border-radius:10px;background:#110d1d;font-size:12px}.play{position:relative;width:100%;border:0;border-radius:15px;padding:14px 16px;font-size:14px;font-weight:900;letter-spacing:.06em;color:#130a22;background:linear-gradient(135deg,#c9a5ff,#8c51ed);box-shadow:0 10px 28px #7b3ed744}.heist .play{color:#251700;background:linear-gradient(135deg,#ffe79b,#d7a72f);box-shadow:0 10px 28px #a9782444}.play:disabled{filter:grayscale(1);opacity:.5}.footer{text-align:center;color:#766b87;font-size:11px;padding:18px 0}.error{display:none;padding:16px;border:1px solid #6a3447;background:#321523;border-radius:16px;color:#ffc4d3;margin-bottom:14px}.loading{opacity:.65}
-    @media(min-width:650px){.games{grid-template-columns:1fr 1fr}.game{min-height:310px}}
+    .app{max-width:980px;margin:auto}.eyebrow{font-size:12px;letter-spacing:.22em;color:var(--gold);font-weight:800}.hero h1{font-size:30px;line-height:1.05;margin:8px 0 10px}.hero p{color:var(--muted);line-height:1.5;margin:0 0 18px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}.stat{background:#130f21cc;border:1px solid #302657;border-radius:16px;padding:12px;text-align:center}.stat b{display:block;font-size:18px}.stat small{color:var(--muted);font-size:10px;letter-spacing:.08em}
+    .rule{padding:13px 14px;border:1px solid #48366d;border-radius:16px;background:#24183d99;color:#d8c9ef;font-size:13px;line-height:1.45;margin-bottom:14px}.games{display:grid;gap:14px}.game{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:24px;background:linear-gradient(145deg,#1d1631,#100d1c);padding:20px;min-height:245px}.game:before{content:"";position:absolute;inset:auto -60px -90px auto;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,#9f67ff55,transparent 68%)}.game.heist:before{background:radial-gradient(circle,#ffd36544,transparent 68%)}.game.hunter{border-color:#254a4b;background:linear-gradient(145deg,#102429,#071013)}.game.hunter:before{background:radial-gradient(circle,#64ffe742,transparent 68%)}.game.hunter:after{content:"";position:absolute;top:0;left:14%;width:44%;height:100%;transform:skewX(-14deg);background:linear-gradient(90deg,transparent,#aafff20a,transparent);pointer-events:none}.icon{font-size:44px}.badge{display:inline-flex;margin-left:8px;padding:5px 8px;border-radius:999px;background:#2d2145;color:#d9c5ff;font-size:10px;font-weight:800;vertical-align:top}.hunter .badge{background:#143437;color:#bafff3}.game h2{position:relative;margin:12px 0 6px;font-size:22px}.game p{position:relative;margin:0 0 14px;color:var(--muted);line-height:1.45}.meta{position:relative;display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.chip{padding:7px 9px;border:1px solid #3a2d58;border-radius:10px;background:#110d1d;font-size:12px}.hunter .chip{border-color:#2a4c4c;background:#071516}.play{position:relative;width:100%;border:0;border-radius:15px;padding:14px 16px;font-size:14px;font-weight:900;letter-spacing:.06em;color:#130a22;background:linear-gradient(135deg,#c9a5ff,#8c51ed);box-shadow:0 10px 28px #7b3ed744}.heist .play{color:#251700;background:linear-gradient(135deg,#ffe79b,#d7a72f);box-shadow:0 10px 28px #a9782444}.hunter .play{color:#041413;background:linear-gradient(135deg,#c5fff6,#55ddc9);box-shadow:0 10px 28px #37cfba33}.play:disabled{filter:grayscale(1);opacity:.5}.footer{text-align:center;color:#766b87;font-size:11px;padding:18px 0}.error{display:none;padding:16px;border:1px solid #6a3447;background:#321523;border-radius:16px;color:#ffc4d3;margin-bottom:14px}.loading{opacity:.65}
+    @media(min-width:650px){.games{grid-template-columns:repeat(2,1fr)}.game{min-height:300px}.game.hunter{grid-column:1/-1;min-height:245px}}@media(min-width:940px){.games{grid-template-columns:repeat(3,1fr)}.game,.game.hunter{grid-column:auto;min-height:320px}}
   </style>
 </head>
 <body>
@@ -20,7 +20,7 @@
     <section class="hero">
       <div class="eyebrow">ИГРОВОЙ ЦЕНТР</div>
       <h1>Охота за влиянием</h1>
-      <p>Выбери забег. Собранная добыча превращается во влияние текущей беседы, а сверху применяются бонусы древа знаний.</p>
+      <p>Выбери испытание. Собранная добыча превращается во влияние текущей беседы, а сверху применяются бонусы Древа знаний.</p>
     </section>
     <div class="error" id="error"></div>
     <section class="stats">
@@ -33,30 +33,38 @@
       <article class="game rooftop">
         <div><span class="icon">🌃</span><span class="badge">60 СЕКУНД</span></div>
         <h2>Бег по крышам</h2>
-        <p>Персонаж бежит сам. Меняй полосу, прыгай, делай подкат и собирай золотое влияние.</p>
+        <p>Меняй полосу, прыгай, делай подкат и собирай золотое влияние на неоновых крышах.</p>
         <div class="meta"><span class="chip" id="roofAttempts">Попытки: —</span><span class="chip" id="roofBest">Рекорд: —</span><span class="chip">До +100</span></div>
         <button class="play" id="roofPlay" type="button">НАЧАТЬ ПОГОНЮ</button>
       </article>
       <article class="game heist">
         <div><span class="icon">🏛</span><span class="badge">90 СЕКУНД</span></div>
         <h2>Ограбление хранилища</h2>
-        <p>Управляй героем сам, вскрывай сейфы, обходи охрану и успей уйти с добычей.</p>
+        <p>Управляй героем, вскрывай сейфы, обходи охрану и успей уйти с добычей.</p>
         <div class="meta"><span class="chip" id="heistAttempts">Попытки: —</span><span class="chip" id="heistBest">Рекорд: —</span><span class="chip">До +120</span></div>
         <button class="play" id="heistPlay" type="button">ВОЙТИ В ХРАНИЛИЩЕ</button>
       </article>
+      <article class="game hunter">
+        <div><span class="icon">🔦</span><span class="badge">2:30 · НАУШНИКИ</span></div>
+        <h2>Ночной охотник</h2>
+        <p>Ищи ключ-карты в тёмном комплексе, управляй фонариком, прячься и определяй положение существа по звуку.</p>
+        <div class="meta"><span class="chip" id="hunterAttempts">Попытки: —</span><span class="chip" id="hunterBest">Рекорд: —</span><span class="chip">До +130</span></div>
+        <button class="play" id="hunterPlay" type="button">ВОЙТИ В ТЕМНОТУ</button>
+      </article>
     </section>
-    <div class="footer">Reality 89 · Персональные пакеты попыток</div>
+    <div class="footer">Reality 93 · Три испытания влияния</div>
   </main>
   <script>
     (()=>{
       const tg=window.Telegram?.WebApp;tg?.ready();tg?.expand();tg?.setHeaderColor?.('#080612');tg?.setBackgroundColor?.('#080612');
       const params=new URLSearchParams(location.search);const chatId=params.get('chat_id')||'';const initData=tg?.initData||'';
-      const headers={'Content-Type':'application/json','X-Telegram-Init-Data':initData};
-      const $=id=>document.getElementById(id);const fmt=n=>new Intl.NumberFormat('ru-RU').format(Number(n)||0);
+      const headers={'Content-Type':'application/json','X-Telegram-Init-Data':initData};const $=id=>document.getElementById(id);const fmt=n=>new Intl.NumberFormat('ru-RU').format(Number(n)||0);
       async function api(path,body={}){const res=await fetch('/games/api/'+path,{method:'POST',headers,body:JSON.stringify({...body,chat_id:chatId})});const data=await res.json().catch(()=>({ok:false,reason:'Сервер вернул непонятный ответ.'}));if(!res.ok||!data.ok)throw new Error(data.reason||'Не удалось загрузить игровой центр.');return data}
       function go(game){const target=`/games/${game}/?${new URLSearchParams({...Object.fromEntries(params),chat_id:chatId}).toString()}`;location.href=target}
-      $('roofPlay').addEventListener('click',()=>go('rooftop'));$('heistPlay').addEventListener('click',()=>go('heist'));
-      (async()=>{try{const state=await api('state');$('balance').textContent=fmt(state.player.points);$('gameBonus').textContent='+'+Math.round((state.buffs.game_reward||0)*100)+'%';$('rareBonus').textContent='+'+Math.round((state.buffs.rare_reward||0)*100)+'%';$('rule').textContent=state.daily_rule;const r=state.games.rooftop,h=state.games.heist;$('roofAttempts').textContent=`Попытки: ${fmt(r.attempts_left)}/${fmt(r.attempt_limit||state.attempts_per_day||3)}`;$('roofBest').textContent=`Рекорд: ${r.best_score}`;$('heistAttempts').textContent=`Попытки: ${fmt(h.attempts_left)}/${fmt(h.attempt_limit||state.attempts_per_day||3)}`;$('heistBest').textContent=`Рекорд: ${h.best_score}`;$('roofPlay').disabled=r.attempts_left<=0;$('heistPlay').disabled=h.attempts_left<=0;if(r.attempts_left<=0)$('roofPlay').textContent='ПОПЫТКИ ЗАКОНЧИЛИСЬ';if(h.attempts_left<=0)$('heistPlay').textContent='ПОПЫТКИ ЗАКОНЧИЛИСЬ'}catch(e){$('error').style.display='block';$('error').textContent=e.message;$('rule').textContent='В демонстрационном режиме можно открыть игры, но влияние начисляется только при запуске из Telegram-беседы.'}})();
+      const buttons={rooftop:$('roofPlay'),heist:$('heistPlay'),'night-hunter':$('hunterPlay')};
+      buttons.rooftop.addEventListener('click',()=>go('rooftop'));buttons.heist.addEventListener('click',()=>go('heist'));buttons['night-hunter'].addEventListener('click',()=>go('night-hunter'));
+      function fill(game,key,attemptId,bestId){if(!game)return;$(attemptId).textContent=`Попытки: ${fmt(game.attempts_left)}/${fmt(game.attempt_limit||3)}`;$(bestId).textContent=`Рекорд: ${fmt(game.best_score)}`;buttons[key].disabled=game.attempts_left<=0;if(game.attempts_left<=0)buttons[key].textContent='ПОПЫТКИ ЗАКОНЧИЛИСЬ'}
+      (async()=>{try{const state=await api('state');$('balance').textContent=fmt(state.player.points);$('gameBonus').textContent='+'+Math.round((state.buffs.game_reward||0)*100)+'%';$('rareBonus').textContent='+'+Math.round((state.buffs.rare_reward||0)*100)+'%';$('rule').textContent=state.daily_rule;fill(state.games.rooftop,'rooftop','roofAttempts','roofBest');fill(state.games.heist,'heist','heistAttempts','heistBest');fill(state.games['night-hunter'],'night-hunter','hunterAttempts','hunterBest')}catch(e){$('error').style.display='block';$('error').textContent=e.message;$('rule').textContent='В демонстрационном режиме игры можно открыть, но влияние начисляется только при запуске из Telegram-беседы.'}})();
     })();
   </script>
 </body>
