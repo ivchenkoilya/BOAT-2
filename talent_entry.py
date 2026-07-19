@@ -17,6 +17,7 @@ from admin_webapp_v62 import install_admin_webapp_v62
 from boss_upgrade_v52 import install_boss_upgrade_v52
 from economy_fate_ui_v74 import install_economy_fate_ui_v74
 from game_center_runtime_v75 import install_game_center_runtime_v75
+from heist_asset_routes_v78 import install_heist_asset_routes_v78
 from hero_day_v77 import install_hero_day_v77
 from raid_assets_v58 import install_raid_assets
 from raid_balance_v58 import install_raid_balance_v58
@@ -102,6 +103,7 @@ install_raid_v64_direct_tree(core)
 install_raid_v65_balance(core)
 install_admin_webapp_v62(core)
 install_game_center_runtime_v75(core)
+install_heist_asset_routes_v78(core)
 install_admin_center_v76(core)
 install_talent_routes_v63(core)
 install_raid_v59_recovery(core)
