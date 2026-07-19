@@ -6,17 +6,18 @@
   <meta name="theme-color" content="#090710">
   <title>Ограбление хранилища</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="/games/heist/style.css?v=89">
-  <link rel="stylesheet" href="/games/heist/enhance-v83.css?v=89">
-  <link rel="stylesheet" href="/games/heist/ui-v86.css?v=89">
-  <link rel="stylesheet" href="/games/heist/polish-v87.css?v=89">
-  <link rel="stylesheet" href="/games/heist/polish-v88.css?v=89">
+  <link rel="stylesheet" href="/games/heist/style.css?v=90">
+  <link rel="stylesheet" href="/games/heist/enhance-v83.css?v=90">
+  <link rel="stylesheet" href="/games/heist/ui-v86.css?v=90">
+  <link rel="stylesheet" href="/games/heist/polish-v87.css?v=90">
+  <link rel="stylesheet" href="/games/heist/polish-v88.css?v=90">
+  <link rel="stylesheet" href="/games/heist/polish-v90.css?v=90">
 </head>
 <body>
 <div class="app" id="app">
   <header class="top">
     <button class="back" id="back" type="button">← ИГРЫ</button>
-    <div class="title"><b>🏛 ОГРАБЛЕНИЕ</b><small>ЛАБИРИНТ ВЛИЯНИЯ</small></div>
+    <div class="title"><b>🏛 ОГРАБЛЕНИЕ</b><small>ХРАНИЛИЩЕ ВЛИЯНИЯ</small></div>
     <div class="loot"><small>ДОБЫЧА</small><b id="loot">0</b></div>
   </header>
 
@@ -61,12 +62,12 @@
   <section class="card introCard">
     <div class="icon">🏛</div>
     <h1>Большое ограбление</h1>
-    <div class="notice"><b>Взлом теперь требует действий, а не удержания кнопки.</b><br>Управляй механизмами пальцем, следи за шумом и успей сбежать после крупной добычи.</div>
+    <div class="notice"><b>Хранилище получило объёмные стены и новые механики сейфов.</b><br>Штифты и кодовый диск теперь управляются простыми точными нажатиями.</div>
     <div class="featureGrid">
-      <div class="feature"><b>🛠 АКТИВНЫЙ ВЗЛОМ</b>Натяжение и штифты, перетаскивание пинов, электронные цепи и ручное вращение диска.</div>
-      <div class="feature"><b>🔊 ШУМ И ОХРАНА</b>Ошибки привлекают ближайшие камеры и резко повышают тревогу.</div>
-      <div class="feature"><b>🏅 КАЧЕСТВО ВЗЛОМА</b>Грязный, чистый, идеальный и мастерский результат дают разные бонусы.</div>
-      <div class="feature"><b>🚨 ФАЗА ПОБЕГА</b>После элитного сейфа камеры усиливаются, время сокращается и открывается маршрут к выходу.</div>
+      <div class="feature"><b>🏛 ОБЪЁМНОЕ ХРАНИЛИЩЕ</b>Псевдо‑3D стены, золотая отделка, глубокие тени и более выразительные помещения.</div>
+      <div class="feature"><b>🔩 ПОНЯТНЫЕ ШТИФТЫ</b>Индикатор двигается сам — фиксируй каждый штифт в зелёной зоне.</div>
+      <div class="feature"><b>🎯 АВТОМАТИЧЕСКИЙ ДИСК</b>Стрелка вращается сама. Тебе нужно только нажать в правильный момент.</div>
+      <div class="feature"><b>🤖 НОВАЯ ОХРАНА</b>Камеры, тяжёлые дроны и стражи получили разные силуэты и понятные сектора обзора.</div>
     </div>
     <button id="start" type="button">НАЧАТЬ ОГРАБЛЕНИЕ</button>
     <button class="secondary hidden" id="introToGames" type="button">В ИГРОВОЙ ЦЕНТР</button>
@@ -109,7 +110,7 @@
         <div class="safeHandle"></div>
       </div>
     </div>
-    <div class="crackInstruction" id="crackInstruction">Следуй механике выбранного сейфа.</div>
+    <div class="crackInstruction" id="crackInstruction">Следи за движущимся индикатором и нажимай в нужный момент.</div>
     <div class="crackGame" id="crackGame"></div>
     <div class="crackStats">
       <div><span>ПРОЧНОСТЬ ИНСТРУМЕНТА</span><div class="statbar durability"><i id="durabilityBar"></i></div></div>
@@ -119,6 +120,6 @@
   </section>
 </div>
 
-<script src="/games/heist/loader-v88.js?v=89"></script>
+<script src="/games/heist/loader-v90.js?v=90"></script>
 </body>
 </html>
