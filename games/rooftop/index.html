@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#080411">
   <title>Бег по крышам</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="/boss-app/assets/rooftop_v76/game.css?v=79">
+  <link rel="stylesheet" href="/boss-app/assets/rooftop_v76/game.css?v=80">
 </head>
 <body>
 <div class="app">
@@ -18,11 +18,10 @@
   <section class="stage" id="stage">
     <canvas id="game"></canvas>
     <div class="status"><span class="pill" id="timer">01:00</span><span class="pill" id="combo">СЕРИЯ ×1</span><span class="pill" id="lives">❤❤❤</span></div>
-    <div class="boss-alert" id="bossAlert">⚠ ЦЕНТР ВСЕЛЕННОЙ ГОТОВИТ УДАР</div>
+    <div class="boss-alert" id="bossAlert">⚠ ЦЕНТР ВСЕЛЕННОЙ ЗАРЯЖАЕТ УДАР</div>
     <div class="power" id="power"><i id="powerIcon">⚡</i><span id="powerText">СПОСОБНОСТЬ ГОТОВА</span></div>
   </section>
-  <section class="controls swipe-only">
-    <div class="gesture-hint"><span><b>↔</b> СМЕНА ПОЛОСЫ</span><span><b>↑</b> ПРЫЖОК</span><span><b>↓</b> ПОДКАТ</span></div>
+  <section class="controls">
     <button class="control main" id="ability" type="button">✨ СПОСОБНОСТЬ</button>
   </section>
 </div>
@@ -30,11 +29,11 @@
   <section class="card">
     <div class="intro-art" id="introArt"><img class="intro-boss" id="introBoss" alt=""><img class="intro-hero" id="introHero" alt=""></div>
     <h1>Бег по крышам</h1>
-    <div class="notice"><b>✨ Reality 79.</b><br>Честные прыжки, чистое управление свайпами, стабильный размер предметов и новый опасный Центр Вселенной.</div>
-    <p>Перед ударом опасные полосы подсвечиваются розовым, а безопасная — голубым. Меняй полосу, перепрыгивай низкие препятствия и уходи под дроны подкатом.</p>
+    <div class="notice"><b>✨ Reality 80 — визуальный апгрейд.</b><br>Мокрая неоновая крыша, живой город, новые материалы, контактный свет, частицы, следы движения и усиленный Центр Вселенной.</div>
+    <p>Свайпами меняй полосу, прыгай через низкие препятствия и уходи под дроны. Перед ударом босса опасные полосы подсветятся розовым, безопасная — голубым.</p>
     <div class="guide">
-      <div><b>↔ Свайп</b>смена полосы</div><div><b>↑ Свайп вверх</b>честный прыжок</div>
-      <div><b>↓ Свайп вниз</b>подкат под дроном</div><div><b>✨ Кнопка</b>активация усиления</div>
+      <div><b>↔ Свайп</b>смена полосы</div><div><b>↑ Свайп вверх</b>прыжок</div>
+      <div><b>↓ Свайп вниз</b>подкат</div><div><b>✨ Кнопка</b>усиление</div>
     </div>
     <button id="start" class="loading" type="button">ПОДГОТОВКА ЗАБЕГА…</button>
     <div class="error" id="startError"></div>
@@ -55,8 +54,8 @@
     <button class="secondary" id="toGames" type="button">В ИГРОВОЙ ЦЕНТР</button>
   </section>
 </div>
-<script src="/boss-app/assets/rooftop_v76/prelude.js?v=79"></script>
-<script src="/boss-app/assets/rooftop_v76/game-core.js?v=79"></script>
-<script src="/boss-app/assets/rooftop_v76/game-render.js?v=79"></script>
+<script src="/boss-app/assets/rooftop_v76/prelude.js?v=80"></script>
+<script src="/boss-app/assets/rooftop_v76/game-core.js?v=80"></script>
+<script src="/boss-app/assets/rooftop_v76/game-render.js?v=80"></script>
 </body>
 </html>
