@@ -7,7 +7,7 @@
   <title>Ночной охотник</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="/games/game-attempts-v89.js?v=89"></script>
-  <link rel="stylesheet" href="/games/night-hunter/style.css?v=93">
+  <link rel="stylesheet" href="/games/night-hunter/style.css?v=94">
 </head>
 <body>
   <main class="app">
@@ -18,33 +18,40 @@
     </header>
 
     <section class="stage" id="stage">
-      <canvas id="game" aria-label="Тёмный коридор исследовательского комплекса"></canvas>
+      <canvas id="game" aria-label="Исследовательский комплекс с видом сверху"></canvas>
+      <canvas id="minimap" class="minimap" aria-hidden="true"></canvas>
       <div class="scanlines"></div>
       <div class="vignette"></div>
+
       <div class="hud top-hud">
         <span class="pill danger" id="timer">02:30</span>
-        <span class="pill" id="objective">КЛЮЧ-КАРТЫ 0/3</span>
+        <span class="pill objective" id="objective">КЛЮЧ-КАРТЫ 0/3</span>
         <span class="pill lives" id="lives">♥♥♥</span>
       </div>
-      <div class="hud bottom-hud">
+
+      <div class="status-panel">
         <div class="meter"><span>ФОНАРЬ</span><i><b id="batteryBar"></b></i><strong id="battery">100%</strong></div>
         <div class="meter threat"><span>ОХОТА</span><i><b id="threatBar"></b></i><strong id="threat">ТИХО</strong></div>
       </div>
-      <div class="warning" id="warning">НЕ ДВИГАЙСЯ</div>
-      <div class="caption" id="caption">В комплексе отключено питание. Найди три ключ-карты.</div>
-      <button class="flash-toggle" id="flashlight" type="button" aria-label="Включить или выключить фонарь">🔦</button>
-    </section>
 
-    <section class="controls">
-      <div class="move-row">
-        <button class="control" id="left" type="button"><span>◀</span><small>НАЛЕВО</small></button>
-        <button class="control primary" id="search" type="button"><span>◎</span><small>ОСМОТРЕТЬ</small></button>
-        <button class="control" id="right" type="button"><span>▶</span><small>НАПРАВО</small></button>
+      <div class="warning" id="warning">ОН ВИДИТ ТЕБЯ</div>
+      <div class="caption" id="caption">Исследуй комплекс и найди три ключ-карты.</div>
+      <div class="interaction-progress hidden" id="interactionProgress"><i id="interactionBar"></i><b id="interactionText">ОБЫСК</b></div>
+      <div class="context-hint hidden" id="contextHint">ПОДОЙДИ БЛИЖЕ</div>
+
+      <div class="joystick" id="joystick" aria-label="Джойстик движения">
+        <div class="joystick-ring"></div>
+        <div class="joystick-knob" id="joystickKnob"></div>
+        <small>ТИХО · БЕГ</small>
       </div>
-      <div class="action-row">
-        <button class="action" id="hide" type="button">▣ СПРЯТАТЬСЯ</button>
-        <button class="action" id="distract" type="button">◉ ОТВЛЕЧЬ <b id="bottles">2</b></button>
-        <button class="action hot" id="burst" type="button">✦ ВСПЫШКА</button>
+
+      <div class="actions">
+        <button class="action primary" id="interact" type="button"><span>✋</span><b id="interactLabel">ДЕЙСТВИЕ</b></button>
+        <div class="action-grid">
+          <button class="action compact" id="flashlight" type="button"><span>🔦</span><b>ФОНАРЬ</b></button>
+          <button class="action compact" id="distract" type="button"><span>●</span><b>БРОСИТЬ <em id="bottles">2</em></b></button>
+          <button class="action compact hot" id="burst" type="button"><span>✦</span><b>ВСПЫШКА</b></button>
+        </div>
       </div>
     </section>
   </main>
@@ -52,20 +59,20 @@
   <div class="overlay" id="intro">
     <section class="card intro-card">
       <div class="intro-art" aria-hidden="true">
-        <div class="door"></div><div class="hunter"></div><div class="beam"></div>
+        <div class="map-lines"></div><div class="hero-dot"></div><div class="hunter-shadow"></div><div class="beam"></div>
       </div>
-      <div class="eyebrow">СЮЖЕТНЫЙ ХОРРОР · REALITY 93</div>
+      <div class="eyebrow">2D SURVIVAL HORROR · REALITY 94</div>
       <h1>Ночной охотник</h1>
-      <p class="lead">Аварийные двери закрылись. Объект покинул камеру содержания. Он почти слеп, но слышит каждый шаг.</p>
+      <p class="lead">Теперь это единый этаж комплекса. Ходи джойстиком, заходи в комнаты, осматривай предметы и прячься от существа, которое действительно перемещается по карте.</p>
       <div class="mission">
-        <div><b>1</b><span>Найди три ключ-карты</span></div>
-        <div><b>2</b><span>Запусти генератор</span></div>
-        <div><b>3</b><span>Доберись до лифта</span></div>
+        <div><b>1</b><span>Исследуй шесть помещений</span></div>
+        <div><b>2</b><span>Найди три ключ-карты</span></div>
+        <div><b>3</b><span>Запусти генератор и лифт</span></div>
       </div>
       <div class="tips">
-        <span>🎧 Лучше играть в наушниках</span>
-        <span>🔦 Свет выдаёт твоё положение</span>
-        <span>🤫 Шум привлекает охотника</span>
+        <span>🎮 Наклон джойстика задаёт скорость</span>
+        <span>🎧 Шаги охотника слышны по сторонам</span>
+        <span>🔦 Вспышка действует только перед героем</span>
       </div>
       <button class="start loading" id="start" type="button">ПОДГОТОВКА КОМПЛЕКСА…</button>
       <button class="demo hidden" id="demo" type="button">ЗАПУСТИТЬ ДЕМО</button>
@@ -91,6 +98,6 @@
     </section>
   </div>
 
-  <script src="/games/night-hunter/game.js?v=93"></script>
+  <script src="/games/night-hunter/game.js?v=94"></script>
 </body>
 </html>
