@@ -34,9 +34,12 @@ def install_inline_webapp_fix(core: Any) -> None:
         core.WEBAPP_DIR / "raid-final-v25.css",
         core.WEBAPP_DIR / "raid-victory-v59.css",
         core.WEBAPP_DIR / "raid-v61.css",
-        # Reality 65 загружен последним, чтобы заголовок отряда оставался
-        # геометрически по центру независимо от кнопки выбора героя.
+        # Reality 65 загружен после старых слоёв, чтобы заголовок отряда
+        # оставался геометрически по центру независимо от кнопки выбора героя.
         core.WEBAPP_DIR / "raid-v65-balance-layout.css",
+        # Reality 89 финально применяет новый компактный экран боя поверх
+        # старых слоёв и убирает наложение фазы, таймера и эффектов на босса.
+        core.WEBAPP_DIR / "raid-interface-v19.css",
     ]
     js_paths = [
         core.WEBAPP_DIR / "fixed-combat-v18.js",
@@ -54,6 +57,10 @@ def install_inline_webapp_fix(core: Any) -> None:
         core.WEBAPP_DIR / "raid-v64-direct-tree.js",
         # Reality 65 актуализирует в справке 100 000 HP и новый баланс давления.
         core.WEBAPP_DIR / "raid-v65-balance-layout.js",
+        # Гарантированно подключаем исправленные подсказки и финальный контроллер
+        # интерфейса без отдельной загрузки файлов Telegram WebView.
+        core.WEBAPP_DIR / "battle-fx.js",
+        core.WEBAPP_DIR / "raid-interface-v19.js",
     ]
 
     async def webapp_index_with_inline_combat(request: Any):
@@ -62,14 +69,29 @@ def install_inline_webapp_fix(core: Any) -> None:
             css = "\n\n".join(path.read_text(encoding="utf-8") for path in css_paths)
             script = "\n\n".join(path.read_text(encoding="utf-8") for path in js_paths)
 
+            # Предупреждение Reality 61 должно появляться только за три секунды,
+            # а не занимать портрет босса на протяжении семи секунд.
+            script = script.replace(
+                'id="raidWarningTimeV61">7</strong>',
+                'id="raidWarningTimeV61">3</strong>',
+            )
+            script = script.replace(
+                "const visible=active&&seconds<=7;",
+                "const visible=active&&seconds<=3;",
+            )
+            script = script.replace(
+                "За 7 секунд до удара показывается его название и цель.",
+                "За 3 секунды до удара показывается его название и цель.",
+            )
+
             page = re.sub(
-                r"\s*<link[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|action-card-ego-v21|action-card-defense-v21|action-card-heal-v21|action-cards-layout-v21|raid-hotfix-v22|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v65-balance-layout)\.css[^>]*>",
+                r"\s*<link[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|action-card-ego-v21|action-card-defense-v21|action-card-heal-v21|action-cards-layout-v21|raid-hotfix-v22|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v65-balance-layout|raid-interface-v19)\.css[^>]*>",
                 "",
                 page,
                 flags=re.IGNORECASE,
             )
             page = re.sub(
-                r"\s*<script[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v64-direct-tree|raid-v65-balance-layout)\.js[^>]*></script>",
+                r"\s*<script[^>]+(?:battle-fx|fixed-combat-v18|raid-ux-v19|raid-pages-v20|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v64-direct-tree|raid-v65-balance-layout|raid-interface-v19)\.js[^>]*></script>",
                 "",
                 page,
                 flags=re.IGNORECASE,
@@ -78,7 +100,7 @@ def install_inline_webapp_fix(core: Any) -> None:
             # app.js обновлял таймеры пять раз в секунду. Оставляем один тик в
             # секунду: цифры точные, но интерфейс не получает лишних обновлений.
             prelude = """
-<script id="raid-ui-v65-prelude">
+<script id="raid-ui-v89-prelude">
 (function(){
   var nativeSetInterval=window.setInterval.bind(window);
   window.setInterval=function(callback,delay){
@@ -90,12 +112,12 @@ def install_inline_webapp_fix(core: Any) -> None:
 </script>
 """
             inline_style = (
-                "\n<style id=\"raid-ui-v65-inline\">\n"
+                "\n<style id=\"raid-ui-v89-inline\">\n"
                 + css
                 + "\n</style>\n"
             )
             inline_script = (
-                "\n<script id=\"raid-ui-v65-inline-script\">\n"
+                "\n<script id=\"raid-ui-v89-inline-script\">\n"
                 + script
                 + "\n</script>\n"
             )
@@ -110,7 +132,7 @@ def install_inline_webapp_fix(core: Any) -> None:
                     "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
                     "Pragma": "no-cache",
                     "Expires": "0",
-                    "X-Mini-App-UI": "raid-ui-v65-inline",
+                    "X-Mini-App-UI": "raid-ui-v89-inline",
                 },
             )
         except Exception:
