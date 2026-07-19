@@ -8,9 +8,10 @@ from aiohttp import web
 import game_center_v75 as base
 
 
-VERSION = "Reality 94 · Свободное исследование"
+VERSION = "Reality 95 · Живая охота"
 GAME_KEY = "night-hunter"
 GAME_PATH = Path(__file__).resolve().parent / "games" / GAME_KEY
+PART_FILENAMES = tuple(f"game-v95-{letter}.part" for letter in "abcdefg")
 
 
 def install_night_hunter_v93(core: Any) -> None:
@@ -68,6 +69,12 @@ def install_night_hunter_v93(core: Any) -> None:
     async def night_script(_: web.Request) -> web.StreamResponse:
         return file_response(GAME_PATH / "game.js")
 
+    def make_part_handler(filename: str):
+        async def night_part(_: web.Request) -> web.StreamResponse:
+            return file_response(GAME_PATH / filename)
+
+        return night_part
+
     original_start_server = core.start_webapp_server
 
     async def start_server_with_night_hunter(bot: Any):
@@ -83,6 +90,11 @@ def install_night_hunter_v93(core: Any) -> None:
                 app.router.add_get(path, night_index)
             app.router.add_get("/games/night-hunter/style.css", night_style)
             app.router.add_get("/games/night-hunter/game.js", night_script)
+            for filename in PART_FILENAMES:
+                app.router.add_get(
+                    f"/games/night-hunter/{filename}",
+                    make_part_handler(filename),
+                )
             return app
 
         core.web.Application = application_factory
