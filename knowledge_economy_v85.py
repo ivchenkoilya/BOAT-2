@@ -24,7 +24,7 @@ BOSS_WEEKLY_CAP = 15
 BOSS_FINISHER_TREE = 1
 
 GAME_WORDS = ("coin", "dice", "roulette", "game", "fate", "heist", "rooftop", "roof", "casino", "bet")
-TASK_WORDS = ("task", "mission", "action")
+TASK_WORDS = ("task", "mission")
 ACTIVITY_WORDS = ("message", "reaction", "voice", "reply", "activity", "media", "sticker")
 EXCLUDED_WORDS = ("admin", "transfer", "restore", "refund", "compensation", "hero_day", "sabotage", "impeachment", "rebellion", "boss")
 _guard: contextvars.ContextVar[bool] = contextvars.ContextVar("knowledge_v85_guard", default=False)
