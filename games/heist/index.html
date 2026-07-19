@@ -3,32 +3,29 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#08070c">
-  <title>Ограбление — Лабиринт влияния</title>
+  <meta name="theme-color" content="#090710">
+  <title>Ограбление хранилища</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="/games/heist/style-v84.css?v=84">
+  <link rel="stylesheet" href="/games/heist/style.css?v=85">
+  <link rel="stylesheet" href="/games/heist/enhance-v83.css?v=85">
 </head>
 <body>
 <div class="app" id="app">
-  <header class="topbar">
+  <header class="top">
     <button class="back" id="back" type="button">← ИГРЫ</button>
-    <div class="brand"><b>🏛 ОГРАБЛЕНИЕ</b><small>ЛАБИРИНТ ВЛИЯНИЯ</small></div>
+    <div class="title"><b>🏛 ОГРАБЛЕНИЕ</b><small>ЛАБИРИНТ ВЛИЯНИЯ</small></div>
     <div class="loot"><small>ДОБЫЧА</small><b id="loot">0</b></div>
   </header>
 
-  <section class="missionStrip" id="missionStrip">
-    <div class="phase"><small>ФАЗА</small><b id="phaseLabel">ПРОНИКНОВЕНИЕ</b></div>
-    <div class="mission"><small>ЗАДАНИЕ</small><b id="missionLabel">Подготовка операции…</b><i><span id="missionProgress"></span></i></div>
-    <button class="soundToggle" id="soundToggle" type="button" aria-label="Звук">🔊</button>
-  </section>
-
   <section class="stage" id="stage">
     <canvas id="game"></canvas>
-    <div class="lighting"></div>
-    <div class="hud">
+    <div class="lighting" aria-hidden="true"></div>
+    <div class="hud" id="hud">
       <div class="hudrow">
-        <span class="pill timer" id="timer">03:30</span>
-        <span class="pill" id="mapCode">КАРТА —</span>
+        <div class="hudcluster">
+          <span class="pill timer" id="timer">02:45</span>
+          <span class="pill" id="mapCode">КАРТА —</span>
+        </div>
         <span class="pill" id="safes">СЕЙФЫ 0/0</span>
       </div>
       <div class="alarmCard">
@@ -36,78 +33,91 @@
         <div class="alarm"><i id="alarmBar"></i></div>
       </div>
     </div>
-    <div class="phaseFlash" id="phaseFlash"></div>
-    <div class="alertBanner" id="alertBanner"></div>
-    <div class="zoneBanner" id="zoneBanner"></div>
-    <button class="minimapWrap" id="minimapWrap" type="button"><span>КАРТА</span><canvas id="miniMap"></canvas></button>
-    <div class="bagMeter"><span>МЕШОК</span><i><b id="bagBar"></b></i></div>
-    <div class="hint" id="hint">Найди первый сейф и начни ограбление</div>
+    <div class="alertBanner" id="alertBanner">КАМЕРА ФИКСИРУЕТ ДВИЖЕНИЕ</div>
+    <div class="zoneBanner" id="zoneBanner">ЗОЛОТОЙ СЕКТОР</div>
+    <div class="smokeStatus hidden" id="smokeStatus"><span>🌫 ДЫМ</span><b id="smokeTimer">5.5</b></div>
+    <button class="audioToggle" id="audioToggle" type="button" aria-label="Включить или выключить звук">🔊</button>
+    <button class="minimapWrap" id="minimapWrap" type="button" aria-label="Развернуть мини-карту">
+      <span>КАРТА</span><canvas class="minimap" id="miniMap"></canvas>
+    </button>
+    <div class="hint" id="hint">Исследуй хранилище и найди сейфы</div>
   </section>
 
-  <section class="controls">
+  <section class="controls" id="controls">
     <div class="joystick" id="joystick"><div class="joystickRing"></div><div class="knob" id="knob"></div></div>
     <div class="actions">
-      <button class="action main search" id="interact" type="button">🔎 ИЩИ ЦЕЛЬ</button>
-      <div class="gadgetRow">
-        <button class="action gadget" id="gadget1" type="button">🌫 ДЫМ ×2</button>
-        <button class="action gadget" id="gadget2" type="button">⚡ ИМПУЛЬС ×1</button>
-      </div>
+      <button class="action main search" id="interact" type="button">🔎 ПОДОЙДИ К СЕЙФУ</button>
+      <button class="action" id="smoke" type="button">🌫 ДЫМОВАЯ ЗАВЕСА</button>
     </div>
   </section>
 </div>
 
+<div class="fxLayer" id="fxLayer" aria-hidden="true"></div>
+
 <div class="overlay" id="intro">
   <section class="card introCard">
-    <div class="introHead"><div class="icon">🏛</div><div><small>ОПЕРАЦИЯ</small><h1>Большое ограбление</h1></div></div>
-    <p>Каждая попытка создаёт новое хранилище с миссией, секретами, терминалами, вентиляцией и отдельной фазой побега.</p>
-    <div class="missionPreview"><small>ЗАДАНИЕ НА ПОПЫТКУ</small><b id="missionPreview">Будет выбрано случайно</b></div>
-    <h3>Выбери набор</h3>
-    <div class="loadouts" id="loadouts">
-      <button class="loadout selected" data-loadout="silent" type="button"><b>🤫 ТИХИЙ</b><span>3 дыма · меньше тревоги · широкий сектор взлома</span></button>
-      <button class="loadout" data-loadout="pro" type="button"><b>🧰 ПРОФИ</b><span>прочные инструменты · быстрые терминалы · сканер</span></button>
-      <button class="loadout" data-loadout="aggressive" type="button"><b>⚡ ШТУРМ</b><span>быстрый взлом · 2 импульса · больше риска</span></button>
+    <div class="icon">🏛</div>
+    <h1>Большое ограбление</h1>
+    <div class="notice"><b>Каждая попытка — новое хранилище.</b><br>Сейфы доступны, камеры не видят сквозь стены, а музыка и звуки реагируют на уровень тревоги.</div>
+    <div class="featureGrid">
+      <div class="feature"><b>🔐 РЕАЛЬНЫЙ ВЗЛОМ</b>Отмычка, штифты, улучшенный кодовый диск и многоэтапное хранилище.</div>
+      <div class="feature"><b>🎧 ЖИВОЙ ЗВУК</b>Атмосферная музыка, щелчки замков, сирена, дым и награды.</div>
+      <div class="feature"><b>🏛 ТЕМАТИЧЕСКИЕ ЗОНЫ</b>Золото, серверные, пост охраны, лазеры и аварийные помещения.</div>
+      <div class="feature"><b>💰 РАЗНАЯ ДОБЫЧА</b>Обычные, усиленные, элитные и главный легендарный сейф.</div>
     </div>
-    <div class="progressCard"><span>УРОВЕНЬ МЕДВЕЖАТНИКА</span><b id="profileLevel">1</b><i><em id="profileXp"></em></i><small id="profileBonus">Без постоянных бонусов</small></div>
-    <button id="start" type="button">НАЧАТЬ ОПЕРАЦИЮ</button>
-    <button class="secondary" id="introToGames" type="button">В ИГРОВОЙ ЦЕНТР</button>
+    <button id="start" type="button">НАЧАТЬ ОГРАБЛЕНИЕ</button>
+    <button class="secondary hidden" id="introToGames" type="button">В ИГРОВОЙ ЦЕНТР</button>
     <div class="error" id="startError"></div>
   </section>
 </div>
 
 <div class="overlay hidden" id="finish">
   <section class="card result" id="result">
-    <div class="grade" id="runGrade">A</div>
-    <h1 id="resultTitle">Операция завершена</h1>
+    <div class="icon">💰</div>
+    <h1 id="resultTitle">Ограбление завершено</h1>
     <div class="rows">
       <div class="metric"><small>СОБРАНО</small><b id="collected">0</b></div>
       <div class="metric"><small>СОХРАНЕНО</small><b id="secured">0</b></div>
       <div class="metric"><small>СЕЙФЫ</small><b id="opened">0/0</b></div>
-      <div class="metric"><small>ИДЕАЛЬНЫЕ ВЗЛОМЫ</small><b id="perfectHacks">0</b></div>
-      <div class="metric"><small>СЕКРЕТЫ</small><b id="secretsFound">0/0</b></div>
       <div class="metric"><small>МАКС. ТРЕВОГА</small><b id="maxAlarm">0%</b></div>
     </div>
     <div class="reward" id="reward">Сохраняем результат…</div>
-    <div class="xpReward" id="xpReward"></div>
     <button id="again" type="button">НОВАЯ ПОПЫТКА — НОВАЯ КАРТА</button>
     <button class="secondary" id="toGames" type="button">В ИГРОВОЙ ЦЕНТР</button>
   </section>
 </div>
 
-<div class="crackOverlay hidden" id="crackOverlay">
+<div class="crackOverlay hidden" id="crackOverlay" role="dialog" aria-modal="true">
   <div class="crackBackdrop"></div>
   <section class="crackPanel" id="crackPanel">
-    <header class="crackHeader"><div><small id="crackType">МЕХАНИЧЕСКИЙ СЕЙФ</small><h2 id="crackTitle">Вскрытие сейфа</h2></div><button id="crackAbort" type="button">✕</button></header>
-    <div class="crackMeta"><span id="crackStageLabel">ЭТАП 1/1</span><span id="crackDifficulty">СЛОЖНОСТЬ: НИЗКАЯ</span></div>
-    <div class="safeFocus"><div class="safeDoor" id="safeDoor"><i class="bolt b1"></i><i class="bolt b2"></i><i class="bolt b3"></i><i class="bolt b4"></i><div class="safeDial" id="safeDial"><span></span></div><div class="safeHandle"></div></div></div>
-    <div class="crackInstruction" id="crackInstruction"></div>
+    <header class="crackHeader">
+      <div><small id="crackType">МЕХАНИЧЕСКИЙ СЕЙФ</small><h2 id="crackTitle">Вскрытие замка</h2></div>
+      <button id="crackAbort" class="crackAbort" type="button">✕</button>
+    </header>
+    <div class="crackMeta">
+      <span id="crackStageLabel">ЭТАП 1/1</span>
+      <span id="crackDifficulty">СЛОЖНОСТЬ: НИЗКАЯ</span>
+    </div>
+    <div class="safeFocus" id="safeFocus">
+      <div class="safeDoor" id="safeDoor">
+        <i class="bolt b1"></i><i class="bolt b2"></i><i class="bolt b3"></i><i class="bolt b4"></i>
+        <div class="safeDial" id="safeDial"><span></span></div>
+        <div class="safeKeyhole" id="safeKeyhole"></div>
+        <div class="safeHandle"></div>
+      </div>
+    </div>
+    <div class="crackInstruction" id="crackInstruction">Найди правильный угол отмычки и поверни замок.</div>
     <div class="crackGame" id="crackGame"></div>
-    <div class="crackStats"><div><span>ИНСТРУМЕНТ</span><i class="statbar durability"><b id="durabilityBar"></b></i></div><div><span>ПРОГРЕСС</span><i class="statbar progress"><b id="crackProgressBar"></b></i></div></div>
-    <div class="crackMessage" id="crackMessage">Ошибки создают шум и повышают тревогу.</div>
+    <div class="crackStats">
+      <div><span>ПРОЧНОСТЬ ИНСТРУМЕНТА</span><div class="statbar durability"><i id="durabilityBar"></i></div></div>
+      <div><span>ПРОГРЕСС ВЗЛОМА</span><div class="statbar progress"><i id="crackProgressBar"></i></div></div>
+    </div>
+    <div class="crackMessage" id="crackMessage">Работай тихо — ошибки повышают тревогу.</div>
   </section>
 </div>
 
-<div class="tutorial hidden" id="tutorial"><div class="tutorialBubble"><small>ОБУЧЕНИЕ</small><b id="tutorialTitle"></b><p id="tutorialText"></p><button id="tutorialSkip" type="button">ПРОПУСТИТЬ</button></div></div>
-
-<script src="/games/heist/game-v84.js?v=84"></script>
+<script src="/games/heist/pre-v83.js?v=85"></script>
+<script src="/games/heist/game.js?v=85"></script>
+<script src="/games/heist/enhance-v83.js?v=85"></script>
 </body>
 </html>
