@@ -4,9 +4,22 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#090713">
-  <title>Админ-центр Reality 76</title>
-  <link rel="stylesheet" href="/admin-v76/admin.css?v=76">
+  <title>Админ-центр Reality 89</title>
+  <link rel="stylesheet" href="/admin-v76/admin.css?v=89">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    .v89-attempt-row{display:grid;grid-template-columns:1.15fr .85fr;gap:8px}
+    .v89-attempt-row select,.v89-attempt-row input{width:100%;min-height:48px;border:1px solid #493463;background:#0b0812;color:var(--text);border-radius:13px;padding:0 12px;outline:none}
+    .v89-preset-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+    .v89-preset-grid button{min-height:44px;border:1px solid #4a3560;border-radius:12px;background:linear-gradient(180deg,#281c39,#171022);color:var(--text);font-weight:900}
+    .v89-note{margin:10px 2px 0;color:var(--muted);font-size:10px;line-height:1.5}
+    .v89-note b{color:var(--gold)}
+    .v89-limit-badge{display:inline-flex;margin-top:7px;padding:4px 7px;border:1px solid #7856a5;border-radius:999px;color:#e5c9ff;background:#2a1740;font-size:8px;font-weight:900;letter-spacing:.08em}
+    .v89-source-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .v89-source{border:1px solid #382944;border-radius:13px;padding:10px;background:#0f0b17;min-width:0}
+    .v89-source span{font-size:18px}.v89-source small,.v89-source b,.v89-source em{display:block}
+    .v89-source small{color:var(--muted);font-size:9px;margin-top:5px}.v89-source b{font-size:15px;margin-top:2px}.v89-source em{font-style:normal;color:var(--gold);font-size:8px;margin-top:3px}
+  </style>
 </head>
 <body>
   <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
@@ -27,7 +40,7 @@
           <span class="target-text"><small>Участник</small><b id="targetName">Не выбран</b><em id="targetMeta">Нажми, чтобы выбрать</em></span>
           <span class="target-arrow">›</span>
         </button>
-        <div class="connection-row"><span id="connectionState">Подключение…</span><strong id="versionText">Reality 76</strong></div>
+        <div class="connection-row"><span id="connectionState">Подключение…</span><strong id="versionText">Reality 89</strong></div>
       </section>
     </header>
 
@@ -48,7 +61,7 @@
             <button data-action="chat_profiles_recalculate">🧮 Пересчитать профили</button>
             <button data-action="database_check">🩺 Проверить базу</button>
             <button data-action="game_clear_stuck_chat" data-api="games">🎮 Закрыть зависшие игры</button>
-            <button data-confirm-action="game_attempts_reset_chat" data-api="games" data-confirm-title="Сбросить попытки всей беседы?" data-confirm-text="Все участники снова получат по три попытки в каждой игре сегодня.">🔄 Сбросить игровые попытки</button>
+            <button data-confirm-action="game_attempts_reset_chat" data-api="games" data-confirm-title="Сбросить попытки всей беседы?" data-confirm-text="Все участники снова получат базовые попытки в каждой игре сегодня.">🔄 Сбросить игровые попытки</button>
             <button class="danger-soft" data-confirm-action="chat_stats_reset" data-confirm-title="Сбросить статистику беседы?" data-confirm-text="Показатели активности всех участников будут обнулены. Влияние останется.">🧹 Сбросить статистику</button>
           </div>
         </article>
@@ -108,7 +121,7 @@
           <div class="action-grid two">
             <button data-action="game_sessions_close" data-api="games">⏹ Закрыть сессии участника</button>
             <button data-action="game_clear_stuck_chat" data-api="games">🧯 Закрыть зависшие в чате</button>
-            <button data-confirm-action="game_attempts_reset" data-api="games" data-confirm-title="Сбросить попытки участника?" data-confirm-text="У выбранного участника снова появятся попытки в обеих играх.">🔄 Сбросить попытки участника</button>
+            <button data-confirm-action="game_attempts_reset" data-api="games" data-confirm-title="Сбросить попытки участника?" data-confirm-text="У выбранного участника снова появятся базовые попытки в обеих играх.">🔄 Сбросить попытки участника</button>
             <button class="danger-soft" data-confirm-action="game_attempts_reset_chat" data-api="games" data-confirm-title="Сбросить попытки всей беседы?" data-confirm-text="Все участники снова смогут играть сегодня.">👥 Сбросить попытки чата</button>
           </div>
         </article>
@@ -161,7 +174,7 @@
   </nav>
 
   <div class="toast" id="toast"></div>
-  <div class="loading" id="loading"><div class="spinner"></div><b>Загрузка Reality 76</b><span>Синхронизируем участников, игры и древо</span></div>
+  <div class="loading" id="loading"><div class="spinner"></div><b>Загрузка Reality 89</b><span>Синхронизируем участников, игры и древо</span></div>
 
   <section class="modal" id="modal" aria-hidden="true">
     <div class="modal-card">
@@ -174,6 +187,7 @@
     </div>
   </section>
 
-  <script src="/admin-v76/admin.js?v=76"></script>
+  <script src="/admin-v89/admin-v89.js?v=89"></script>
+  <script src="/admin-v76/admin.js?v=89"></script>
 </body>
 </html>
