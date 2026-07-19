@@ -106,6 +106,9 @@ def install_heist_asset_routes_v78(core: Any) -> None:
     async def heist_v91_patch(_: web.Request) -> web.StreamResponse:
         return file_response(HEIST_DIR / "patch-v91.js")
 
+    async def heist_v91_visual_patch(_: web.Request) -> web.StreamResponse:
+        return file_response(HEIST_DIR / "patch-v91-visual.js")
+
     async def heist_v91_polish_style(_: web.Request) -> web.StreamResponse:
         return file_response(HEIST_DIR / "polish-v91.css")
 
@@ -143,6 +146,7 @@ def install_heist_asset_routes_v78(core: Any) -> None:
             app.router.add_get("/games/heist/polish-v90.css", heist_v90_polish_style)
             app.router.add_get("/games/heist/loader-v91.js", heist_v91_loader)
             app.router.add_get("/games/heist/patch-v91.js", heist_v91_patch)
+            app.router.add_get("/games/heist/patch-v91-visual.js", heist_v91_visual_patch)
             app.router.add_get("/games/heist/polish-v91.css", heist_v91_polish_style)
             app.router.add_get("/games/heist/polish-v91.js", heist_v91_polish_script)
             return app
