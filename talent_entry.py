@@ -17,6 +17,7 @@ from admin_webapp_v62 import install_admin_webapp_v62
 from boss_upgrade_v52 import install_boss_upgrade_v52
 from economy_fate_ui_v74 import install_economy_fate_ui_v74
 from game_center_runtime_v75 import install_game_center_runtime_v75
+from hero_day_v77 import install_hero_day_v77
 from raid_assets_v58 import install_raid_assets
 from raid_balance_v58 import install_raid_balance_v58
 from raid_v59_fix import install_raid_v59_fix
@@ -127,6 +128,10 @@ install_talent_bonus_display_v73(core)
 # Reality 74 ставится после начислений: меняет пороги ролей, переносит старые
 # балансы, стабилизирует ветку Удачи и добавляет расчёт в Шар судьбы.
 install_economy_fate_ui_v74(core)
+# Reality 77 финально меняет механику Главного героя дня: +500 остаются
+# навсегда, снимается только звание, а временная боевая роль работает до
+# следующих выборов.
+install_hero_day_v77(core)
 
 # В main.py есть общий обработчик F.text, зарегистрированный раньше расширений.
 # Переносим команды древа, мастерства и игр в начало списка, чтобы общий
