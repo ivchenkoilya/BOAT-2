@@ -1,6 +1,7 @@
 import asyncio
 
 import main as core
+from about_admin_v76 import install_about_admin_v76
 from about_balance_v74 import install_about_balance_v74
 from about_bonus_v73 import install_about_bonus_v73
 from about_compact_v72 import install_about_compact_v72
@@ -11,6 +12,7 @@ from about_optimizer_v71 import install_about_optimizer_v71
 from about_recommendations_v67 import install_about_recommendations_v67
 from about_recommendations_v68 import install_about_recommendations_v68
 from about_updates import install_about_updates
+from admin_center_v76 import install_admin_center_v76
 from admin_webapp_v62 import install_admin_webapp_v62
 from boss_upgrade_v52 import install_boss_upgrade_v52
 from economy_fate_ui_v74 import install_economy_fate_ui_v74
@@ -86,8 +88,9 @@ install_talent_optimizer_v71(core)
 # Сначала задаём базовый урон и тактические механики рейда. Reality 61
 # устанавливает предыдущий стабильный слой, Reality 64 выдаёт очки древа,
 # а Reality 65 поднимает HP до 100 000 и усложняет давление отряда.
-# Затем подключается защищённый админ-центр. Reality 75 добавляет игровые
-# маршруты поверх него, а Reality 63 финально добавляет маршруты древа.
+# Reality 62 оставляет совместимые старые API админки, Reality 75 добавляет
+# игровой центр, а Reality 76 поверх них подключает новый интерфейс и игровые
+# инструменты. Reality 63 затем финально добавляет маршруты древа.
 install_raid_balance_v58(core)
 install_raid_v59_fix(core)
 install_raid_v60(core)
@@ -98,6 +101,7 @@ install_raid_v64_direct_tree(core)
 install_raid_v65_balance(core)
 install_admin_webapp_v62(core)
 install_game_center_runtime_v75(core)
+install_admin_center_v76(core)
 install_talent_routes_v63(core)
 install_raid_v59_recovery(core)
 install_talent_rules(core)
@@ -115,6 +119,8 @@ install_about_bonus_v73(core)
 install_about_balance_v74(core)
 # Reality 75 добавляет две игровые Mini App и серверные награды.
 install_about_games_v75(core)
+# Reality 76 добавляет в «О боте» новый админ-центр и его игровые инструменты.
+install_about_admin_v76(core)
 install_inline_webapp_fix(core)
 # Reality 73 видит итоговое начисление после старых талантов.
 install_talent_bonus_display_v73(core)
