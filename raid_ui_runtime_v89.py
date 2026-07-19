@@ -49,11 +49,7 @@ def install_raid_ui_runtime_v89(core: Any) -> None:
         def application_factory(*args: Any, **kwargs: Any):
             app = previous_application(*args, **kwargs)
             for name in sorted(_ALLOWED_NAMES):
-                app.router.add_get(
-                    f"/boss-app/{name}",
-                    raid_asset,
-                    name=f"raid-ui-v89-{name}",
-                )
+                app.router.add_get(f"/boss-app/{name}", raid_asset)
             return app
 
         core.web.Application = application_factory
