@@ -4,6 +4,7 @@ import main as core
 from about_balance_v74 import install_about_balance_v74
 from about_bonus_v73 import install_about_bonus_v73
 from about_compact_v72 import install_about_compact_v72
+from about_games_v75 import install_about_games_v75
 from about_optimizer_v69 import install_about_optimizer_v69
 from about_optimizer_v70 import install_about_optimizer_v70
 from about_optimizer_v71 import install_about_optimizer_v71
@@ -13,6 +14,7 @@ from about_updates import install_about_updates
 from admin_webapp_v62 import install_admin_webapp_v62
 from boss_upgrade_v52 import install_boss_upgrade_v52
 from economy_fate_ui_v74 import install_economy_fate_ui_v74
+from game_center_runtime_v75 import install_game_center_runtime_v75
 from raid_assets_v58 import install_raid_assets
 from raid_balance_v58 import install_raid_balance_v58
 from raid_v59_fix import install_raid_v59_fix
@@ -84,8 +86,8 @@ install_talent_optimizer_v71(core)
 # Сначала задаём базовый урон и тактические механики рейда. Reality 61
 # устанавливает предыдущий стабильный слой, Reality 64 выдаёт очки древа,
 # а Reality 65 поднимает HP до 100 000 и усложняет давление отряда.
-# Затем подключается защищённый админ-центр, а финальный маршрут древа
-# возвращает весь расширенный интерфейс и API Reality 71.
+# Затем подключается защищённый админ-центр. Reality 75 добавляет игровые
+# маршруты поверх него, а Reality 63 финально добавляет маршруты древа.
 install_raid_balance_v58(core)
 install_raid_v59_fix(core)
 install_raid_v60(core)
@@ -95,6 +97,7 @@ install_raid_v61_safety(core)
 install_raid_v64_direct_tree(core)
 install_raid_v65_balance(core)
 install_admin_webapp_v62(core)
+install_game_center_runtime_v75(core)
 install_talent_routes_v63(core)
 install_raid_v59_recovery(core)
 install_talent_rules(core)
@@ -110,16 +113,18 @@ install_about_compact_v72(core)
 install_about_bonus_v73(core)
 # Reality 74 финально заменяет карточку актуальной экономикой.
 install_about_balance_v74(core)
+# Reality 75 добавляет две игровые Mini App и серверные награды.
+install_about_games_v75(core)
 install_inline_webapp_fix(core)
 # Reality 73 видит итоговое начисление после старых талантов.
 install_talent_bonus_display_v73(core)
-# Reality 74 ставится последним: меняет пороги ролей, переносит старые балансы,
-# стабилизирует ветку Удачи и добавляет отдельный расчёт в Шар судьбы.
+# Reality 74 ставится после начислений: меняет пороги ролей, переносит старые
+# балансы, стабилизирует ветку Удачи и добавляет расчёт в Шар судьбы.
 install_economy_fate_ui_v74(core)
 
 # В main.py есть общий обработчик F.text, зарегистрированный раньше расширений.
-# Переносим команды древа и мастерства в начало списка, чтобы общий обработчик
-# обычного текста не перехватывал их раньше специальных обработчиков.
+# Переносим команды древа, мастерства и игр в начало списка, чтобы общий
+# обработчик обычного текста не перехватывал их раньше специальных обработчиков.
 _priority_names = {
     "cmd_talents",
     "cmd_buffs",
@@ -127,6 +132,7 @@ _priority_names = {
     "cmd_builds",
     "cmd_active_talents",
     "cmd_community_tree",
+    "cmd_games",
 }
 _handlers = core.router.message.handlers
 _priority = [
