@@ -7,7 +7,7 @@
   <title>Ночной охотник</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="/games/game-attempts-v89.js?v=89"></script>
-  <link rel="stylesheet" href="/games/night-hunter/style.css?v=94">
+  <link rel="stylesheet" href="/games/night-hunter/style.css?v=95">
 </head>
 <body>
   <main class="app">
@@ -22,12 +22,15 @@
       <canvas id="minimap" class="minimap" aria-hidden="true"></canvas>
       <div class="scanlines"></div>
       <div class="vignette"></div>
+      <div class="danger-filter" id="dangerFilter"></div>
 
       <div class="hud top-hud">
         <span class="pill danger" id="timer">02:30</span>
         <span class="pill objective" id="objective">КЛЮЧ-КАРТЫ 0/3</span>
         <span class="pill lives" id="lives">♥♥♥</span>
       </div>
+
+      <div class="sound-indicator" id="soundIndicator"><i></i><b>ТИШИНА</b></div>
 
       <div class="status-panel">
         <div class="meter"><span>ФОНАРЬ</span><i><b id="batteryBar"></b></i><strong id="battery">100%</strong></div>
@@ -36,7 +39,6 @@
 
       <div class="warning" id="warning">ОН ВИДИТ ТЕБЯ</div>
       <div class="caption" id="caption">Исследуй комплекс и найди три ключ-карты.</div>
-      <div class="interaction-progress hidden" id="interactionProgress"><i id="interactionBar"></i><b id="interactionText">ОБЫСК</b></div>
       <div class="context-hint hidden" id="contextHint">ПОДОЙДИ БЛИЖЕ</div>
 
       <div class="joystick" id="joystick" aria-label="Джойстик движения">
@@ -53,6 +55,23 @@
           <button class="action compact hot" id="burst" type="button"><span>✦</span><b>ВСПЫШКА</b></button>
         </div>
       </div>
+
+      <div class="search-overlay hidden" id="searchOverlay">
+        <section class="search-panel" id="searchPanel">
+          <header class="search-head">
+            <div><small>БЫСТРЫЙ ОБЫСК</small><b id="searchLocation">ТЕРМИНАЛ</b></div>
+            <button id="cancelSearch" type="button" aria-label="Закрыть обыск">×</button>
+          </header>
+          <div class="search-target">
+            <span id="searchTargetIcon">▣</span>
+            <div><small>НАЙДИ ПРЕДМЕТ</small><b id="searchTargetName">КЛЮЧ-КАРТА</b></div>
+            <strong id="searchTime">5.0</strong>
+          </div>
+          <div class="search-timer"><i id="searchTimerBar"></i></div>
+          <div class="search-grid" id="searchGrid" aria-label="Предметы для обыска"></div>
+          <p id="searchHint">Охотник продолжает двигаться, пока ты роешься.</p>
+        </section>
+      </div>
     </section>
   </main>
 
@@ -61,18 +80,18 @@
       <div class="intro-art" aria-hidden="true">
         <div class="map-lines"></div><div class="hero-dot"></div><div class="hunter-shadow"></div><div class="beam"></div>
       </div>
-      <div class="eyebrow">2D SURVIVAL HORROR · REALITY 94</div>
+      <div class="eyebrow">2D SURVIVAL HORROR · REALITY 95</div>
       <h1>Ночной охотник</h1>
-      <p class="lead">Теперь это единый этаж комплекса. Ходи джойстиком, заходи в комнаты, осматривай предметы и прячься от существа, которое действительно перемещается по карте.</p>
+      <p class="lead">Исследуй единый этаж джойстиком. Охотник патрулирует коридоры, идёт на шум, обыскивает комнаты и начинает настоящую погоню, когда замечает тебя.</p>
       <div class="mission">
-        <div><b>1</b><span>Исследуй шесть помещений</span></div>
-        <div><b>2</b><span>Найди три ключ-карты</span></div>
+        <div><b>1</b><span>Ищи предметы внутри шкафов</span></div>
+        <div><b>2</b><span>Собери три ключ-карты</span></div>
         <div><b>3</b><span>Запусти генератор и лифт</span></div>
       </div>
       <div class="tips">
-        <span>🎮 Наклон джойстика задаёт скорость</span>
-        <span>🎧 Шаги охотника слышны по сторонам</span>
-        <span>🔦 Вспышка действует только перед героем</span>
+        <span>🎮 Слабый наклон — тихий шаг</span>
+        <span>🎧 Направление шагов видно и слышно</span>
+        <span>🔦 Вспышка действует только по направлению взгляда</span>
       </div>
       <button class="start loading" id="start" type="button">ПОДГОТОВКА КОМПЛЕКСА…</button>
       <button class="demo hidden" id="demo" type="button">ЗАПУСТИТЬ ДЕМО</button>
@@ -98,6 +117,6 @@
     </section>
   </div>
 
-  <script src="/games/night-hunter/game.js?v=94"></script>
+  <script src="/games/night-hunter/game.js?v=95"></script>
 </body>
 </html>
