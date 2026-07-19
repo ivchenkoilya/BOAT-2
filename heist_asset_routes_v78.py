@@ -24,7 +24,7 @@ def install_heist_asset_routes_v78(core: Any) -> None:
                 "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
                 "Pragma": "no-cache",
                 "Expires": "0",
-                "X-Heist-Assets": "reality-90",
+                "X-Heist-Assets": "reality-91",
             },
         )
 
@@ -100,6 +100,18 @@ def install_heist_asset_routes_v78(core: Any) -> None:
     async def heist_v90_polish_style(_: web.Request) -> web.StreamResponse:
         return file_response(HEIST_DIR / "polish-v90.css")
 
+    async def heist_v91_loader(_: web.Request) -> web.StreamResponse:
+        return file_response(HEIST_DIR / "loader-v91.js")
+
+    async def heist_v91_patch(_: web.Request) -> web.StreamResponse:
+        return file_response(HEIST_DIR / "patch-v91.js")
+
+    async def heist_v91_polish_style(_: web.Request) -> web.StreamResponse:
+        return file_response(HEIST_DIR / "polish-v91.css")
+
+    async def heist_v91_polish_script(_: web.Request) -> web.StreamResponse:
+        return file_response(HEIST_DIR / "polish-v91.js")
+
     async def start_server_with_heist_assets(bot: Any):
         previous_application = core.web.Application
 
@@ -129,6 +141,10 @@ def install_heist_asset_routes_v78(core: Any) -> None:
             app.router.add_get("/games/heist/patch-v90.js", heist_v90_patch)
             app.router.add_get("/games/heist/patch-v90-hotfix.js", heist_v90_hotfix)
             app.router.add_get("/games/heist/polish-v90.css", heist_v90_polish_style)
+            app.router.add_get("/games/heist/loader-v91.js", heist_v91_loader)
+            app.router.add_get("/games/heist/patch-v91.js", heist_v91_patch)
+            app.router.add_get("/games/heist/polish-v91.css", heist_v91_polish_style)
+            app.router.add_get("/games/heist/polish-v91.js", heist_v91_polish_script)
             return app
 
         core.web.Application = application_factory
