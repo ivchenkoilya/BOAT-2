@@ -24,7 +24,7 @@ def install_heist_asset_routes_v78(core: Any) -> None:
                 "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
                 "Pragma": "no-cache",
                 "Expires": "0",
-                "X-Heist-Assets": "reality-84",
+                "X-Heist-Assets": "reality-86",
             },
         )
 
@@ -49,6 +49,12 @@ def install_heist_asset_routes_v78(core: Any) -> None:
     async def heist_v84_script(_: web.Request) -> web.StreamResponse:
         return file_response(HEIST_DIR / "game-v84.js")
 
+    async def heist_v86_ui_style(_: web.Request) -> web.StreamResponse:
+        return file_response(HEIST_DIR / "ui-v86.css")
+
+    async def heist_v86_ui_script(_: web.Request) -> web.StreamResponse:
+        return file_response(HEIST_DIR / "ui-v86.js")
+
     async def start_server_with_heist_assets(bot: Any):
         previous_application = core.web.Application
 
@@ -61,6 +67,8 @@ def install_heist_asset_routes_v78(core: Any) -> None:
             app.router.add_get("/games/heist/enhance-v83.js", heist_enhance_script)
             app.router.add_get("/games/heist/style-v84.css", heist_v84_style)
             app.router.add_get("/games/heist/game-v84.js", heist_v84_script)
+            app.router.add_get("/games/heist/ui-v86.css", heist_v86_ui_style)
+            app.router.add_get("/games/heist/ui-v86.js", heist_v86_ui_script)
             return app
 
         core.web.Application = application_factory
