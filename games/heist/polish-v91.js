@@ -1,7 +1,7 @@
 (()=>{
   "use strict";
   const $=id=>document.getElementById(id);
-  const overlay=$("crackOverlay"),stats=document.querySelector(".crackStats"),reward=$("reward"),loot=$("loot");
+  const overlay=$("crackOverlay"),stats=document.querySelector(".crackStats"),reward=$("reward"),loot=$("loot"),crackGame=$("crackGame");
 
   const ensureStatValues=()=>{
     if(!stats)return;
@@ -12,14 +12,14 @@
       if(!label||!bar)return;
       let value=label.querySelector(".v91StatValue");
       if(!value){
-        value=document.createElement("b");value.className="v91StatValue";
         if(index===2&&$("noiseValue")){value=$("noiseValue");value.classList.add("v91StatValue");}
-        else label.appendChild(value);
+        else{value=document.createElement("b");value.className="v91StatValue";label.appendChild(value);}
       }
       const width=parseFloat(bar.style.width||getComputedStyle(bar).width)||0;
       const parentWidth=bar.parentElement?.getBoundingClientRect().width||100;
       const percent=bar.style.width.includes("%")?parseFloat(bar.style.width):width/Math.max(1,parentWidth)*100;
-      value.textContent=Math.round(Math.max(0,Math.min(100,percent)))+"%";
+      const text=Math.round(Math.max(0,Math.min(100,percent)))+"%";
+      if(value.textContent!==text)value.textContent=text;
       card.classList.toggle("danger",index===2&&percent>=65);
     });
   };
@@ -34,6 +34,16 @@
   if(overlay)new MutationObserver(syncOverlay).observe(overlay,{attributes:true,attributeFilter:["class"]});
   if(stats)new MutationObserver(ensureStatValues).observe(stats,{childList:true,subtree:true});
   syncOverlay();
+
+  if(crackGame){
+    const relayTimingState=()=>{
+      const shell=crackGame.querySelector(".v91PinGame");
+      if(!shell)return;
+      shell.classList.toggle("v91-hit",crackGame.classList.contains("v91-hit"));
+      shell.classList.toggle("v91-miss",crackGame.classList.contains("v91-miss"));
+    };
+    new MutationObserver(relayTimingState).observe(crackGame,{attributes:true,attributeFilter:["class"],childList:true});
+  }
 
   if(loot){
     let previous=loot.querySelector("b")?.textContent||loot.textContent;
