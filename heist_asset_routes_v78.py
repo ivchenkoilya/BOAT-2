@@ -24,7 +24,7 @@ def install_heist_asset_routes_v78(core: Any) -> None:
                 "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
                 "Pragma": "no-cache",
                 "Expires": "0",
-                "X-Heist-Assets": "reality-78",
+                "X-Heist-Assets": "reality-83",
             },
         )
 
@@ -34,6 +34,15 @@ def install_heist_asset_routes_v78(core: Any) -> None:
     async def heist_script(_: web.Request) -> web.StreamResponse:
         return file_response(HEIST_DIR / "game.js")
 
+    async def heist_enhance_style(_: web.Request) -> web.StreamResponse:
+        return file_response(HEIST_DIR / "enhance-v83.css")
+
+    async def heist_pre_script(_: web.Request) -> web.StreamResponse:
+        return file_response(HEIST_DIR / "pre-v83.js")
+
+    async def heist_enhance_script(_: web.Request) -> web.StreamResponse:
+        return file_response(HEIST_DIR / "enhance-v83.js")
+
     async def start_server_with_heist_assets(bot: Any):
         previous_application = core.web.Application
 
@@ -41,6 +50,9 @@ def install_heist_asset_routes_v78(core: Any) -> None:
             app = previous_application(*args, **kwargs)
             app.router.add_get("/games/heist/style.css", heist_style)
             app.router.add_get("/games/heist/game.js", heist_script)
+            app.router.add_get("/games/heist/enhance-v83.css", heist_enhance_style)
+            app.router.add_get("/games/heist/pre-v83.js", heist_pre_script)
+            app.router.add_get("/games/heist/enhance-v83.js", heist_enhance_script)
             return app
 
         core.web.Application = application_factory
