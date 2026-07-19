@@ -40,6 +40,7 @@ def install_inline_webapp_fix(core: Any) -> None:
         # Reality 89 финально применяет новый компактный экран боя поверх
         # старых слоёв и убирает наложение фазы, таймера и эффектов на босса.
         core.WEBAPP_DIR / "raid-interface-v19.css",
+        core.WEBAPP_DIR / "raid-hotfix-v89.css",
     ]
     js_paths = [
         core.WEBAPP_DIR / "fixed-combat-v18.js",
@@ -85,7 +86,7 @@ def install_inline_webapp_fix(core: Any) -> None:
             )
 
             page = re.sub(
-                r"\s*<link[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|action-card-ego-v21|action-card-defense-v21|action-card-heal-v21|action-cards-layout-v21|raid-hotfix-v22|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v65-balance-layout|raid-interface-v19)\.css[^>]*>",
+                r"\s*<link[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|action-card-ego-v21|action-card-defense-v21|action-card-heal-v21|action-cards-layout-v21|raid-hotfix-v22|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v65-balance-layout|raid-interface-v19|raid-hotfix-v89)\.css[^>]*>",
                 "",
                 page,
                 flags=re.IGNORECASE,
