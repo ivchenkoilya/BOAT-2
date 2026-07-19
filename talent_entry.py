@@ -44,6 +44,13 @@ from today_types_expansion import install_today_types
 from today_types_in_roles import install_types_in_roles
 from webapp_inline_fix import install_inline_webapp_fix
 
+# Новая шкала задаётся до установки остальных модулей, чтобы все игровые слои
+# использовали одинаковые пороги ролей уже во время своей инициализации.
+core.DUST_MIN_POINTS = 1000
+core.EXTRAS_MIN_POINTS = 3000
+core.SECONDARY_MIN_POINTS = 6000
+core.HERO_MIN_POINTS = 10000
+
 install_boss_upgrade_v52(core)
 install_raid_assets(core)
 install_today_types(core)
