@@ -29,32 +29,8 @@ function setupHelp(){document.addEventListener('click',e=>{
  if(type==='heal'){replay(document.querySelector('.fx-heal'),'play',850);document.querySelectorAll('.fighter').forEach(x=>replay(x,'heal-flash',720))}
  if(type==='defend')replay(document.querySelector('.fx-shield'),'play',800);
 });}
-function observePhase(){const phase=$('phaseText');if(!phase)return;new MutationObserver(()=>{const next=phase.textContent;if(next&&next!==lastPhase&&lastPhase){const overlay=$('phaseTransition');if(overlay){overlay.textContent=next==='ПОБЕДА'?'ЭГО РАЗРУШЕНО':`ФАЗА ${next}`;replay(overlay,'show',1500)}}lastPhase=next}).observe(phase,{childList:true,subtree:true,characterData:true})}
-function timerSeconds(value){const parts=String(value||'').trim().split(':').map(Number);if(parts.some(Number.isNaN))return 999;if(parts.length===3)return parts[0]*3600+parts[1]*60+parts[2];if(parts.length===2)return parts[0]*60+parts[1];return parts.length===1?parts[0]:999}
-function observeBossWarning(){const next=$('nextAction');if(!next)return;let warned=false;setInterval(()=>{const seconds=timerSeconds(next.textContent);if(seconds<=3&&seconds>=0&&!warned){warned=true;replay($('bossWarning'),'show',3100)}if(seconds>4)warned=false},200)}
-function clarifyBossEffects(){
- const panel=$('bossEffectsPanel');
- const toggle=$('bossEffectsToggle');
- const shield=$('shieldText');
- const effect=$('effectText');
- if(toggle){const label=toggle.querySelector('span');if(label)label.textContent='СТАТУС БОССА';toggle.setAttribute('aria-label','Показать активные эффекты босса')}
- if(panel&&!panel.querySelector('.effects-explainer')){
-  const title=document.createElement('div');
-  title.className='effects-explainer';
-  title.innerHTML='<b>ЧТО СЕЙЧАС ДЕЛАЕТ БОСС</b><small>Эти эффекты мешают вашему отряду</small>';
-  panel.prepend(title);
-  const items=panel.querySelectorAll('.effect-item');
-  if(items[0]){const b=items[0].querySelector('b'),s=items[0].querySelector('small');if(b)b.textContent='Сарказм';if(s)s.textContent='Ослабляет ваши обычные удары'}
-  if(items[1]){const b=items[1].querySelector('b');if(b)b.textContent='Щит ЧСВ'}
-  if(items[2]){const b=items[2].querySelector('b');if(b)b.textContent='Особый эффект'}
- }
- const rewrite=()=>{
-  if(shield){const raw=shield.textContent.trim();const match=raw.match(/(\d+)/);const next=raw==='разбит'?'Щит разрушен':match?`Ослабит ещё ${match[1]} ударов`:raw;if(next&&next!==raw)shield.textContent=next}
-  if(effect){const raw=effect.textContent.trim();let next=raw;if(/^антихил\s+/i.test(raw))next=`Лечение заблокировано · ${raw.replace(/^антихил\s+/i,'')}`;else if(raw==='атака сорвана')next='Следующая атака сорвана';else if(raw==='нет')next='Нет активного эффекта';if(next!==raw)effect.textContent=next}
- };
- rewrite();
- [shield,effect].filter(Boolean).forEach(node=>new MutationObserver(rewrite).observe(node,{childList:true,subtree:true,characterData:true}));
-}
+function observePhase(){const phase=$('phaseText');if(!phase)return;new MutationObserver(()=>{const next=phase.textContent;if(next&&next!==lastPhase&&lastPhase){const overlay=$('phaseTransition');overlay.textContent=next==='ПОБЕДА'?'ЭГО РАЗРУШЕНО':`ФАЗА ${next}`;replay(overlay,'show',1500)}lastPhase=next}).observe(phase,{childList:true,subtree:true,characterData:true})}
+function observeBossWarning(){const next=$('nextAction');if(!next)return;let warned=false;setInterval(()=>{const parts=next.textContent.split(':').map(Number);const seconds=parts.length===2?parts[0]*60+parts[1]:999;if(seconds<=5&&seconds>=0&&!warned){warned=true;replay($('bossWarning'),'show',3100)}if(seconds>7)warned=false},500)}
 function observeFighters(){const fighters=$('fighters');if(!fighters)return;let previous=new Map();new MutationObserver(()=>{document.querySelectorAll('.fighter').forEach((card,index)=>{const hp=card.querySelector('em')?.textContent||'';if(previous.has(index)&&previous.get(index)!==hp)replay(card,'hp-changed',520);previous.set(index,hp)})}).observe(fighters,{childList:true,subtree:true})}
-setupHelp();observePhase();observeBossWarning();clarifyBossEffects();observeFighters();
+setupHelp();observePhase();observeBossWarning();observeFighters();
 })();
