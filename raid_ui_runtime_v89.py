@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import mimetypes
 import re
-from pathlib import Path
 from typing import Any
 
 from aiohttp import web
@@ -45,17 +43,14 @@ def install_raid_ui_runtime_v89(core: Any) -> None:
         if not target.is_file():
             raise web.HTTPNotFound()
 
-        content_type, _ = mimetypes.guess_type(target.name)
-        headers = {
-            "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
-            "Pragma": "no-cache",
-            "Expires": "0",
-            "X-Raid-UI": "reality-89",
-        }
         return core.web.FileResponse(
             target,
-            headers=headers,
-            content_type=content_type,
+            headers={
+                "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+                "Pragma": "no-cache",
+                "Expires": "0",
+                "X-Raid-UI": "reality-89",
+            },
         )
 
     async def start_server_with_raid_assets(bot: Any):
