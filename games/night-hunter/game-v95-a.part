@@ -1,0 +1,155 @@
+(()=>{
+  'use strict';
+
+  const tg=window.Telegram?.WebApp;
+  tg?.ready();tg?.expand();tg?.setHeaderColor?.('#020608');tg?.setBackgroundColor?.('#020608');
+  const $=id=>document.getElementById(id);
+  const params=new URLSearchParams(location.search);
+  const chatId=params.get('chat_id')||'';
+  const headers={'Content-Type':'application/json','X-Telegram-Init-Data':tg?.initData||''};
+  const canvas=$('game'),ctx=canvas.getContext('2d',{alpha:false});
+  const minimap=$('minimap'),mctx=minimap.getContext('2d');
+  const lightCanvas=document.createElement('canvas'),lctx=lightCanvas.getContext('2d');
+  const roomName=$('roomName'),scoreEl=$('score'),timerEl=$('timer'),objectiveEl=$('objective'),livesEl=$('lives');
+  const batteryEl=$('battery'),batteryBar=$('batteryBar'),threatEl=$('threat'),threatBar=$('threatBar');
+  const caption=$('caption'),warning=$('warning'),dangerFilter=$('dangerFilter'),soundIndicator=$('soundIndicator');
+  const interactButton=$('interact'),interactLabel=$('interactLabel'),contextHint=$('contextHint');
+  const joystick=$('joystick'),joystickKnob=$('joystickKnob');
+  const searchOverlay=$('searchOverlay'),searchPanel=$('searchPanel'),searchGrid=$('searchGrid');
+  const searchLocation=$('searchLocation'),searchTargetIcon=$('searchTargetIcon'),searchTargetName=$('searchTargetName');
+  const searchTime=$('searchTime'),searchTimerBar=$('searchTimerBar'),searchHint=$('searchHint');
+
+  const WORLD={w:1200,h:900};
+  const rooms=[
+    {id:'security',name:'ПОСТ ОХРАНЫ',x:40,y:40,w:330,h:280,color:'#15383c',accent:'#72fff0'},
+    {id:'lab',name:'ЛАБОРАТОРИЯ',x:435,y:40,w:330,h:280,color:'#202b45',accent:'#9aa8ff'},
+    {id:'archive',name:'АРХИВ',x:830,y:40,w:330,h:280,color:'#3b3221',accent:'#ffc96b'},
+    {id:'med',name:'МЕДИЦИНСКИЙ БЛОК',x:40,y:580,w:330,h:280,color:'#1d3c37',accent:'#9df9df'},
+    {id:'elevator',name:'ЛИФТОВОЙ ХОЛЛ',x:435,y:580,w:330,h:280,color:'#26373c',accent:'#70ffc0'},
+    {id:'generator',name:'ГЕНЕРАТОРНАЯ',x:830,y:580,w:330,h:280,color:'#44321e',accent:'#ffb557'}
+  ];
+  const corridors=[
+    {x:350,y:145,w:105,h:72},{x:745,y:145,w:105,h:72},
+    {x:350,y:685,w:105,h:72},{x:745,y:685,w:105,h:72},
+    {x:165,y:300,w:82,h:300},{x:559,y:300,w:82,h:300},{x:954,y:300,w:82,h:300},
+    {x:165,y:414,w:871,h:78}
+  ];
+  const walkZones=[...rooms,...corridors];
+  const solids=[
+    {id:'sec-desk',type:'desk',x:112,y:93,w:185,h:58},
+    {id:'sec-locker',type:'locker',x:64,y:205,w:52,h:86},
+    {id:'sec-cabinet',type:'cabinet',x:302,y:70,w:39,h:96},
+    {id:'lab-capsule',type:'capsule',x:545,y:78,w:112,h:153},
+    {id:'lab-console-a',type:'console',x:458,y:244,w:88,h:38},
+    {id:'lab-console-b',type:'console',x:666,y:244,w:76,h:38},
+    {id:'archive-shelf-a',type:'shelf',x:866,y:79,w:236,h:31},
+    {id:'archive-shelf-b',type:'shelf',x:866,y:151,w:236,h:31},
+    {id:'archive-shelf-c',type:'shelf',x:866,y:223,w:172,h:31},
+    {id:'archive-locker',type:'locker',x:1091,y:211,w:48,h:80},
+    {id:'med-bed-a',type:'bed',x:139,y:628,w:164,h:47},
+    {id:'med-bed-b',type:'bed',x:139,y:754,w:164,h:47},
+    {id:'med-locker',type:'locker',x:63,y:686,w:51,h:87},
+    {id:'med-cabinet',type:'cabinet',x:305,y:608,w:38,h:96},
+    {id:'generator-main',type:'generator',x:900,y:630,w:182,h:111},
+    {id:'generator-locker',type:'locker',x:1087,y:748,w:50,h:85},
+    {id:'generator-crate',type:'crate',x:850,y:785,w:74,h:48},
+    {id:'elevator-console',type:'elevatorConsole',x:684,y:711,w:38,h:68}
+  ];
+  const covers=[
+    {id:'sec-locker',x:123,y:249,label:'ШКАФ ПОСТА ОХРАНЫ'},
+    {id:'archive-locker',x:1080,y:251,label:'АРХИВНЫЙ ШКАФ'},
+    {id:'med-locker',x:123,y:730,label:'МЕДИЦИНСКИЙ ШКАФ'},
+    {id:'generator-locker',x:1076,y:788,label:'ТЕХНИЧЕСКИЙ ШКАФ'}
+  ];
+  const searchables=[
+    {id:'security-terminal',x:205,y:166,label:'ТЕРМИНАЛ',group:'a',room:'security'},
+    {id:'lab-console',x:500,y:299,label:'КОНСОЛЬ ЛАБОРАТОРИИ',group:'a',room:'lab'},
+    {id:'lab-cabinet',x:710,y:118,label:'ШКАФ С ОБРАЗЦАМИ',group:'a',room:'lab'},
+    {id:'archive-shelf',x:930,y:126,label:'АРХИВНЫЙ СТЕЛЛАЖ',group:'b',room:'archive'},
+    {id:'archive-box',x:1070,y:278,label:'КОРОБ С ДОКУМЕНТАМИ',group:'b',room:'archive'},
+    {id:'med-cabinet',x:288,y:649,label:'МЕДИЦИНСКИЙ ШКАФ',group:'c',room:'med'},
+    {id:'med-cart',x:314,y:786,label:'МЕДИЦИНСКАЯ ТЕЛЕЖКА',group:'c',room:'med'},
+    {id:'generator-toolbox',x:864,y:768,label:'ЯЩИК С ИНСТРУМЕНТАМИ',group:'c',room:'generator'}
+  ];
+  const generatorTarget={id:'generator',x:992,y:765,label:'ЗАПУСТИТЬ ГЕНЕРАТОР'};
+  const elevatorTarget={id:'elevator',x:600,y:804,label:'ВЫЗВАТЬ ЛИФТ'};
+  const patrolPoints=[
+    {x:320,y:185},{x:480,y:190},{x:720,y:190},{x:850,y:190},{x:1125,y:130},
+    {x:205,y:440},{x:600,y:450},{x:995,y:450},
+    {x:320,y:720},{x:480,y:720},{x:720,y:720},{x:850,y:720},{x:1120,y:650}
+  ];
+  const lootCatalog=[
+    {key:'card',name:'КЛЮЧ-КАРТА',icon:'▣',color:'#ffc96b'},
+    {key:'battery',name:'БАТАРЕЯ',icon:'🔋',color:'#7fffe9'},
+    {key:'bottle',name:'КОЛБА',icon:'⚗',color:'#9ffff0'},
+    {key:'medkit',name:'АПТЕЧКА',icon:'✚',color:'#70ffc0'},
+    {key:'record',name:'КАРТА ПАМЯТИ',icon:'◆',color:'#bcb1ff'}
+  ];
+  const decoyIcons=['📎','🧪','🔩','📄','🧷','🩹','🔧','📁','🔬','🧫','🗝','🧯','📼','🪛','🧲','🗜'];
+
+  const state={
+    running:false,finished:false,demo:false,sessionId:null,seed:1,time:150,last:0,
+    battery:100,flashlight:true,lives:3,score:0,cards:0,generator:false,escaped:false,
+    bottles:2,searches:0,hits:0,noise:0,threat:7,interaction:null,hidden:false,hideTarget:null,
+    searched:new Set(),cardIds:new Set(),visited:new Set(),particles:[],messageUntil:0,
+    flashAlpha:0,shake:0,distance:0,lastStepAt:0,lastHeartbeat:0,lastRoom:'security',
+    audio:null,invulnerableUntil:0,hideCheckAt:0,bottle:null,searchGame:null,searchCooldownUntil:0,
+    nextAmbientAt:0,flickerUntil:0,ambientPulse:0,lastMonsterMapAt:0,lastMonsterMapX:0,lastMonsterMapY:0
+  };
+  const player={x:205,y:190,r:13,facingX:1,facingY:0,walk:0};
+  const monster={
+    x:1120,y:650,r:10,mode:'patrol',targetX:1120,targetY:650,path:[],pathIndex:0,
+    repathAt:0,stunnedUntil:0,chaseLostAt:0,lastSeenX:0,lastSeenY:0,lastSeenAt:0,lastStepAt:0,
+    patrolIndex:12,searchUntil:0,searchCenterX:0,searchCenterY:0,waitUntil:0,dashUntil:0,
+    nextDashAt:0,sawHideId:null,lastMoveX:1120,lastMoveY:650,stuckSince:0
+  };
+  const camera={x:0,y:0};
+  const joystickState={pointerId:null,x:0,y:0,magnitude:0};
+  const keys=new Set();
+  let raf=0,resizeObserver=null,viewW=1,viewH=1,dpr=1;
+
+  function rand(){state.seed=(state.seed*1664525+1013904223)>>>0;return state.seed/4294967296}
+  function clamp(value,min,max){return Math.max(min,Math.min(max,value))}
+  function distance(ax,ay,bx,by){return Math.hypot(bx-ax,by-ay)}
+  function vibrate(type='light'){try{tg?.HapticFeedback?.impactOccurred?.(type)}catch(_){}}
+  async function api(path,body={}){const res=await fetch('/games/api/'+path,{method:'POST',headers,body:JSON.stringify({...body,chat_id:chatId})});const data=await res.json().catch(()=>({ok:false,reason:'Сервер вернул непонятный ответ.'}));if(!res.ok||!data.ok)throw new Error(data.reason||'Ошибка игрового сервера.');return data}
+  function goGames(){location.href='/games/?'+new URLSearchParams({...Object.fromEntries(params),chat_id:chatId}).toString()}
+  function setMessage(text,seconds=2.6){caption.textContent=text;state.messageUntil=performance.now()+seconds*1000}
+  function formatTime(value){value=Math.max(0,Math.ceil(value));return String(Math.floor(value/60)).padStart(2,'0')+':'+String(value%60).padStart(2,'0')}
+  function pointInRect(x,y,rect,pad=0){return x>=rect.x-pad&&x<=rect.x+rect.w+pad&&y>=rect.y-pad&&y<=rect.y+rect.h+pad}
+  function pointInWalkZone(x,y){return walkZones.some(zone=>pointInRect(x,y,zone))}
+  function pointInSolid(x,y,pad=0){return solids.some(item=>pointInRect(x,y,item,pad))}
+  function canOccupy(x,y,r=12){const samples=[[0,0],[r,0],[-r,0],[0,r],[0,-r],[r*.7,r*.7],[-r*.7,r*.7],[r*.7,-r*.7],[-r*.7,-r*.7]];return samples.every(([dx,dy])=>pointInWalkZone(x+dx,y+dy)&&!pointInSolid(x+dx,y+dy,1))}
+  function roomAt(x,y){return rooms.find(room=>pointInRect(x,y,room))||null}
+  function lineOfSight(ax,ay,bx,by){const steps=Math.ceil(distance(ax,ay,bx,by)/15);for(let i=1;i<steps;i++){const t=i/steps,x=ax+(bx-ax)*t,y=ay+(by-ay)*t;if(!pointInWalkZone(x,y)||pointInSolid(x,y,2))return false}return true}
+  function isInFlashlight(x,y){if(!state.flashlight||state.hidden||state.battery<=0)return false;const dx=x-player.x,dy=y-player.y,dist=Math.hypot(dx,dy);if(dist>375)return false;const dot=(dx*player.facingX+dy*player.facingY)/(dist||1);return dot>.5&&lineOfSight(player.x,player.y,x,y)}
+
+  const GRID=32,COLS=Math.ceil(WORLD.w/GRID),ROWS=Math.ceil(WORLD.h/GRID);let navWalkable=[];
+  function navIndex(cx,cy){return cy*COLS+cx}
+  function rebuildNavigation(){navWalkable=new Array(COLS*ROWS).fill(false);for(let cy=0;cy<ROWS;cy++)for(let cx=0;cx<COLS;cx++){const x=cx*GRID+GRID/2,y=cy*GRID+GRID/2;navWalkable[navIndex(cx,cy)]=canOccupy(x,y,8)}}
+  function nearestNavCell(x,y){const bx=clamp(Math.floor(x/GRID),0,COLS-1),by=clamp(Math.floor(y/GRID),0,ROWS-1);for(let radius=0;radius<9;radius++)for(let dy=-radius;dy<=radius;dy++)for(let dx=-radius;dx<=radius;dx++){if(Math.abs(dx)!==radius&&Math.abs(dy)!==radius)continue;const cx=bx+dx,cy=by+dy;if(cx<0||cy<0||cx>=COLS||cy>=ROWS)continue;const index=navIndex(cx,cy);if(navWalkable[index])return {cx,cy,index}}return null}
+  function buildPath(sx,sy,tx,ty){const start=nearestNavCell(sx,sy),goal=nearestNavCell(tx,ty);if(!start||!goal)return [];if(start.index===goal.index)return [{x:tx,y:ty}];const previous=new Int32Array(COLS*ROWS);previous.fill(-2);previous[start.index]=-1;const queue=new Int32Array(COLS*ROWS);let head=0,tail=0;queue[tail++]=start.index;const dirs=[[1,0],[-1,0],[0,1],[0,-1]];while(head<tail){const current=queue[head++];if(current===goal.index)break;const cx=current%COLS,cy=Math.floor(current/COLS);for(const [dx,dy] of dirs){const nx=cx+dx,ny=cy+dy;if(nx<0||ny<0||nx>=COLS||ny>=ROWS)continue;const ni=navIndex(nx,ny);if(!navWalkable[ni]||previous[ni]!==-2)continue;previous[ni]=current;queue[tail++]=ni}}if(previous[goal.index]===-2)return [];const reversed=[];let current=goal.index;while(current!==-1){const cx=current%COLS,cy=Math.floor(current/COLS);reversed.push({x:cx*GRID+GRID/2,y:cy*GRID+GRID/2});current=previous[current]}reversed.reverse();reversed.shift();reversed.push({x:tx,y:ty});return reversed}
+
+  function initAudio(){if(state.audio)return;try{const ac=new (window.AudioContext||window.webkitAudioContext)(),master=ac.createGain();master.gain.value=.1;master.connect(ac.destination);const ambient=ac.createOscillator(),ambientGain=ac.createGain();ambient.type='sawtooth';ambient.frequency.value=39;ambientGain.gain.value=.032;ambient.connect(ambientGain).connect(master);ambient.start();state.audio={ac,master,ambient,ambientGain}}catch(_){state.audio=null}}
+  function tone(freq=120,duration=.12,type='sine',volume=.18,pan=0){const audio=state.audio;if(!audio)return;const oscillator=audio.ac.createOscillator(),gain=audio.ac.createGain();oscillator.type=type;oscillator.frequency.setValueAtTime(freq,audio.ac.currentTime);gain.gain.setValueAtTime(Math.max(.001,volume),audio.ac.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audio.ac.currentTime+duration);let node=gain;if(audio.ac.createStereoPanner){const panner=audio.ac.createStereoPanner();panner.pan.value=clamp(pan,-1,1);gain.connect(panner);node=panner}oscillator.connect(gain);node.connect(audio.master);oscillator.start();oscillator.stop(audio.ac.currentTime+duration)}
+  function heartbeat(){tone(61,.1,'sine',.36);setTimeout(()=>tone(49,.14,'sine',.28),125)}
+  function monsterFootstep(){const pan=clamp((monster.x-player.x)/280,-1,1);tone(monster.mode==='chase'?44:53,.18,'sine',monster.mode==='chase'?.44:.28,pan);setTimeout(()=>tone(35,.14,'sine',.23,pan),90)}
+  function playerFootstep(intensity){tone(intensity>.75?84:68,.045,'triangle',.042+intensity*.035,0)}
+
+  function chooseCardLocations(){state.cardIds.clear();for(const group of ['a','b','c']){const options=searchables.filter(item=>item.group===group);state.cardIds.add(options[Math.floor(rand()*options.length)].id)}}
+  function emitNoise(x,y,radius,kind='step'){state.noise=Math.max(state.noise,clamp(radius/5,0,100));const heard=distance(monster.x,monster.y,x,y)<=radius;if(heard||kind==='generator'){if(monster.mode!=='chase'){monster.mode='investigate';monster.targetX=x;monster.targetY=y;monster.path=[];monster.repathAt=0;monster.searchCenterX=x;monster.searchCenterY=y}if(kind!=='step'&&kind!=='searchTick')setMessage(kind==='bottle'?'Разбитая колба отвлекла охотника.':'Охотник услышал шум.',1.8)}}
+  function inputVector(){let x=joystickState.x,y=joystickState.y;if(keys.has('arrowleft')||keys.has('a'))x-=1;if(keys.has('arrowright')||keys.has('d'))x+=1;if(keys.has('arrowup')||keys.has('w'))y-=1;if(keys.has('arrowdown')||keys.has('s'))y+=1;const magnitude=Math.hypot(x,y);if(magnitude>1){x/=magnitude;y/=magnitude}return {x,y,magnitude:Math.min(1,magnitude)}}
+  function movePlayer(dt,now){const input=inputVector();if(state.hidden||state.interaction||state.searchGame){player.walk=0;if(state.interaction&&input.magnitude>.18)cancelInteraction('Действие прервано.');return}if(input.magnitude<.08){player.walk=0;return}player.facingX=input.x/input.magnitude;player.facingY=input.y/input.magnitude;player.walk=input.magnitude;const speed=48+input.magnitude*118,dx=player.facingX*speed*dt,dy=player.facingY*speed*dt;const beforeX=player.x,beforeY=player.y;if(canOccupy(player.x+dx,player.y,player.r))player.x+=dx;if(canOccupy(player.x,player.y+dy,player.r))player.y+=dy;const travelled=distance(beforeX,beforeY,player.x,player.y);state.distance+=travelled;state.score+=travelled*.006;const stepDelay=clamp(590-input.magnitude*330,225,540);if(now-state.lastStepAt>stepDelay&&travelled>.3){state.lastStepAt=now;playerFootstep(input.magnitude);emitNoise(player.x,player.y,65+input.magnitude*195,'step')}}
+
+  function nearestContext(){if(state.hidden)return {kind:'exitHide',label:'ВЫЙТИ ИЗ УКРЫТИЯ',duration:.1,target:state.hideTarget};let best=null,bestDistance=Infinity;const consider=(context,x,y,range=62)=>{const d=distance(player.x,player.y,x,y);if(d<range&&d<bestDistance){best=context;bestDistance=d}};for(const cover of covers)consider({kind:'hide',label:'СПРЯТАТЬСЯ',duration:.35,target:cover},cover.x,cover.y,55);for(const item of searchables)if(!state.searched.has(item.id)&&performance.now()>state.searchCooldownUntil)consider({kind:'search',label:'ОБЫСКАТЬ '+item.label,target:item},item.x,item.y,66);consider({kind:'generator',label:state.cards>=3?'ЗАПУСТИТЬ ГЕНЕРАТОР':'НУЖНО 3 КЛЮЧ-КАРТЫ',duration:2.25,target:generatorTarget},generatorTarget.x,generatorTarget.y,76);consider({kind:'elevator',label:state.generator?'ВЫЗВАТЬ ЛИФТ':'ЛИФТ БЕЗ ПИТАНИЯ',duration:1.7,target:elevatorTarget},elevatorTarget.x,elevatorTarget.y,72);return best}
+  function beginInteraction(){if(!state.running||state.finished||state.interaction||state.searchGame)return;const context=nearestContext();if(!context){setMessage('Рядом нет объекта для взаимодействия.',1.5);return}if(context.kind==='generator'&&state.cards<3){setMessage(`Не хватает ключ-карт: ${state.cards}/3.`,2);return}if(context.kind==='elevator'&&!state.generator){setMessage('Сначала восстанови питание в генераторной.',2);return}if(context.kind==='exitHide'){exitHide();return}if(context.kind==='search'){openSearch(context.target);return}state.interaction={...context,started:performance.now(),progress:0};emitNoise(player.x,player.y,context.kind==='generator'?1200:110,context.kind==='generator'?'generator':'action');tone(context.kind==='generator'?92:205,.12,'square',.13);vibrate('light')}
+  function cancelInteraction(message='Действие отменено.'){if(!state.interaction)return;state.interaction=null;setMessage(message,1.4)}
+  function completeInteraction(){const interaction=state.interaction;if(!interaction)return;state.interaction=null;if(interaction.kind==='hide'){enterHide(interaction.target);return}if(interaction.kind==='generator'){activateGenerator();return}if(interaction.kind==='elevator'){escape()}}
+  function updateInteraction(now){if(!state.interaction)return;const elapsed=(now-state.interaction.started)/1000;state.interaction.progress=clamp(elapsed/state.interaction.duration,0,1);if(state.interaction.progress>=1)completeInteraction()}
+
+  function rewardForSearch(item){if(state.cardIds.has(item.id))return lootCatalog[0];const roll=rand();if(roll<.32)return lootCatalog[1];if(roll<.56)return lootCatalog[2];if(roll<.74)return lootCatalog[3];return lootCatalog[4]}
+  function shuffle(array){for(let i=array.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[array[i],array[j]]=[array[j],array[i]]}return array}
+  function openSearch(item){const reward=rewardForSearch(item),duration=reward.key==='card'?6.2:5.3;state.searchGame={item,reward,endsAt:performance.now()+duration*1000,duration,wrong:0,lastNoiseAt:0};searchLocation.textContent=item.label;searchTargetIcon.textContent=reward.icon;searchTargetIcon.style.color=reward.color;searchTargetName.textContent=reward.name;searchHint.textContent='Охотник продолжает двигаться, пока ты роешься.';searchGrid.innerHTML='';const cells=[{target:true,icon:reward.icon}];const decoys=shuffle([...decoyIcons]);for(let i=0;i<11;i++)cells.push({target:false,icon:decoys[i%decoys.length]});shuffle(cells).forEach(cell=>{const button=document.createElement('button');button.className='loot-item';button.type='button';button.textContent=cell.icon;button.dataset.target=cell.target?'1':'0';searchGrid.appendChild(button)});searchOverlay.classList.remove('hidden');searchPanel.classList.remove('wrong','success');emitNoise(player.x,player.y,340,'search');tone(180,.09,'square',.12);vibrate('light');resetJoystick()}
+  function closeSearch(reason=''){state.searchGame=null;searchOverlay.classList.add('hidden');searchPanel.classList.remove('wrong','success');if(reason)setMessage(reason,2)}
+  function failSearch(){if(!state.searchGame)return;emitNoise(player.x,player.y,480,'search');state.searchCooldownUntil=performance.now()+1700;closeSearch('Ты не успел найти предмет. Шум разнёсся по комнате.')}
+  function applySearchReward(item,reward){state.searched.add(item.id);state.searches++;state.score+=6;if(reward.key==='card'){state.cards++;state.score+=40;spawnParticles(item.x,item.y,30,'#ffc96b');tone(690,.28,'sine',.25);setMessage(`Ключ-карта найдена. Осталось: ${3-state.cards}.`,3)}else if(reward.key==='battery'){state.battery=Math.min(100,state.battery+28);spawnParticles(item.x,item.y,20,'#7fffe9');setMessage('Батарея найдена. Заряд +28%.',2.5)}else if(reward.key==='bottle'){state.bottles=Math.min(4,state.bottles+1);setMessage('Найдена колба. Её можно бросить для отвлечения.',2.5)}else if(reward.key==='medkit'){if(state.lives<3){state.lives++;setMessage('Аптечка восстановила одну жизнь.',2.5)}else{state.score+=16;setMessage('Аптечка не понадобилась. +16 очков.',2.5)}}else{state.score+=18;setMessage('Найдена запись эксперимента. +18 очков.',2.5)}vibrate('medium')}
