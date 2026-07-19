@@ -1,8 +1,8 @@
 (()=>{
   "use strict";
-  const $=id=>document.getElementById(id),stage=$("stage"),loot=$("loot"),crack=$("crackOverlay");
+  const $=id=>document.getElementById(id),stage=$("stage"),loot=$("loot"),crack=$("crackOverlay"),actions=document.querySelector(".actions");
   if(loot&&!loot.querySelector(".bagWeight")){const b=document.createElement("small");b.className="bagWeight";b.textContent="МЕШОК ЛЁГКИЙ";loot.appendChild(b);const sync=()=>{const n=parseInt(loot.querySelector("b")?.textContent||loot.textContent)||0;b.textContent=n>=650?"МЕШОК ПЕРЕГРУЖЕН":n>=320?"МЕШОК ТЯЖЁЛЫЙ":"МЕШОК ЛЁГКИЙ";b.classList.toggle("heavy",n>=320&&n<650);b.classList.toggle("overloaded",n>=650)};sync();new MutationObserver(sync).observe(loot,{childList:true,subtree:true,characterData:true});}
-  const badge=document.createElement("div");badge.className="escapeBadge hidden";badge.textContent="🚨 ПОБЕГ — КАМЕРЫ УСИЛЕНЫ";stage?.appendChild(badge);
-  const watchEscape=()=>badge.classList.toggle("hidden",!stage?.classList.contains("escape-mode"));if(stage)new MutationObserver(watchEscape).observe(stage,{attributes:true,attributeFilter:["class"]});watchEscape();
+  const badge=document.createElement("div");badge.className="escapeBadge hidden";badge.textContent="🚨 ПОБЕГ — КАМЕРЫ УСИЛЕНЫ";stage?.appendChild(badge);const watchEscape=()=>badge.classList.toggle("hidden",!stage?.classList.contains("escape-mode"));if(stage)new MutationObserver(watchEscape).observe(stage,{attributes:true,attributeFilter:["class"]});watchEscape();
+  if(actions&&!$("bait")){actions.classList.add("v88-three");const bait=document.createElement("button");bait.id="bait";bait.type="button";bait.className="action v88-bait";bait.textContent="📡 ПРИМАНКА ×1";bait.addEventListener("click",()=>document.dispatchEvent(new CustomEvent("heist:bait")));actions.appendChild(bait);document.addEventListener("heist:bait-state",e=>{const n=Math.max(0,Number(e.detail?.charges)||0);bait.textContent="📡 ПРИМАНКА ×"+n;bait.disabled=n<=0;});}
   if(crack)new MutationObserver(()=>{if(crack.classList.contains("hidden"))return;requestAnimationFrame(()=>{const game=$("crackGame");if(game?.querySelector(".v88Circuit"))$("crackType").textContent="ЭЛЕКТРОННЫЙ СЕЙФ";});}).observe(crack,{attributes:true,attributeFilter:["class"]});
 })();
