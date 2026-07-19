@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#090713">
+  <title>Админ-центр Reality 76</title>
+  <link rel="stylesheet" href="/admin-v76/admin.css?v=76">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <main class="app-shell">
+    <header class="sticky-head">
+      <div class="topbar">
+        <div class="brand-mark">👁</div>
+        <div class="brand-copy"><small>ГЛАВНЫЙ ГЕРОЙ</small><h1>Админ-центр</h1></div>
+        <button class="icon-button" id="refreshButton" aria-label="Обновить">↻</button>
+      </div>
+      <section class="context-strip">
+        <div class="context-chat">
+          <label for="chatSelect">Беседа</label>
+          <div class="select-wrap"><select id="chatSelect"></select><span>⌄</span></div>
+        </div>
+        <button class="target-chip" id="targetChip" data-tab-open="participant">
+          <span class="target-avatar" id="targetAvatar">?</span>
+          <span class="target-text"><small>Участник</small><b id="targetName">Не выбран</b><em id="targetMeta">Нажми, чтобы выбрать</em></span>
+          <span class="target-arrow">›</span>
+        </button>
+        <div class="connection-row"><span id="connectionState">Подключение…</span><strong id="versionText">Reality 76</strong></div>
+      </section>
+    </header>
+
+    <div class="screen-stack">
+      <section class="screen active" data-screen="home">
+        <div class="section-head"><div><small>ОБЗОР</small><h2>Состояние системы</h2></div></div>
+        <div class="metric-grid" id="homeMetrics"></div>
+
+        <article class="panel alert-panel hidden" id="systemAlert">
+          <div class="panel-title"><span>⚠️</span><div><b>Нужно внимание</b><small id="systemAlertText"></small></div></div>
+          <button class="wide-button" data-tab-open="games">Перейти в игровой центр</button>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title"><span>⚡</span><div><b>Быстрые действия</b><small>Для выбранной беседы</small></div></div>
+          <div class="action-grid two">
+            <button data-action="chat_cooldowns_reset">⏱ Сбросить все КД</button>
+            <button data-action="chat_profiles_recalculate">🧮 Пересчитать профили</button>
+            <button data-action="database_check">🩺 Проверить базу</button>
+            <button data-action="game_clear_stuck_chat" data-api="games">🎮 Закрыть зависшие игры</button>
+            <button data-confirm-action="game_attempts_reset_chat" data-api="games" data-confirm-title="Сбросить попытки всей беседы?" data-confirm-text="Все участники снова получат по три попытки в каждой игре сегодня.">🔄 Сбросить игровые попытки</button>
+            <button class="danger-soft" data-confirm-action="chat_stats_reset" data-confirm-title="Сбросить статистику беседы?" data-confirm-text="Показатели активности всех участников будут обнулены. Влияние останется.">🧹 Сбросить статистику</button>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title"><span>👥</span><div><b>Быстрый выбор участника</b><small>Нажатие сразу открывает его профиль</small></div></div>
+          <div class="user-list compact" id="quickUsers"></div>
+        </article>
+      </section>
+
+      <section class="screen" data-screen="participant">
+        <div class="section-head"><div><small>УЧАСТНИК</small><h2>Профиль и управление</h2></div></div>
+        <article class="panel search-panel">
+          <label class="field-label" for="userSearch">Имя, username или Telegram ID</label>
+          <div class="search-row"><input id="userSearch" type="search" placeholder="Начни вводить…"><button id="searchButton">Найти</button></div>
+          <div class="user-list search-results" id="searchResults"></div>
+          <button class="wide-button" id="selectSelfButton">👤 Выбрать себя</button>
+        </article>
+
+        <div id="participantProfile">
+          <div class="metric-grid" id="participantMetrics"></div>
+
+          <article class="panel requires-user">
+            <div class="panel-title"><span>⭐</span><div><b>Очки влияния</b><small id="pointsSubtitle">Текущий баланс: —</small></div></div>
+            <div class="step-grid"><button data-action="points_delta" data-value="-1000">−1000</button><button data-action="points_delta" data-value="-100">−100</button><button data-action="points_delta" data-value="100">+100</button><button data-action="points_delta" data-value="1000">+1000</button></div>
+            <button class="wide-button" data-form="points">✍️ Установить точное значение</button>
+          </article>
+
+          <article class="panel requires-user">
+            <div class="panel-title"><span>🎭</span><div><b>Роль участника</b><small>Актуальная шкала Reality 74</small></div></div>
+            <div class="role-grid" id="roleGrid"></div>
+          </article>
+
+          <article class="panel requires-user">
+            <div class="panel-title"><span>🔇</span><div><b>Ограничения</b><small>Бот должен быть администратором беседы</small></div></div>
+            <div class="action-grid three"><button data-mute="5">5 минут</button><button data-mute="10">10 минут</button><button data-mute="15">15 минут</button></div>
+            <button class="wide-button positive" data-action="unmute">🔊 Снять мут</button>
+          </article>
+
+          <article class="panel requires-user">
+            <div class="panel-title"><span>🧰</span><div><b>Обслуживание участника</b><small>Кулдауны и статистика активности</small></div></div>
+            <div class="action-grid two">
+              <button data-action="cooldown_user_chat">⏱ КД в этой беседе</button>
+              <button data-action="cooldown_user_global">🌐 КД во всех беседах</button>
+              <button class="danger-soft full" data-confirm-action="stats_user_reset" data-confirm-title="Сбросить статистику участника?" data-confirm-text="Сообщения, реакции и показатели активности будут обнулены.">🧹 Сбросить статистику</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="games">
+        <div class="section-head"><div><small>ОХОТА ЗА ВЛИЯНИЕМ</small><h2>Игровой центр</h2></div><button class="mini-button" id="openGamesButton">Открыть игру</button></div>
+        <div class="metric-grid" id="gameSystemMetrics"></div>
+
+        <article class="panel">
+          <div class="panel-title"><span>🛠</span><div><b>Обслуживание игр</b><small>Сессии и дневные попытки</small></div></div>
+          <div class="action-grid two">
+            <button data-action="game_sessions_close" data-api="games">⏹ Закрыть сессии участника</button>
+            <button data-action="game_clear_stuck_chat" data-api="games">🧯 Закрыть зависшие в чате</button>
+            <button data-confirm-action="game_attempts_reset" data-api="games" data-confirm-title="Сбросить попытки участника?" data-confirm-text="У выбранного участника снова появятся попытки в обеих играх.">🔄 Сбросить попытки участника</button>
+            <button class="danger-soft" data-confirm-action="game_attempts_reset_chat" data-api="games" data-confirm-title="Сбросить попытки всей беседы?" data-confirm-text="Все участники снова смогут играть сегодня.">👥 Сбросить попытки чата</button>
+          </div>
+        </article>
+
+        <div id="gameCards"></div>
+
+        <article class="panel">
+          <div class="panel-title"><span>📋</span><div><b>Последние забеги участника</b><small>Завершённые, активные и аннулированные результаты</small></div></div>
+          <div class="run-list" id="gameRuns"></div>
+        </article>
+      </section>
+
+      <section class="screen" data-screen="raid">
+        <div class="section-head"><div><small>ЦЕНТР ВСЕЛЕННОЙ</small><h2>Управление рейдом</h2></div></div>
+        <div id="raidContent"></div>
+      </section>
+
+      <section class="screen" data-screen="knowledge">
+        <div class="section-head"><div><small>ДРЕВО ЗНАНИЙ</small><h2>Таланты и реальные баффы</h2></div></div>
+        <div class="metric-grid knowledge-metrics" id="knowledgeMetrics"></div>
+
+        <article class="panel requires-user">
+          <div class="panel-title"><span>🌳</span><div><b>Очки древа</b><small>Прямая валюта прокачки талантов</small></div></div>
+          <div class="step-grid"><button data-action="tree_delta" data-value="-1">−1</button><button data-action="tree_delta" data-value="1">+1</button><button data-action="tree_delta" data-value="5">+5</button><button data-form="tree">Точное</button></div>
+          <div class="action-grid two">
+            <button data-action="knowledge_recalculate">🧮 Пересчитать профиль</button>
+            <button data-confirm-action="tree_refund" data-confirm-title="Вернуть потраченные очки?" data-confirm-text="Все таланты будут сброшены, а очки вернутся в доступные.">↩ Вернуть очки</button>
+            <button class="danger-soft full" data-confirm-action="knowledge_week_reset" data-confirm-title="Сбросить недельный лимит?" data-confirm-text="Участник снова сможет получать рейдовые очки древа на этой неделе.">📅 Сбросить недельный прогресс</button>
+          </div>
+        </article>
+
+        <article class="panel"><div class="panel-title"><span>✨</span><div><b>Активные таланты</b><small>Текущая прокачка выбранного участника</small></div></div><div id="talentList" class="talent-list"></div></article>
+        <article class="panel"><div class="panel-title"><span>📊</span><div><b>Суммарные баффы</b><small>Эффекты, которые реально применяются ботом</small></div></div><div id="buffList" class="buff-list"></div></article>
+      </section>
+
+      <section class="screen" data-screen="history">
+        <div class="section-head"><div><small>ЖУРНАЛ</small><h2>История действий</h2></div><button class="mini-button" data-action="undo">↩ Отменить</button></div>
+        <div class="history-list" id="historyList"></div>
+      </section>
+    </div>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="active" data-tab="home"><span>⌂</span><small>Главная</small></button>
+    <button data-tab="participant"><span>👤</span><small>Участник</small></button>
+    <button data-tab="games"><span>🎮</span><small>Игры</small></button>
+    <button data-tab="raid"><span>🌌</span><small>Рейд</small></button>
+    <button data-tab="knowledge"><span>🌳</span><small>Древо</small></button>
+    <button data-tab="history"><span>☷</span><small>История</small></button>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+  <div class="loading" id="loading"><div class="spinner"></div><b>Загрузка Reality 76</b><span>Синхронизируем участников, игры и древо</span></div>
+
+  <section class="modal" id="modal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" data-modal-close>×</button>
+      <div class="modal-icon" id="modalIcon">⚙</div>
+      <h3 id="modalTitle">Подтверждение</h3>
+      <p id="modalText"></p>
+      <div id="modalField"></div>
+      <div class="modal-actions"><button data-modal-close>Отмена</button><button id="modalConfirm">Подтвердить</button></div>
+    </div>
+  </section>
+
+  <script src="/admin-v76/admin.js?v=76"></script>
+</body>
+</html>
