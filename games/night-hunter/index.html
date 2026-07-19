@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#020608">
+  <title>Ночной охотник</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="/games/game-attempts-v89.js?v=89"></script>
+  <link rel="stylesheet" href="/games/night-hunter/style.css?v=93">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <button class="back" id="back" type="button">← ИГРЫ</button>
+      <div class="brand"><b>НОЧНОЙ ОХОТНИК</b><small id="roomName">ПОСТ ОХРАНЫ</small></div>
+      <div class="score"><small>ОЧКИ</small><b id="score">0</b></div>
+    </header>
+
+    <section class="stage" id="stage">
+      <canvas id="game" aria-label="Тёмный коридор исследовательского комплекса"></canvas>
+      <div class="scanlines"></div>
+      <div class="vignette"></div>
+      <div class="hud top-hud">
+        <span class="pill danger" id="timer">02:30</span>
+        <span class="pill" id="objective">КЛЮЧ-КАРТЫ 0/3</span>
+        <span class="pill lives" id="lives">♥♥♥</span>
+      </div>
+      <div class="hud bottom-hud">
+        <div class="meter"><span>ФОНАРЬ</span><i><b id="batteryBar"></b></i><strong id="battery">100%</strong></div>
+        <div class="meter threat"><span>ОХОТА</span><i><b id="threatBar"></b></i><strong id="threat">ТИХО</strong></div>
+      </div>
+      <div class="warning" id="warning">НЕ ДВИГАЙСЯ</div>
+      <div class="caption" id="caption">В комплексе отключено питание. Найди три ключ-карты.</div>
+      <button class="flash-toggle" id="flashlight" type="button" aria-label="Включить или выключить фонарь">🔦</button>
+    </section>
+
+    <section class="controls">
+      <div class="move-row">
+        <button class="control" id="left" type="button"><span>◀</span><small>НАЛЕВО</small></button>
+        <button class="control primary" id="search" type="button"><span>◎</span><small>ОСМОТРЕТЬ</small></button>
+        <button class="control" id="right" type="button"><span>▶</span><small>НАПРАВО</small></button>
+      </div>
+      <div class="action-row">
+        <button class="action" id="hide" type="button">▣ СПРЯТАТЬСЯ</button>
+        <button class="action" id="distract" type="button">◉ ОТВЛЕЧЬ <b id="bottles">2</b></button>
+        <button class="action hot" id="burst" type="button">✦ ВСПЫШКА</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="overlay" id="intro">
+    <section class="card intro-card">
+      <div class="intro-art" aria-hidden="true">
+        <div class="door"></div><div class="hunter"></div><div class="beam"></div>
+      </div>
+      <div class="eyebrow">СЮЖЕТНЫЙ ХОРРОР · REALITY 93</div>
+      <h1>Ночной охотник</h1>
+      <p class="lead">Аварийные двери закрылись. Объект покинул камеру содержания. Он почти слеп, но слышит каждый шаг.</p>
+      <div class="mission">
+        <div><b>1</b><span>Найди три ключ-карты</span></div>
+        <div><b>2</b><span>Запусти генератор</span></div>
+        <div><b>3</b><span>Доберись до лифта</span></div>
+      </div>
+      <div class="tips">
+        <span>🎧 Лучше играть в наушниках</span>
+        <span>🔦 Свет выдаёт твоё положение</span>
+        <span>🤫 Шум привлекает охотника</span>
+      </div>
+      <button class="start loading" id="start" type="button">ПОДГОТОВКА КОМПЛЕКСА…</button>
+      <button class="demo hidden" id="demo" type="button">ЗАПУСТИТЬ ДЕМО</button>
+      <div class="error" id="startError"></div>
+    </section>
+  </div>
+
+  <div class="overlay hidden" id="finish">
+    <section class="card result-card">
+      <div class="result-icon" id="resultIcon">◉</div>
+      <div class="eyebrow" id="resultEyebrow">СИСТЕМА БЕЗОПАСНОСТИ</div>
+      <h1 id="resultTitle">Побег завершён</h1>
+      <p id="resultText">Лифт закрылся в последнюю секунду.</p>
+      <div class="result-grid">
+        <div><small>ОЧКИ</small><b id="resultScore">0</b></div>
+        <div><small>КАРТЫ</small><b id="resultCards">0/3</b></div>
+        <div><small>ОБЫСКИ</small><b id="resultSearches">0</b></div>
+        <div><small>СТОЛКНОВЕНИЯ</small><b id="resultHits">0</b></div>
+      </div>
+      <div class="reward" id="reward">Сохраняем результат…</div>
+      <button class="start" id="again" type="button">ЕЩЁ ОДНА ПОПЫТКА</button>
+      <button class="secondary" id="toGames" type="button">В ИГРОВОЙ ЦЕНТР</button>
+    </section>
+  </div>
+
+  <script src="/games/night-hunter/game.js?v=93"></script>
+</body>
+</html>
