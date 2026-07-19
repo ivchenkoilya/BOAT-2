@@ -14,6 +14,7 @@ from about_recommendations_v68 import install_about_recommendations_v68
 from about_updates import install_about_updates
 from admin_attempts_hotfix_v92 import install_admin_attempts_hotfix_v92
 from admin_center_v76 import install_admin_center_v76
+from admin_night_hunter_v95 import install_admin_night_hunter_v95
 from admin_open_v89 import install_admin_open_v89
 from admin_webapp_v62 import install_admin_webapp_v62
 from boss_upgrade_v52 import install_boss_upgrade_v52
@@ -64,8 +65,9 @@ core.EXTRAS_MIN_POINTS = 3000
 core.SECONDARY_MIN_POINTS = 6000
 core.HERO_MIN_POINTS = 10000
 
-# Reality 92 ставится первой. Она добавляет middleware в исходную фабрику
-# aiohttp.Application, поэтому его не могут потерять последующие обёртки Mini App.
+# Reality 95 и Reality 92 ставятся первыми. Первый слой добавляет интерфейс
+# Ночного охотника, второй — персональные лимиты попыток через стабильные API.
+install_admin_night_hunter_v95(core)
 install_admin_attempts_hotfix_v92(core)
 
 install_boss_upgrade_v52(core)
@@ -158,7 +160,7 @@ install_influence_balance_v87(core)
 # Reality 88 поднимает базовую выплату команды до 50–150 влияния до применения
 # всех бонусов Древа знаний.
 install_influence_reward_v88(core)
-# Финальный слой меняет карточку и кнопку /admin на актуальную Reality 92.
+# Финальный слой меняет карточку и кнопку /admin на актуальную Reality 95.
 install_admin_open_v89(core)
 
 # В main.py есть общий обработчик F.text, зарегистрированный раньше расширений.
