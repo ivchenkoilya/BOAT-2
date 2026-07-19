@@ -49,7 +49,7 @@
     }
   }`);
 
-    source=source.replace("Базовая награда ограбления: <b>+${t.base_run_reward}</b><br>За улучшение рекорда: <b>+${t.payable_base}</b>","Сохранённая добыча: <b>+${t.base_run_reward}</b><br>Начислено за забег: <b>+${t.payable_base}</b>");
+    source=source.replace("Базовая награда: <b>+${r.base_run_reward}</b><br>За улучшение рекорда: <b>+${r.payable_base}</b>","Сохранённая добыча: <b>+${r.base_run_reward}</b><br>Начислено за забег: <b>+${r.payable_base}</b>");
     return source;
   });
 })();
