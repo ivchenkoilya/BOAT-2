@@ -43,15 +43,32 @@ def install_raid_ui_runtime_v89(core: Any) -> None:
         if not target.is_file():
             raise web.HTTPNotFound()
 
-        return core.web.FileResponse(
-            target,
-            headers={
-                "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
-                "Pragma": "no-cache",
-                "Expires": "0",
-                "X-Raid-UI": "reality-89",
-            },
-        )
+        headers = {
+            "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+            "Pragma": "no-cache",
+            "Expires": "0",
+            "X-Raid-UI": "reality-89",
+        }
+
+        # Reality 60 originally displayed its attack card for seven seconds.
+        # Serve the same controller with a strict three-second warning window.
+        if name == "raid-v60.js":
+            source = target.read_text(encoding="utf-8")
+            source = source.replace(
+                'id="raidWarningTimeV60">7</strong>',
+                'id="raidWarningTimeV60">3</strong>',
+            )
+            source = source.replace(
+                "const visible=active&&seconds<=7;",
+                "const visible=active&&seconds<=3;",
+            )
+            return core.web.Response(
+                text=source,
+                content_type="application/javascript",
+                headers=headers,
+            )
+
+        return core.web.FileResponse(target, headers=headers)
 
     async def start_server_with_raid_assets(bot: Any):
         previous_application = core.web.Application
