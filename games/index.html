@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#080612">
+  <title>Охота за влиянием</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root{color-scheme:dark;--bg:#080612;--panel:#151126;--line:#302557;--violet:#a76cff;--gold:#ffd365;--text:#f8f3ff;--muted:#a89cbe}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% -20%,#43257b 0,#17102b 34%,#080612 70%);color:var(--text);font-family:Inter,system-ui,sans-serif}body{padding:calc(18px + env(safe-area-inset-top)) 16px calc(30px + env(safe-area-inset-bottom));overflow-x:hidden}
+    .app{max-width:680px;margin:auto}.eyebrow{font-size:12px;letter-spacing:.22em;color:var(--gold);font-weight:800}.hero h1{font-size:30px;line-height:1.05;margin:8px 0 10px}.hero p{color:var(--muted);line-height:1.5;margin:0 0 18px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}.stat{background:#130f21cc;border:1px solid #302657;border-radius:16px;padding:12px;text-align:center}.stat b{display:block;font-size:18px}.stat small{color:var(--muted);font-size:10px;letter-spacing:.08em}
+    .rule{padding:13px 14px;border:1px solid #48366d;border-radius:16px;background:#24183d99;color:#d8c9ef;font-size:13px;line-height:1.45;margin-bottom:14px}.games{display:grid;gap:14px}.game{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:24px;background:linear-gradient(145deg,#1d1631,#100d1c);padding:20px;min-height:245px}.game:before{content:"";position:absolute;inset:auto -60px -90px auto;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,#9f67ff55,transparent 68%)}.game.heist:before{background:radial-gradient(circle,#ffd36544,transparent 68%)}.icon{font-size:44px}.badge{display:inline-flex;margin-left:8px;padding:5px 8px;border-radius:999px;background:#2d2145;color:#d9c5ff;font-size:10px;font-weight:800;vertical-align:top}.game h2{margin:12px 0 6px;font-size:22px}.game p{margin:0 0 14px;color:var(--muted);line-height:1.45}.meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.chip{padding:7px 9px;border:1px solid #3a2d58;border-radius:10px;background:#110d1d;font-size:12px}.play{position:relative;width:100%;border:0;border-radius:15px;padding:14px 16px;font-size:14px;font-weight:900;letter-spacing:.06em;color:#130a22;background:linear-gradient(135deg,#c9a5ff,#8c51ed);box-shadow:0 10px 28px #7b3ed744}.heist .play{color:#251700;background:linear-gradient(135deg,#ffe79b,#d7a72f);box-shadow:0 10px 28px #a9782444}.play:disabled{filter:grayscale(1);opacity:.5}.footer{text-align:center;color:#766b87;font-size:11px;padding:18px 0}.error{display:none;padding:16px;border:1px solid #6a3447;background:#321523;border-radius:16px;color:#ffc4d3;margin-bottom:14px}.loading{opacity:.65}
+    @media(min-width:650px){.games{grid-template-columns:1fr 1fr}.game{min-height:310px}}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <div class="eyebrow">ИГРОВОЙ ЦЕНТР</div>
+      <h1>Охота за влиянием</h1>
+      <p>Выбери забег. Собранная добыча превращается во влияние текущей беседы, а сверху применяются бонусы древа знаний.</p>
+    </section>
+    <div class="error" id="error"></div>
+    <section class="stats">
+      <div class="stat"><b id="balance">—</b><small>ВЛИЯНИЕ</small></div>
+      <div class="stat"><b id="gameBonus">—</b><small>БОНУС ИГР</small></div>
+      <div class="stat"><b id="rareBonus">—</b><small>УДАЧА</small></div>
+    </section>
+    <div class="rule" id="rule">Загружаем попытки и лучшие результаты…</div>
+    <section class="games">
+      <article class="game rooftop">
+        <div><span class="icon">🌃</span><span class="badge">60 СЕКУНД</span></div>
+        <h2>Бег по крышам</h2>
+        <p>Персонаж бежит сам. Меняй полосу, прыгай, делай подкат и собирай золотое влияние.</p>
+        <div class="meta"><span class="chip" id="roofAttempts">Попытки: —</span><span class="chip" id="roofBest">Рекорд: —</span><span class="chip">До +100</span></div>
+        <button class="play" id="roofPlay" type="button">НАЧАТЬ ПОГОНЮ</button>
+      </article>
+      <article class="game heist">
+        <div><span class="icon">🏛</span><span class="badge">90 СЕКУНД</span></div>
+        <h2>Ограбление хранилища</h2>
+        <p>Управляй героем сам, вскрывай сейфы, обходи охрану и успей уйти с добычей.</p>
+        <div class="meta"><span class="chip" id="heistAttempts">Попытки: —</span><span class="chip" id="heistBest">Рекорд: —</span><span class="chip">До +120</span></div>
+        <button class="play" id="heistPlay" type="button">ВОЙТИ В ХРАНИЛИЩЕ</button>
+      </article>
+    </section>
+    <div class="footer">Reality 75 · Игры находятся в активной разработке</div>
+  </main>
+  <script>
+    (()=>{
+      const tg=window.Telegram?.WebApp;tg?.ready();tg?.expand();tg?.setHeaderColor?.('#080612');tg?.setBackgroundColor?.('#080612');
+      const params=new URLSearchParams(location.search);const chatId=params.get('chat_id')||'';const initData=tg?.initData||'';
+      const headers={'Content-Type':'application/json','X-Telegram-Init-Data':initData};
+      const $=id=>document.getElementById(id);const fmt=n=>new Intl.NumberFormat('ru-RU').format(Number(n)||0);
+      async function api(path,body={}){const res=await fetch('/games/api/'+path,{method:'POST',headers,body:JSON.stringify({...body,chat_id:chatId})});const data=await res.json().catch(()=>({ok:false,reason:'Сервер вернул непонятный ответ.'}));if(!res.ok||!data.ok)throw new Error(data.reason||'Не удалось загрузить игровой центр.');return data}
+      function go(game){const target=`/games/${game}/?${new URLSearchParams({...Object.fromEntries(params),chat_id:chatId}).toString()}`;location.href=target}
+      $('roofPlay').addEventListener('click',()=>go('rooftop'));$('heistPlay').addEventListener('click',()=>go('heist'));
+      (async()=>{try{const state=await api('state');$('balance').textContent=fmt(state.player.points);$('gameBonus').textContent='+'+Math.round((state.buffs.game_reward||0)*100)+'%';$('rareBonus').textContent='+'+Math.round((state.buffs.rare_reward||0)*100)+'%';$('rule').textContent=state.daily_rule;const r=state.games.rooftop,h=state.games.heist;$('roofAttempts').textContent=`Попытки: ${r.attempts_left}/3`;$('roofBest').textContent=`Рекорд: ${r.best_score}`;$('heistAttempts').textContent=`Попытки: ${h.attempts_left}/3`;$('heistBest').textContent=`Рекорд: ${h.best_score}`;$('roofPlay').disabled=r.attempts_left<=0;$('heistPlay').disabled=h.attempts_left<=0;if(r.attempts_left<=0)$('roofPlay').textContent='ПОПЫТКИ ЗАКОНЧИЛИСЬ';if(h.attempts_left<=0)$('heistPlay').textContent='ПОПЫТКИ ЗАКОНЧИЛИСЬ'}catch(e){$('error').style.display='block';$('error').textContent=e.message;$('rule').textContent='В демонстрационном режиме можно открыть игры, но влияние начисляется только при запуске из Telegram-беседы.'}})();
+    })();
+  </script>
+</body>
+</html>
