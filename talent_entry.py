@@ -12,10 +12,9 @@ from about_optimizer_v71 import install_about_optimizer_v71
 from about_recommendations_v67 import install_about_recommendations_v67
 from about_recommendations_v68 import install_about_recommendations_v68
 from about_updates import install_about_updates
+from admin_attempts_hotfix_v92 import install_admin_attempts_hotfix_v92
 from admin_center_v76 import install_admin_center_v76
-from admin_game_attempts_v89 import install_admin_game_attempts_v89
 from admin_open_v89 import install_admin_open_v89
-from admin_route_v90 import install_admin_route_v90
 from admin_webapp_v62 import install_admin_webapp_v62
 from boss_upgrade_v52 import install_boss_upgrade_v52
 from economy_fate_ui_v74 import install_economy_fate_ui_v74
@@ -63,6 +62,10 @@ core.DUST_MIN_POINTS = 1000
 core.EXTRAS_MIN_POINTS = 3000
 core.SECONDARY_MIN_POINTS = 6000
 core.HERO_MIN_POINTS = 10000
+
+# Reality 92 ставится первой. Она добавляет middleware в исходную фабрику
+# aiohttp.Application, поэтому его не могут потерять последующие обёртки Mini App.
+install_admin_attempts_hotfix_v92(core)
 
 install_boss_upgrade_v52(core)
 install_raid_assets(core)
@@ -153,13 +156,7 @@ install_influence_balance_v87(core)
 # Reality 88 поднимает базовую выплату команды до 50–150 влияния до применения
 # всех бонусов Древа знаний.
 install_influence_reward_v88(core)
-# Reality 89 добавляет персональные пакеты игровых попыток любого размера,
-# расширенную статистику источников Древа и новый слой админ-центра.
-install_admin_game_attempts_v89(core)
-# Reality 90 отдаёт админку по отдельному пути, чтобы Telegram не открывал
-# закэшированную страницу Reality 76.
-install_admin_route_v90(core)
-# Финальный слой меняет карточку и кнопку /admin на актуальную Reality 90.
+# Финальный слой меняет карточку и кнопку /admin на актуальную Reality 92.
 install_admin_open_v89(core)
 
 # В main.py есть общий обработчик F.text, зарегистрированный раньше расширений.
