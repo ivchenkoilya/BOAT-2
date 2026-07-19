@@ -7,116 +7,89 @@
   <title>Ночной охотник</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="/games/game-attempts-v89.js?v=89"></script>
-  <link rel="stylesheet" href="/games/night-hunter/style.css?v=95">
+  <link rel="stylesheet" href="/games/night-hunter/style.css?v=96">
 </head>
 <body>
-  <main class="app">
-    <header class="topbar">
-      <button class="back" id="back" type="button">← ИГРЫ</button>
-      <div class="brand"><b>НОЧНОЙ ОХОТНИК</b><small id="roomName">ПОСТ ОХРАНЫ</small></div>
-      <div class="score"><small>ОЧКИ</small><b id="score">0</b></div>
-    </header>
+<main class="app">
+  <header class="topbar">
+    <button class="back" id="back" type="button">← ИГРЫ</button>
+    <div class="brand"><b>НОЧНОЙ ОХОТНИК</b><small id="roomName">ПОСТ ОХРАНЫ</small></div>
+    <div class="score"><small>ОЧКИ</small><b id="score">0</b></div>
+  </header>
 
-    <section class="stage" id="stage">
-      <canvas id="game" aria-label="Исследовательский комплекс с видом сверху"></canvas>
-      <canvas id="minimap" class="minimap" aria-hidden="true"></canvas>
-      <div class="scanlines"></div>
-      <div class="vignette"></div>
-      <div class="danger-filter" id="dangerFilter"></div>
+  <section class="stage" id="stage">
+    <canvas id="game" aria-label="Исследовательский комплекс с видом сверху"></canvas>
+    <canvas id="minimap" class="minimap" aria-hidden="true"></canvas>
+    <div class="scanlines"></div><div class="vignette"></div><div class="danger-filter" id="dangerFilter"></div>
 
-      <div class="hud top-hud">
-        <span class="pill danger" id="timer">02:30</span>
-        <span class="pill objective" id="objective">КЛЮЧ-КАРТЫ 0/3</span>
-        <span class="pill lives" id="lives">♥♥♥</span>
-      </div>
+    <div class="hud top-hud">
+      <span class="pill danger" id="timer">02:30</span>
+      <span class="pill objective" id="objective">КЛЮЧ-КАРТЫ 0/3</span>
+      <span class="pill lives" id="lives">♥♥♥</span>
+    </div>
+    <button class="map-toggle" id="mapToggle" type="button" aria-label="Показать карту">⌁</button>
+    <div class="sound-indicator" id="soundIndicator"><i></i><b>ТИШИНА</b></div>
 
-      <div class="sound-indicator" id="soundIndicator"><i></i><b>ТИШИНА</b></div>
+    <div class="compact-status">
+      <div class="compact-meter"><span>🔦</span><i><b id="batteryBar"></b></i><strong id="battery">100%</strong></div>
+      <div class="compact-meter threat"><span>👁</span><i><b id="threatBar"></b></i><strong id="threat">ТИХО</strong></div>
+    </div>
 
-      <div class="status-panel">
-        <div class="meter"><span>ФОНАРЬ</span><i><b id="batteryBar"></b></i><strong id="battery">100%</strong></div>
-        <div class="meter threat"><span>ОХОТА</span><i><b id="threatBar"></b></i><strong id="threat">ТИХО</strong></div>
-      </div>
+    <div class="warning" id="warning">ОН ВИДИТ ТЕБЯ</div>
+    <div class="caption" id="caption">Исследуй комплекс и найди три ключ-карты.</div>
+    <div class="context-hint hidden" id="contextHint">ПОДОЙДИ БЛИЖЕ</div>
 
-      <div class="warning" id="warning">ОН ВИДИТ ТЕБЯ</div>
-      <div class="caption" id="caption">Исследуй комплекс и найди три ключ-карты.</div>
-      <div class="context-hint hidden" id="contextHint">ПОДОЙДИ БЛИЖЕ</div>
+    <div class="joystick" id="joystick" aria-label="Джойстик движения">
+      <div class="joystick-ring"></div><div class="joystick-knob" id="joystickKnob"></div><small>ТИХО · БЕГ</small>
+    </div>
 
-      <div class="joystick" id="joystick" aria-label="Джойстик движения">
-        <div class="joystick-ring"></div>
-        <div class="joystick-knob" id="joystickKnob"></div>
-        <small>ТИХО · БЕГ</small>
-      </div>
+    <div class="actions">
+      <button class="action primary" id="interact" type="button"><span>✋</span><b id="interactLabel">ДЕЙСТВИЕ</b></button>
+      <button class="action round" id="flashlight" type="button"><span>🔦</span><b>СВЕТ</b></button>
+      <button class="action round" id="distract" type="button"><span>●</span><b id="bottleLabel">2</b></button>
+      <button class="action round hot" id="burst" type="button"><span>✦</span><b>ВСПЫШКА</b></button>
+    </div>
 
-      <div class="actions">
-        <button class="action primary" id="interact" type="button"><span>✋</span><b id="interactLabel">ДЕЙСТВИЕ</b></button>
-        <div class="action-grid">
-          <button class="action compact" id="flashlight" type="button"><span>🔦</span><b>ФОНАРЬ</b></button>
-          <button class="action compact" id="distract" type="button"><span>●</span><b>БРОСИТЬ <em id="bottles">2</em></b></button>
-          <button class="action compact hot" id="burst" type="button"><span>✦</span><b>ВСПЫШКА</b></button>
-        </div>
-      </div>
-
-      <div class="search-overlay hidden" id="searchOverlay">
-        <section class="search-panel" id="searchPanel">
-          <header class="search-head">
-            <div><small>БЫСТРЫЙ ОБЫСК</small><b id="searchLocation">ТЕРМИНАЛ</b></div>
-            <button id="cancelSearch" type="button" aria-label="Закрыть обыск">×</button>
-          </header>
-          <div class="search-target">
-            <span id="searchTargetIcon">▣</span>
-            <div><small>НАЙДИ ПРЕДМЕТ</small><b id="searchTargetName">КЛЮЧ-КАРТА</b></div>
-            <strong id="searchTime">5.0</strong>
-          </div>
+    <div class="search-overlay hidden" id="searchOverlay">
+      <section class="search-panel" id="searchPanel">
+        <header class="search-head">
+          <div><small>ОБЫСК В РЕАЛЬНОМ ВРЕМЕНИ</small><b id="searchLocation">ТЕРМИНАЛ</b></div>
+          <button id="cancelSearch" type="button" aria-label="Закрыть обыск">×</button>
+        </header>
+        <div class="search-scene" id="searchScene">
+          <div class="search-target"><span id="searchTargetIcon">▣</span><div><small>НАЙДИ</small><b id="searchTargetName">КЛЮЧ-КАРТУ</b></div><strong id="searchTime">6.0</strong></div>
           <div class="search-timer"><i id="searchTimerBar"></i></div>
-          <div class="search-grid" id="searchGrid" aria-label="Предметы для обыска"></div>
-          <p id="searchHint">Охотник продолжает двигаться, пока ты роешься.</p>
-        </section>
-      </div>
-    </section>
-  </main>
+          <div class="search-grid" id="searchGrid"></div>
+          <div class="search-foot"><span id="searchHint">Убирай бумаги и нажми на нужный предмет.</span><b id="searchDanger">ШУМ: НИЗКИЙ</b></div>
+        </div>
+      </section>
+    </div>
+  </section>
+</main>
 
-  <div class="overlay" id="intro">
-    <section class="card intro-card">
-      <div class="intro-art" aria-hidden="true">
-        <div class="map-lines"></div><div class="hero-dot"></div><div class="hunter-shadow"></div><div class="beam"></div>
-      </div>
-      <div class="eyebrow">2D SURVIVAL HORROR · REALITY 95</div>
-      <h1>Ночной охотник</h1>
-      <p class="lead">Исследуй единый этаж джойстиком. Охотник патрулирует коридоры, идёт на шум, обыскивает комнаты и начинает настоящую погоню, когда замечает тебя.</p>
-      <div class="mission">
-        <div><b>1</b><span>Ищи предметы внутри шкафов</span></div>
-        <div><b>2</b><span>Собери три ключ-карты</span></div>
-        <div><b>3</b><span>Запусти генератор и лифт</span></div>
-      </div>
-      <div class="tips">
-        <span>🎮 Слабый наклон — тихий шаг</span>
-        <span>🎧 Направление шагов видно и слышно</span>
-        <span>🔦 Вспышка действует только по направлению взгляда</span>
-      </div>
-      <button class="start loading" id="start" type="button">ПОДГОТОВКА КОМПЛЕКСА…</button>
-      <button class="demo hidden" id="demo" type="button">ЗАПУСТИТЬ ДЕМО</button>
-      <div class="error" id="startError"></div>
-    </section>
-  </div>
+<div class="overlay" id="intro">
+  <section class="card intro-card">
+    <div class="intro-art" aria-hidden="true"><div class="map-lines"></div><div class="hero-dot"></div><div class="hunter-shadow"></div><div class="beam"></div></div>
+    <div class="eyebrow">2D SURVIVAL HORROR · REALITY 96</div>
+    <h1>Ночной охотник</h1>
+    <p class="lead">Комнаты стали просторнее, герой — живее, а охотник открывает двери, идёт на шум, прочёсывает помещения и не прекращает поиск сразу после потери следа.</p>
+    <div class="mission"><div><b>1</b><span>Ищи предметы внутри объектов</span></div><div><b>2</b><span>Собери три ключ-карты</span></div><div><b>3</b><span>Запусти генератор и лифт</span></div></div>
+    <div class="tips"><span>🎮 Слабый наклон — тихий шаг</span><span>🎧 Шаги слышны по сторонам</span><span>🚪 Двери приглушают звук</span></div>
+    <button class="start loading" id="start" type="button">ПОДГОТОВКА КОМПЛЕКСА…</button>
+    <button class="demo hidden" id="demo" type="button">ЗАПУСТИТЬ ДЕМО</button>
+    <div class="error" id="startError"></div>
+  </section>
+</div>
 
-  <div class="overlay hidden" id="finish">
-    <section class="card result-card">
-      <div class="result-icon" id="resultIcon">◉</div>
-      <div class="eyebrow" id="resultEyebrow">СИСТЕМА БЕЗОПАСНОСТИ</div>
-      <h1 id="resultTitle">Побег завершён</h1>
-      <p id="resultText">Лифт закрылся в последнюю секунду.</p>
-      <div class="result-grid">
-        <div><small>ОЧКИ</small><b id="resultScore">0</b></div>
-        <div><small>КАРТЫ</small><b id="resultCards">0/3</b></div>
-        <div><small>ОБЫСКИ</small><b id="resultSearches">0</b></div>
-        <div><small>СТОЛКНОВЕНИЯ</small><b id="resultHits">0</b></div>
-      </div>
-      <div class="reward" id="reward">Сохраняем результат…</div>
-      <button class="start" id="again" type="button">ЕЩЁ ОДНА ПОПЫТКА</button>
-      <button class="secondary" id="toGames" type="button">В ИГРОВОЙ ЦЕНТР</button>
-    </section>
-  </div>
-
-  <script src="/games/night-hunter/game.js?v=95"></script>
+<div class="overlay hidden" id="finish">
+  <section class="card result-card">
+    <div class="result-icon" id="resultIcon">◉</div><div class="eyebrow" id="resultEyebrow">СИСТЕМА БЕЗОПАСНОСТИ</div>
+    <h1 id="resultTitle">Побег завершён</h1><p id="resultText">Лифт закрылся в последнюю секунду.</p>
+    <div class="result-grid"><div><small>ОЧКИ</small><b id="resultScore">0</b></div><div><small>КАРТЫ</small><b id="resultCards">0/3</b></div><div><small>ОБЫСКИ</small><b id="resultSearches">0</b></div><div><small>СТОЛКНОВЕНИЯ</small><b id="resultHits">0</b></div></div>
+    <div class="reward" id="reward">Сохраняем результат…</div>
+    <button class="start" id="again" type="button">ЕЩЁ ОДНА ПОПЫТКА</button><button class="secondary" id="toGames" type="button">В ИГРОВОЙ ЦЕНТР</button>
+  </section>
+</div>
+<script src="/games/night-hunter/game.js?v=96"></script>
 </body>
 </html>
