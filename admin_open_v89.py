@@ -6,7 +6,7 @@ from typing import Any
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, WebAppInfo
 
 
-VERSION = "Reality 92 · Админ-центр Pro"
+VERSION = "Reality 95 · Админ-центр Pro"
 
 
 def install_admin_open_v89(core: Any) -> None:
@@ -47,16 +47,14 @@ def install_admin_open_v89(core: Any) -> None:
             await message.answer("⚠️ Сначала открой <code>/admin</code> в нужной групповой беседе.")
             return
 
-        # Используем проверенный маршрут Reality 76, но каждый раз добавляем
-        # уникальный build-параметр. Страница и API обновляются middleware Reality 92.
         url = (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/admin-v76/"
-            f"?chat_id={chat_id}&user_id={int(target.user_id)}&build=92-{int(time.time())}"
+            f"?chat_id={chat_id}&user_id={int(target.user_id)}&build=95-{int(time.time())}"
         )
         markup = InlineKeyboardMarkup(
             inline_keyboard=[[
                 InlineKeyboardButton(
-                    text="🛠 Открыть админ-центр Reality 92",
+                    text="🛠 Открыть админ-центр Reality 95",
                     web_app=WebAppInfo(url=url),
                 )
             ]]
@@ -64,11 +62,12 @@ def install_admin_open_v89(core: Any) -> None:
         try:
             await bot.send_message(
                 message.from_user.id,
-                "🛠 <b>АДМИН-ЦЕНТР REALITY 92</b>\n\n"
+                "🛠 <b>АДМИН-ЦЕНТР REALITY 95</b>\n\n"
                 f"Беседа: <code>{chat_id}</code>\n"
                 f"Участник: <b>{target.full_name}</b>\n\n"
-                "Персональные попытки работают через стабильный маршрут, "
-                "а новый игровой экран загружается без отдельного адреса.",
+                "Теперь в игровом разделе поддерживаются три Mini App: "
+                "Бег по крышам, Ограбление хранилища и Ночной охотник. "
+                "Для каждой игры можно отдельно выдавать персональные попытки.",
                 reply_markup=markup,
             )
         except Exception:
@@ -77,7 +76,7 @@ def install_admin_open_v89(core: Any) -> None:
         if core.is_group(message):
             await core.ephemeral_reply(
                 message,
-                "🔒 Админ-центр Reality 92 отправлен в личные сообщения.",
+                "🔒 Админ-центр Reality 95 отправлен в личные сообщения.",
                 delay_seconds=3,
             )
 
