@@ -18,6 +18,7 @@ from boss_upgrade_v52 import install_boss_upgrade_v52
 from economy_fate_ui_v74 import install_economy_fate_ui_v74
 from game_center_runtime_v75 import install_game_center_runtime_v75
 from heist_asset_routes_v78 import install_heist_asset_routes_v78
+from heist_reward_v91 import install_heist_reward_v91
 from hero_day_v77 import install_hero_day_v77
 from influence_balance_v87 import install_influence_balance_v87
 from influence_reward_v88 import install_influence_reward_v88
@@ -107,6 +108,9 @@ install_raid_v65_balance(core)
 install_admin_webapp_v62(core)
 install_game_center_runtime_v75(core)
 install_heist_asset_routes_v78(core)
+# Reality 91 подменяет только финал игры: ограбление начисляет всю сохранённую
+# добычу, а повторная отправка той же сессии не выдаёт очки второй раз.
+install_heist_reward_v91(core)
 install_admin_center_v76(core)
 install_talent_routes_v63(core)
 install_raid_v59_recovery(core)
