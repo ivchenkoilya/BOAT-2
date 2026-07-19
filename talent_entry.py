@@ -1,6 +1,7 @@
 import asyncio
 
 import main as core
+from about_optimizer_v69 import install_about_optimizer_v69
 from about_recommendations_v67 import install_about_recommendations_v67
 from about_recommendations_v68 import install_about_recommendations_v68
 from about_updates import install_about_updates
@@ -22,6 +23,7 @@ from talent_improvements_v66 import install_talent_improvements_v66
 from talent_mastery import install_mastery
 from talent_mastery_ui import install_mastery_ui
 from talent_menu import install_menu
+from talent_optimizer_v69 import install_talent_optimizer_v69
 from talent_recommendations_v67 import install_talent_recommendations_v67
 from talent_recommendations_v68 import install_talent_recommendations_v68
 from talent_routes_v63 import install_talent_routes_v63
@@ -55,12 +57,15 @@ install_talent_recommendations_v67(core)
 # Reality 68 добавляет отмену выбранной сборки и убирает движение узла:
 # следующий шаг только спокойно светится, а свободный режим очищает подсказки.
 install_talent_recommendations_v68(core)
+# Reality 69 заменяет все заранее заданные рекомендации персональным
+# серверным перебором допустимых уровней по статистике конкретного игрока.
+install_talent_optimizer_v69(core)
 
 # Сначала задаём базовый урон и тактические механики рейда. Reality 61
 # устанавливает предыдущий стабильный слой, Reality 64 выдаёт очки древа,
 # а Reality 65 поднимает HP до 100 000 и усложняет давление отряда.
 # Затем подключается защищённый админ-центр, а финальный маршрут древа
-# возвращает весь расширенный интерфейс и API Reality 68.
+# возвращает весь расширенный интерфейс и API Reality 69.
 install_raid_balance_v58(core)
 install_raid_v59_fix(core)
 install_raid_v60(core)
@@ -76,6 +81,7 @@ install_talent_rules(core)
 install_about_updates(core)
 install_about_recommendations_v67(core)
 install_about_recommendations_v68(core)
+install_about_optimizer_v69(core)
 install_inline_webapp_fix(core)
 
 # В main.py есть общий обработчик F.text, зарегистрированный раньше расширений.
