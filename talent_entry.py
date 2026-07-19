@@ -1,6 +1,7 @@
 import asyncio
 
 import main as core
+from about_balance_v74 import install_about_balance_v74
 from about_bonus_v73 import install_about_bonus_v73
 from about_compact_v72 import install_about_compact_v72
 from about_optimizer_v69 import install_about_optimizer_v69
@@ -11,6 +12,7 @@ from about_recommendations_v68 import install_about_recommendations_v68
 from about_updates import install_about_updates
 from admin_webapp_v62 import install_admin_webapp_v62
 from boss_upgrade_v52 import install_boss_upgrade_v52
+from economy_fate_ui_v74 import install_economy_fate_ui_v74
 from raid_assets_v58 import install_raid_assets
 from raid_balance_v58 import install_raid_balance_v58
 from raid_v59_fix import install_raid_v59_fix
@@ -99,11 +101,14 @@ install_about_optimizer_v71(core)
 install_about_compact_v72(core)
 # Reality 73 добавляет актуальное описание видимых бонусов древа.
 install_about_bonus_v73(core)
+# Reality 74 финально заменяет карточку актуальной экономикой.
+install_about_balance_v74(core)
 install_inline_webapp_fix(core)
-# Слой Reality 73 ставится последним: он видит уже итоговое начисление после
-# всех талантов, дописывает прозрачный расчёт в карточку и переименовывает
-# ветку «Награды» в «Удача».
+# Reality 73 видит итоговое начисление после старых талантов.
 install_talent_bonus_display_v73(core)
+# Reality 74 ставится последним: меняет пороги ролей, переносит старые балансы,
+# стабилизирует ветку Удачи и добавляет отдельный расчёт в Шар судьбы.
+install_economy_fate_ui_v74(core)
 
 # В main.py есть общий обработчик F.text, зарегистрированный раньше расширений.
 # Переносим команды древа и мастерства в начало списка, чтобы общий обработчик
