@@ -1,0 +1,32 @@
+:root{--hud-safe:94px}
+.app{gap:5px!important;padding:calc(5px + env(safe-area-inset-top)) 7px calc(5px + env(safe-area-inset-bottom))!important}
+.top{min-height:52px!important;grid-template-columns:82px 1fr 64px!important;gap:5px!important}
+.back{height:42px!important;border-radius:14px!important;padding:0 9px!important;font-size:11px!important}
+.title b{font-size:14px!important}.title small{margin-top:1px!important;font-size:8px!important;letter-spacing:.07em!important}
+.loot{padding-right:1px!important}.loot small{font-size:7px!important}.loot b{font-size:21px!important}
+.stage{border-radius:21px!important}
+.stage:before{border-radius:20px!important}
+.hud{left:7px!important;right:7px!important;top:7px!important;height:84px!important}
+.hudrow{gap:5px!important}.hudcluster{gap:5px!important}
+.pill{min-height:35px!important;padding:6px 10px!important;font-size:10px!important;box-shadow:0 4px 14px #0008,inset 0 1px rgba(255,255,255,.045)!important}
+.pill.timer{font-size:12px!important}
+.alarmCard{margin-top:5px!important;padding:6px 9px 7px!important;border-radius:14px!important;box-shadow:0 5px 16px #0008!important}
+.alarmLabel{margin-bottom:4px!important;font-size:8px!important}
+.alarm{height:7px!important}
+.alertBanner{top:97px!important}.zoneBanner{top:132px!important}.smokeStatus{top:101px!important;right:9px!important}
+.minimapWrap{left:9px!important;right:auto!important;top:101px!important;bottom:auto!important;width:84px!important;height:84px!important;padding:4px!important;border-radius:50%!important;background:rgba(6,5,9,.86)!important;border:1px solid rgba(255,213,108,.42)!important;box-shadow:0 8px 24px #000a,0 0 20px rgba(173,109,255,.14)!important;overflow:hidden!important}
+.minimapWrap>span{display:none!important}
+.minimap{width:100%!important;height:100%!important;border-radius:50%!important}
+.minimapWrap.expanded{left:50%!important;top:50%!important;bottom:auto!important;width:min(260px,72vw)!important;height:min(260px,72vw)!important;border-radius:24px!important;transform:translate(-50%,-50%)!important;background:rgba(4,4,8,.97)!important;box-shadow:0 22px 70px #000,0 0 38px rgba(173,109,255,.24)!important}
+.minimapWrap.expanded .minimap{border-radius:18px!important}
+.audioToggle{left:auto!important;right:9px!important;top:101px!important;bottom:auto!important;width:38px!important;height:38px!important;font-size:16px!important;border-radius:50%!important}
+.hint{bottom:7px!important;padding:7px 11px!important;border-radius:13px!important;font-size:9px!important;max-width:calc(100% - 22px)!important}
+.controls{height:138px!important;grid-template-columns:142px minmax(0,1fr)!important;gap:7px!important;padding-top:0!important}
+.joystick{width:138px!important;height:138px!important;left:-4px!important;box-shadow:inset 0 0 34px #000d,0 10px 25px #0008,0 0 16px rgba(255,215,108,.08)!important}
+.joystick:before{inset:13px!important}.joystickRing{inset:31px!important}
+.knob{width:58px!important;height:58px!important;left:40px!important;top:40px!important}
+.actions{height:132px!important;grid-template-rows:75px 50px!important;gap:7px!important}
+.action{border-radius:16px!important;font-size:10px!important;line-height:1.1!important;padding:0 8px!important}
+.action.main{font-size:11px!important}
+@media(max-width:380px){.top{grid-template-columns:76px 1fr 58px!important}.controls{grid-template-columns:132px minmax(0,1fr)!important;height:130px!important}.joystick{width:128px!important;height:128px!important}.joystickRing{inset:29px!important}.knob{width:54px!important;height:54px!important;left:37px!important;top:37px!important}.actions{height:124px!important;grid-template-rows:70px 47px!important}.minimapWrap{width:78px!important;height:78px!important}}
+@media(max-height:760px){:root{--hud-safe:88px}.top{min-height:48px!important}.controls{height:122px!important;grid-template-columns:124px minmax(0,1fr)!important}.joystick{width:120px!important;height:120px!important}.joystickRing{inset:27px!important}.knob{width:50px!important;height:50px!important;left:35px!important;top:35px!important}.actions{height:117px!important;grid-template-rows:65px 45px!important}.minimapWrap{top:94px!important;width:74px!important;height:74px!important}.audioToggle{top:94px!important}.alertBanner{top:91px!important}.zoneBanner{top:124px!important}}
