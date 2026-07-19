@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#090710">
   <title>Ограбление хранилища</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="/games/heist/style.css?v=81">
+  <link rel="stylesheet" href="/games/heist/style.css?v=82">
 </head>
 <body>
 <div class="app" id="app">
@@ -19,9 +19,12 @@
   <section class="stage" id="stage">
     <canvas id="game"></canvas>
     <div class="lighting" aria-hidden="true"></div>
-    <div class="hud">
+    <div class="hud" id="hud">
       <div class="hudrow">
-        <div class="hudcluster"><span class="pill" id="timer">02:15</span><span class="pill" id="mapCode">КАРТА —</span></div>
+        <div class="hudcluster">
+          <span class="pill timer" id="timer">02:45</span>
+          <span class="pill" id="mapCode">КАРТА —</span>
+        </div>
         <span class="pill" id="safes">СЕЙФЫ 0/0</span>
       </div>
       <div class="alarmCard">
@@ -30,6 +33,7 @@
       </div>
     </div>
     <div class="alertBanner" id="alertBanner">КАМЕРА ФИКСИРУЕТ ДВИЖЕНИЕ</div>
+    <div class="zoneBanner" id="zoneBanner">ЗОЛОТОЙ СЕКТОР</div>
     <div class="smokeStatus hidden" id="smokeStatus"><span>🌫 ДЫМ</span><b id="smokeTimer">5.5</b></div>
     <button class="minimapWrap" id="minimapWrap" type="button" aria-label="Развернуть мини-карту">
       <span>КАРТА</span><canvas class="minimap" id="miniMap"></canvas>
@@ -37,28 +41,28 @@
     <div class="hint" id="hint">Исследуй хранилище и найди сейфы</div>
   </section>
 
-  <section class="controls">
-    <div class="joystick" id="joystick"><div class="knob" id="knob"></div></div>
+  <section class="controls" id="controls">
+    <div class="joystick" id="joystick"><div class="joystickRing"></div><div class="knob" id="knob"></div></div>
     <div class="actions">
-      <button class="action main" id="interact" type="button">🔎 ИЩИ ЦЕЛЬ</button>
+      <button class="action main search" id="interact" type="button">🔎 ПОДОЙДИ К СЕЙФУ</button>
       <button class="action" id="smoke" type="button">🌫 ДЫМОВАЯ ЗАВЕСА</button>
     </div>
   </section>
 </div>
+
 <div class="fxLayer" id="fxLayer" aria-hidden="true"></div>
 
 <div class="overlay" id="intro">
-  <section class="card">
+  <section class="card introCard">
     <div class="icon">🏛</div>
     <h1>Большое ограбление</h1>
-    <div class="notice"><b>Каждая попытка — новое хранилище.</b><br>Все сейфы доступны, но сектора, камеры, редкость добычи и путь к выходу меняются.</div>
+    <div class="notice"><b>Каждая попытка — новое хранилище.</b><br>Сейфы доступны, камеры не видят сквозь стены, а у каждого класса сейфов свой способ взлома.</div>
     <div class="featureGrid">
-      <div class="feature"><b>🗺 ЖИВОЕ ХРАНИЛИЩЕ</b>Золотые залы, технические коридоры, охрана, лазерные и аварийные сектора.</div>
-      <div class="feature"><b>📹 УМНЫЕ КАМЕРЫ</b>Поиск, подозрение и обнаружение. Стены перекрывают обзор.</div>
-      <div class="feature"><b>💎 ГЛАВНЫЙ СЕЙФ</b>Обычная, редкая, элитная и легендарная добыча с разным временем взлома.</div>
-      <div class="feature"><b>🌫 ТАКТИКА</b>Дым скрывает героя, сбивает камеры и снижает тревогу.</div>
+      <div class="feature"><b>🔐 РЕАЛЬНЫЙ ВЗЛОМ</b>Отмычка, штифты, кодовый диск и многоэтапное главное хранилище.</div>
+      <div class="feature"><b>📹 ЧЕСТНЫЕ КАМЕРЫ</b>Луч останавливается стеной. Сначала подозрение, затем обнаружение.</div>
+      <div class="feature"><b>🗺 БОЛЬШАЯ КАРТА</b>Туман войны, разные сектора, декор и подсказка маршрута.</div>
+      <div class="feature"><b>💰 РАЗНАЯ ДОБЫЧА</b>Обычные, усиленные, элитные и главный легендарный сейф.</div>
     </div>
-    <p>Вскрывай сейфы, следи за тревогой и возвращайся к зелёному выходу. После раскрытия всех сейфов маршрут эвакуации подсветится.</p>
     <button id="start" type="button">НАЧАТЬ ОГРАБЛЕНИЕ</button>
     <button class="secondary hidden" id="introToGames" type="button">В ИГРОВОЙ ЦЕНТР</button>
     <div class="error" id="startError"></div>
@@ -81,6 +85,35 @@
   </section>
 </div>
 
-<script src="/games/heist/game.js?v=81"></script>
+<div class="crackOverlay hidden" id="crackOverlay" role="dialog" aria-modal="true">
+  <div class="crackBackdrop"></div>
+  <section class="crackPanel" id="crackPanel">
+    <header class="crackHeader">
+      <div><small id="crackType">МЕХАНИЧЕСКИЙ СЕЙФ</small><h2 id="crackTitle">Вскрытие замка</h2></div>
+      <button id="crackAbort" class="crackAbort" type="button">✕</button>
+    </header>
+    <div class="crackMeta">
+      <span id="crackStageLabel">ЭТАП 1/1</span>
+      <span id="crackDifficulty">СЛОЖНОСТЬ: НИЗКАЯ</span>
+    </div>
+    <div class="safeFocus" id="safeFocus">
+      <div class="safeDoor" id="safeDoor">
+        <i class="bolt b1"></i><i class="bolt b2"></i><i class="bolt b3"></i><i class="bolt b4"></i>
+        <div class="safeDial" id="safeDial"><span></span></div>
+        <div class="safeKeyhole" id="safeKeyhole"></div>
+        <div class="safeHandle"></div>
+      </div>
+    </div>
+    <div class="crackInstruction" id="crackInstruction">Найди правильный угол отмычки и поверни замок.</div>
+    <div class="crackGame" id="crackGame"></div>
+    <div class="crackStats">
+      <div><span>ПРОЧНОСТЬ ИНСТРУМЕНТА</span><div class="statbar durability"><i id="durabilityBar"></i></div></div>
+      <div><span>ПРОГРЕСС ВЗЛОМА</span><div class="statbar progress"><i id="crackProgressBar"></i></div></div>
+    </div>
+    <div class="crackMessage" id="crackMessage">Работай тихо — ошибки повышают тревогу.</div>
+  </section>
+</div>
+
+<script src="/games/heist/game.js?v=82"></script>
 </body>
 </html>
