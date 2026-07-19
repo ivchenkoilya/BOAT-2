@@ -4,7 +4,8 @@
   const patches=[1,2,3,4,5].map(n=>"/games/heist/patch-v88-"+n+".js").concat([
     "/games/heist/patch-v90.js",
     "/games/heist/patch-v90-hotfix.js",
-    "/games/heist/patch-v91.js"
+    "/games/heist/patch-v91.js",
+    "/games/heist/patch-v91-visual.js"
   ]);
   const post=[
     "/games/heist/enhance-v83.js",
