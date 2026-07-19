@@ -176,11 +176,18 @@
     if(grid.innerHTML!==markup)grid.innerHTML=markup;
   }
 
+  function renderHistoryNames(){
+    document.querySelectorAll('#historyList .history-item header b').forEach(node=>{
+      if(node.textContent.trim()==='game_attempts_set')node.textContent='Выдача игровых попыток';
+    });
+  }
+
   function renderUpgrade(){
     const attemptsReady=ensureAttemptPanel();
     const economyReady=ensureEconomyPanel();
     renderGameLimits();
     renderSources();
+    renderHistoryNames();
     const version=document.getElementById('versionText');
     const versionText=runtime.state?.version||'Reality 89';
     if(version&&version.textContent!==versionText)version.textContent=versionText;
