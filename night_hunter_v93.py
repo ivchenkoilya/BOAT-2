@@ -8,7 +8,7 @@ from aiohttp import web
 import game_center_v75 as base
 
 
-VERSION = "Reality 93 · Ночной охотник"
+VERSION = "Reality 94 · Свободное исследование"
 GAME_KEY = "night-hunter"
 GAME_PATH = Path(__file__).resolve().parent / "games" / GAME_KEY
 
