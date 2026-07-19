@@ -1,6 +1,7 @@
 import asyncio
 
 import main as core
+from about_compact_v72 import install_about_compact_v72
 from about_optimizer_v69 import install_about_optimizer_v69
 from about_optimizer_v70 import install_about_optimizer_v70
 from about_optimizer_v71 import install_about_optimizer_v71
@@ -92,6 +93,9 @@ install_about_recommendations_v68(core)
 install_about_optimizer_v69(core)
 install_about_optimizer_v70(core)
 install_about_optimizer_v71(core)
+# Reality 72 ставится последним и заменяет разросшуюся цепочку «О боте»
+# одной компактной карточкой с безопасным запасом до лимита Telegram.
+install_about_compact_v72(core)
 install_inline_webapp_fix(core)
 
 # В main.py есть общий обработчик F.text, зарегистрированный раньше расширений.
