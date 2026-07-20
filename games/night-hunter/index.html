@@ -7,31 +7,31 @@
   <title>Ночной охотник: Последняя смена</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="/games/game-attempts-v89.js?v=89"></script>
-  <link rel="stylesheet" href="/games/night-hunter/style-v108.css?v=112">
-  <link rel="stylesheet" href="/games/night-hunter/style-v110.css?v=112">
+  <link rel="stylesheet" href="/games/night-hunter/style-v108.css?v=113">
+  <link rel="stylesheet" href="/games/night-hunter/style-v110.css?v=113">
 </head>
 <body>
 <main class="app">
   <header class="topbar">
     <button id="back" class="back" type="button">← ИГРЫ</button>
-    <div class="brand"><b>ПОСЛЕДНЯЯ СМЕНА</b><small id="location">ДОРОГА К ЗАВОДУ</small></div>
+    <div class="brand"><b>ПОСЛЕДНЯЯ СМЕНА</b><small id="location">ДОРОГА К ALIVSPORT</small></div>
     <div class="score"><small>ОЧКИ</small><b id="score">0</b></div>
   </header>
 
   <section class="stage" id="stage">
-    <canvas id="game" aria-label="Мистическая ночная смена на заводе"></canvas>
+    <canvas id="game" aria-label="Мистическая ночная смена на заводе ALIVSPORT"></canvas>
     <div class="scanlines"></div><div class="vignette"></div><div class="staticFx" id="staticFx"></div>
 
     <div class="hudTop">
       <span class="clock" id="clock">17:42</span>
-      <div class="objective"><small>ТЕКУЩАЯ ЗАДАЧА</small><b id="objective">ДОЙДИ ДО ПРОХОДНОЙ</b><span class="objectiveDetail" id="objectiveDetail">Тёплый вечер. Дневная смена покидает территорию.</span></div>
+      <div class="objective"><small>ТЕКУЩАЯ ЗАДАЧА</small><b id="objective">ДОЙДИ ДО ПРОХОДНОЙ</b><span class="objectiveDetail" id="objectiveDetail">Тёплый вечер. Дневная смена ALIVSPORT покидает территорию.</span></div>
     </div>
 
     <div class="battery hidden" id="batteryHud">
       <small>ФОНАРЬ</small><i><b id="batteryBar"></b></i><strong id="batteryText">100%</strong>
     </div>
 
-    <div class="caption" id="caption">Тёплый вечер. Ты идёшь на первую ночную смену.</div>
+    <div class="caption" id="caption">Тёплый вечер. Ты идёшь на первую ночную смену в ALIVSPORT.</div>
     <div class="eventBanner" id="eventBanner"><small>СМЕНА №184</small><b>ПРИБЫТИЕ</b></div>
 
     <div class="joystick" id="joystick"><div class="joystickRing"></div><div class="joystickKnob" id="joystickKnob"></div></div>
@@ -52,13 +52,13 @@
     <div class="factoryPoster">
       <div class="sun"></div><div class="factorySilhouette"></div><div class="workerSilhouette"></div><div class="nightLayer"></div>
     </div>
-    <div class="eyebrow">REALITY 112 · STABILITY ROLLBACK</div>
+    <div class="eyebrow">REALITY 113 · ALIVSPORT</div>
     <h1>Ночной охотник:<br>Последняя смена</h1>
-    <p>Стабильная версия заводской смены без коллизий деревьев и неудачного экспериментального визуального слоя.</p>
+    <p>Мистическая ночная смена на заводе ALIVSPORT. Камеры, обходы с фонариком, журналы, ремонт оборудования и цикл, который не хочет заканчиваться.</p>
     <div class="features">
-      <div><b>СТАБИЛЬНОСТЬ</b><span>Свободное перемещение без застреваний</span></div>
-      <div><b>СЮЖЕТ СОХРАНЁН</b><span>Камеры, ремонты, документы и станок №0</span></div>
-      <div><b>ВИЗУАЛ БЕЗ ЭКСПЕРИМЕНТА</b><span>Возвращена предыдущая рабочая отрисовка</span></div>
+      <div><b>ALIVSPORT</b><span>Новое название завода во всех сценах и документах</span></div>
+      <div><b>СОТРУДНИК: ИВЧ</b><span>Имя исправлено в журнале, нарядах и системе станка №0</span></div>
+      <div><b>СТАБИЛЬНАЯ ОСНОВА</b><span>Сюжет и управление сохранены без новых коллизий</span></div>
     </div>
     <button class="primary loading" id="start" type="button">ПОДГОТОВКА СМЕНЫ…</button>
     <button class="secondary hidden" id="demo" type="button">ЗАПУСТИТЬ ДЕМО</button>
@@ -68,7 +68,7 @@
 
 <div class="overlay hidden" id="journalModal">
   <section class="paperCard">
-    <div class="paperHeader"><small>АО «ОРФЕЙ-МЕХАНИКА»</small><b id="journalTitle">ЖУРНАЛ ПРИЁМА СМЕНЫ</b><span id="shiftStamp">СМЕНА №184</span></div>
+    <div class="paperHeader"><small>АО «ALIVSPORT»</small><b id="journalTitle">ЖУРНАЛ ПРИЁМА СМЕНЫ</b><span id="shiftStamp">СМЕНА №184</span></div>
     <div class="journalTable" id="journalTable"></div>
     <div class="signatureBlock">
       <div class="signatureLabel" id="signatureLabel">ПОСТАВЬТЕ ПОДПИСЬ В ВЫДЕЛЕННОМ ПОЛЕ</div>
@@ -81,7 +81,7 @@
 
 <div class="overlay hidden" id="cameraModal">
   <section class="cameraCard">
-    <div class="cameraTop"><div><small>СИСТЕМА ВИДЕОНАБЛЮДЕНИЯ</small><b id="cameraTitle">ПОСТ ДЕЖУРНОГО</b></div><span id="cameraTime">18:00:00</span></div>
+    <div class="cameraTop"><div><small>СИСТЕМА ВИДЕОНАБЛЮДЕНИЯ ALIVSPORT</small><b id="cameraTitle">ПОСТ ДЕЖУРНОГО</b></div><span id="cameraTime">18:00:00</span></div>
     <div class="cameraScreen"><canvas id="cameraFeed" width="960" height="540"></canvas><div class="cameraNoise"></div><div class="rec">● REC</div></div>
     <div class="cameraControls" id="cameraControls"></div>
     <div class="cameraStatus" id="cameraStatus">Проверьте обязательные камеры.</div>
@@ -91,7 +91,7 @@
 
 <div class="overlay hidden" id="repairModal">
   <section class="repairCard">
-    <div class="repairHead"><div><small>ТЕХНИЧЕСКОЕ ОБСЛУЖИВАНИЕ</small><b id="repairTitle">ДИАГНОСТИКА</b></div><span id="repairCode">ЗАЯВКА 014</span></div>
+    <div class="repairHead"><div><small>ТЕХНИЧЕСКОЕ ОБСЛУЖИВАНИЕ ALIVSPORT</small><b id="repairTitle">ДИАГНОСТИКА</b></div><span id="repairCode">ЗАЯВКА 014</span></div>
     <p id="repairDescription"></p>
     <div class="repairWorkspace" id="repairWorkspace"></div>
     <div class="repairHint" id="repairHint"></div>
@@ -111,7 +111,7 @@
 
 <div class="overlay hidden" id="notesModal">
   <section class="notesCard">
-    <div class="notesHead"><div><small>ЛИЧНЫЙ ЖУРНАЛ</small><b>НАЙДЕННЫЕ ДОКУМЕНТЫ</b></div><button id="closeNotes" type="button">✕</button></div>
+    <div class="notesHead"><div><small>ЛИЧНЫЙ ЖУРНАЛ ИВЧ</small><b>НАЙДЕННЫЕ ДОКУМЕНТЫ</b></div><button id="closeNotes" type="button">✕</button></div>
     <div class="notesList" id="notesList"></div>
   </section>
 </div>
@@ -119,9 +119,9 @@
 <div class="overlay hidden" id="choiceModal">
   <section class="choiceCard">
     <div class="eyebrow">06:00 · ПЕРЕДАЧА СМЕНЫ</div>
-    <h1>Кому ты передаёшь смену?</h1>
-    <p>На камере проходной стоит человек в твоей одежде. Система требует подпись в графе «Смену принял».</p>
-    <div class="choiceCamera"><canvas id="choiceFeed" width="800" height="360"></canvas><span>КАМЕРА 01 · ПРОХОДНАЯ</span></div>
+    <h1>Кому Ивч передаёт смену?</h1>
+    <p>На камере проходной стоит человек в той же рабочей одежде. Система ALIVSPORT требует подпись в графе «Смену принял».</p>
+    <div class="choiceCamera"><canvas id="choiceFeed" width="800" height="360"></canvas><span>КАМЕРА 01 · ПРОХОДНАЯ ALIVSPORT</span></div>
     <div class="choiceGrid">
       <button id="signAgain" type="button"><b>ПОСТАВИТЬ ПОДПИСЬ</b><small>Передать смену самому себе</small></button>
       <button id="refuseSign" type="button"><b>ОТКАЗАТЬСЯ</b><small>Попытаться выйти без передачи смены</small></button>
@@ -147,6 +147,6 @@
   </section>
 </div>
 
-<script src="/games/night-hunter/game-v110.js?v=112"></script>
+<script src="/games/night-hunter/game-v113.js?v=113"></script>
 </body>
 </html>
