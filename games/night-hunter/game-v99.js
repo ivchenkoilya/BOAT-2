@@ -1,1 +1,1 @@
-PLACEHOLDER
+(async()=>{const error=document.getElementById('startError'),start=document.getElementById('start');try{const names=['a','b','c','d','e','f','g'];const parts=await Promise.all(names.map(async n=>{const r=await fetch(`/games/night-hunter/game-v99-${n}.js?v=99`,{cache:'no-store'});if(!r.ok)throw new Error(`часть ${n.toUpperCase()}`);return r.text()}));(0,eval)(parts.join(''))}catch(e){if(error){error.style.display='block';error.textContent='Не удалось загрузить режим зачистки: '+e.message}if(start){start.disabled=true;start.textContent='ОШИБКА ЗАГРУЗКИ'}}})();
