@@ -8,7 +8,6 @@
   const fighters=document.getElementById('fighters');
   const navButtons=[...document.querySelectorAll('.bottom-nav button')];
   const skinsButton=navButtons.at(-1);
-  const chooseHero=document.querySelector('.squad-section .section-head>button');
   const userId=String(tg?.initDataUnsafe?.user?.id||'guest');
   const storageKey=`bossHeroSkin:${userId}`;
   const SKINS=Array.from({length:6},(_,index)=>({
@@ -99,7 +98,6 @@
     skinsButton.dataset.modal='skins';
     skinsButton.setAttribute('aria-label','Образы героя');
   }
-  if(chooseHero)chooseHero.dataset.modal='skins';
 
   document.addEventListener('click',event=>{
     const opener=event.target.closest('[data-modal="skins"]');
