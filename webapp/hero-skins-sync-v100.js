@@ -46,24 +46,33 @@
     return SKINS.find(skin=>skin.id===id)||null;
   }
 
+  function setData(element,key,value){
+    const text=String(value);
+    if(element.dataset[key]!==text)element.dataset[key]=text;
+  }
+
+  function clearData(element,key){
+    if(Object.prototype.hasOwnProperty.call(element.dataset,key))delete element.dataset[key];
+  }
+
   function setCardSkin(card,fighter){
     if(!card||!fighter)return;
     const userId=Number(fighter.user_id||0);
     const skin=skinById(fighter.skin_id);
-    card.dataset.userId=String(userId);
+    setData(card,'userId',userId);
     const avatar=card.querySelector('.fighter-avatar');
     if(!avatar)return;
 
     let image=avatar.querySelector('.fighter-skin-image');
     if(!skin){
-      delete card.dataset.heroSkin;
-      delete avatar.dataset.selectedSkin;
+      clearData(card,'heroSkin');
+      clearData(avatar,'selectedSkin');
       image?.remove();
       return;
     }
 
-    card.dataset.heroSkin=String(skin.id);
-    avatar.dataset.selectedSkin=String(skin.id);
+    setData(card,'heroSkin',skin.id);
+    setData(avatar,'selectedSkin',skin.id);
     if(!image){
       image=document.createElement('img');
       image.className='fighter-skin-image';
@@ -80,9 +89,10 @@
   }
 
   function decorateHeroesPage(){
+    const ordered=orderedFighters();
     const byId=new Map((latestState?.fighters||[]).map(fighter=>[String(fighter.user_id),fighter]));
     document.querySelectorAll('.page-heroes-grid .fighter:not(.empty-fighter)').forEach((card,index)=>{
-      const fighter=byId.get(String(card.dataset.userId||''))||orderedFighters()[index];
+      const fighter=byId.get(String(card.dataset.userId||''))||ordered[index];
       if(fighter)setCardSkin(card,fighter);
     });
   }
@@ -113,10 +123,11 @@
     if(!grid)return;
     const key=`${selectedSkinId()}:${SKINS.length}`;
     if(grid.dataset.heroSkinsKey===key&&grid.querySelector('[data-hero-skin]'))return;
-    grid.dataset.heroSkinsKey=key;
+    setData(grid,'heroSkinsKey',key);
     grid.innerHTML=galleryMarkup();
     const intro=page.querySelector('.page-intro');
-    if(intro)intro.textContent='Выбери образ героя. Выбранный портрет будет виден в карточке отряда у тебя и у остальных участников рейда.';
+    const text='Выбери образ героя. Выбранный портрет будет виден в карточке отряда у тебя и у остальных участников рейда.';
+    if(intro&&intro.textContent!==text)intro.textContent=text;
   }
 
   function renderAll(){
@@ -146,7 +157,11 @@
 
   async function chooseSkin(skinId,button){
     if(!bossId||!tg?.initData){
-      window.dispatchEvent(new CustomEvent('hero-skin-error',{detail:'Открой рейд через Telegram, чтобы сохранить образ.'}));
+      const toast=document.getElementById('toast');
+      if(toast){
+        toast.textContent='Открой рейд через Telegram, чтобы сохранить образ.';
+        toast.className='toast show error';
+      }
       return;
     }
     button?.classList.add('saving');
