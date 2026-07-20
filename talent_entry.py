@@ -44,6 +44,7 @@ from raid_v61_safety import install_raid_v61_safety
 from raid_v64_direct_tree import install_raid_v64_direct_tree
 from raid_v65_balance import install_raid_v65_balance
 from reality_event_command_v98 import install_reality_event_command_v98
+from reality_event_live_v109 import install_reality_event_live_v109
 from reality_event_vote_v97 import install_reality_event_vote_v97
 from reality_events_admin_bridge_v96 import install_reality_events_admin_bridge_v96
 from reality_events_boss_autostart_v96 import install_reality_events_boss_autostart_v96
@@ -199,6 +200,9 @@ install_bot_game_balance_v101(core)
 # Reality 108 предупреждает беседу за час до конца рейдового кулдауна, а затем
 # автоматически отправляет и запускает карточку Центра Вселенной.
 install_boss_autostart_v108(core)
+# Reality 109 пересчитывает и редактирует карточку события при любом коллективном
+# вкладе: влияние, игры, задания, возврат налога, удары и урон по боссу.
+install_reality_event_live_v109(core)
 
 # В main.py есть общий обработчик F.text, зарегистрированный раньше расширений.
 # Переносим команды древа, мастерства, игр и события в начало списка.
