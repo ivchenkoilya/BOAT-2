@@ -6,6 +6,7 @@ from typing import Any
 from aiogram.types import User
 
 import reality_events_v96 as events
+from reality_events_rewards_v96 import install_reality_events_rewards_v96
 from reality_events_runtime_fix_v96 import install_reality_events_runtime_fix_v96
 
 
@@ -17,8 +18,9 @@ def install_reality_events_boss_autostart_v96(core: Any) -> None:
         return
     core._reality_events_boss_autostart_v96_installed = True
 
-    # Сначала исправляем совместимость начислений со старым API баланса.
+    # Сначала исправляем совместимость начислений и ставим редактор наград.
     install_reality_events_runtime_fix_v96(core)
+    install_reality_events_rewards_v96(core)
     original_start_event = events._start_event
 
     async def start_event_with_boss(
