@@ -8,6 +8,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from career_system_v120 import install_career_system_v120
 from command_hub_v121 import install_command_hub_v121
+from command_hub_compat_v121 import install_command_hub_compat_v121
 from finance_route_fix_v116 import install_finance_route_fix_v116
 from finance_loan_requests_v118 import install_finance_loan_requests_v118
 
@@ -92,3 +93,4 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     # длинный список команд крупными разделами с рабочими кнопками.
     install_career_system_v120(core)
     install_command_hub_v121(core)
+    install_command_hub_compat_v121(core)
