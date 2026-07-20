@@ -77,7 +77,7 @@ def install_inline_webapp_fix(core: Any) -> None:
             )
 
             prelude = """
-<script id="raid-ui-v65-prelude">
+<script id="raid-ui-v107-prelude">
 (function(){
   var nativeSetInterval=window.setInterval.bind(window);
   window.setInterval=function(callback,delay){
@@ -85,11 +85,52 @@ def install_inline_webapp_fix(core: Any) -> None:
     var safeDelay=Number(delay)===200?1000:delay;
     return nativeSetInterval.apply(window,[callback,safeDelay].concat(args));
   };
+
+  function initialBossId(){
+    try{
+      var tg=window.Telegram&&window.Telegram.WebApp;
+      var params=new URLSearchParams(location.search);
+      return String(
+        (tg&&tg.initDataUnsafe&&tg.initDataUnsafe.start_param)||
+        params.get('boss')||
+        params.get('tgWebAppStartParam')||
+        sessionStorage.getItem('raid:last-boss-id')||
+        ''
+      ).trim();
+    }catch(_error){return '';}
+  }
+
+  function publishRaidState(data){
+    if(!data||!data.ok)return;
+    var battle=data.battle||{};
+    var id=String(battle.boss_id||data.boss_id||window.__raidBossId||'').trim();
+    if(id){
+      window.__raidBossId=id;
+      try{sessionStorage.setItem('raid:last-boss-id',id);}catch(_error){}
+    }
+    if(Array.isArray(data.fighters))window.__raidBossState=data;
+    try{window.dispatchEvent(new CustomEvent('raid-state-updated',{detail:data}));}catch(_error){}
+  }
+
+  window.__raidBossId=window.__raidBossId||initialBossId();
+  window.__publishRaidState=publishRaidState;
+
+  var nativeFetch=window.fetch.bind(window);
+  window.fetch=async function(){
+    var args=Array.prototype.slice.call(arguments);
+    var response=await nativeFetch.apply(window,args);
+    var input=args[0];
+    var url=typeof input==='string'?input:String(input&&input.url||'');
+    if(url.indexOf('/boss-app/api/boss/')!==-1){
+      response.clone().json().then(publishRaidState).catch(function(){});
+    }
+    return response;
+  };
 })();
 </script>
 """
             inline_style = (
-                "\n<style id=\"raid-ui-v105-inline\">\n"
+                "\n<style id=\"raid-ui-v107-inline\">\n"
                 + css
                 + "\n</style>\n"
             )
@@ -98,7 +139,7 @@ def install_inline_webapp_fix(core: Any) -> None:
                 source = path.read_text(encoding="utf-8")
                 safe_name = re.sub(r"[^a-zA-Z0-9_-]+", "-", path.stem)
                 script_blocks.append(
-                    f'\n<script id="raid-ui-v105-{index}-{safe_name}">\n{source}\n</script>\n'
+                    f'\n<script id="raid-ui-v107-{index}-{safe_name}">\n{source}\n</script>\n'
                 )
             inline_scripts = "".join(script_blocks)
 
@@ -113,7 +154,7 @@ def install_inline_webapp_fix(core: Any) -> None:
                     "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
                     "Pragma": "no-cache",
                     "Expires": "0",
-                    "X-Mini-App-UI": "raid-ui-v105-isolated",
+                    "X-Mini-App-UI": "raid-ui-v107-shared-state",
                 },
             )
         except Exception:
