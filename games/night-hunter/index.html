@@ -4,12 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#05080b">
-  <title>Ночной охотник: Зачистка</title>
+  <title>Ночной охотник: Эвакуация</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="/games/game-attempts-v89.js?v=89"></script>
   <link rel="stylesheet" href="/games/night-hunter/style.css?v=100">
   <link rel="stylesheet" href="/games/night-hunter/style-v101.css?v=101">
   <link rel="stylesheet" href="/games/night-hunter/style-v102.css?v=102">
+  <link rel="stylesheet" href="/games/night-hunter/style-v104.css?v=104">
 </head>
 <body>
 <main class="app">
@@ -19,21 +20,23 @@
     <div class="score"><small>ОЧКИ</small><b id="score">0</b></div>
   </header>
   <section class="stage" id="stage">
-    <canvas id="game" aria-label="Зачистка исследовательского комплекса"></canvas>
+    <canvas id="game" aria-label="Сюжетная эвакуация из заражённого комплекса"></canvas>
     <div class="scanlines"></div><div class="vignette"></div><div class="damageFx" id="damageFx"></div>
     <div class="topHud">
-      <span class="pill timer" id="timer">04:00</span>
-      <span class="pill objective" id="objective">ЗАЧИСТИ СЕКТОР 1/6</span>
+      <span class="pill timer" id="timer">06:00</span>
+      <span class="pill objective" id="objective">АКТИВИРУЙ ТЕРМИНАЛ ОХРАНЫ</span>
       <span class="pill hp"><em>HP</em><i><b id="hpBar"></b></i><strong id="hpText">100/100</strong></span>
     </div>
     <div class="weaponHud">
       <div class="weaponName"><span id="weaponIcon">🔫</span><div><small id="weaponName">ПИСТОЛЕТ</small><b id="ammoText">12 / 84</b></div></div>
       <div class="ammoBar"><i id="ammoBar"></i></div><span class="streak" id="streak">СЕРИЯ ×0</span>
     </div>
+    <div class="radioHud" id="radioHud"><div class="radioPortrait">◉</div><div><small id="radioSpeaker">АННА</small><p id="radioText">Если кто-нибудь слышит… я в медицинском блоке.</p><b id="survivorHp">СИГНАЛ ПО РАЦИИ</b></div></div>
+    <canvas class="miniMap" id="miniMap" width="190" height="110" aria-label="Карта комплекса"></canvas>
     <div class="bossHud hidden" id="bossHud"><small id="bossPhase">ТЯЖЁЛЫЙ ОХОТНИК · ФАЗА 1</small><i><b id="bossBar"></b></i></div>
-    <div class="waveBanner" id="waveBanner"><small>СЕКТОР 1</small><b>ЗАЧИСТКА НАЧАТА</b></div>
-    <div class="caption" id="caption">Левый джойстик — движение. Круг огня — направление луча и стрельба.</div>
-    <div class="direction hidden" id="direction"><span>➜</span><b>СЕКТОР 2</b><small id="directionDistance">120 м</small></div>
+    <div class="waveBanner" id="waveBanner"><small>ОПЕРАЦИЯ</small><b>СИГНАЛ НАЙДЕН</b></div>
+    <div class="caption" id="caption">Исследуй весь комплекс. Двери больше не закрываются после входа.</div>
+    <div class="direction hidden" id="direction"><span>➜</span><b>ЦЕЛЬ</b><small id="directionDistance">120 м</small></div>
     <div class="joystick" id="joystick"><div class="joystickRing"></div><div class="joystickKnob" id="joystickKnob"></div></div>
     <div class="actions">
       <button class="fire" id="fire" type="button"><span>✹</span><b>ОГОНЬ</b><small>ВЕДИ ПАЛЬЦЕМ — ЦЕЛЬСЯ</small></button>
@@ -47,37 +50,44 @@
 <div class="overlay" id="intro">
   <section class="card">
     <div class="poster"><div class="hero"></div><div class="beam"></div><div class="muzzle"></div><div class="horde"></div></div>
-    <div class="eyebrow">CIRCULAR AIM UPDATE · REALITY 103</div>
-    <h1>Зачистка комплекса</h1>
-    <p>Большой левый джойстик отвечает только за движение. Удерживай кнопку «Огонь» и веди пальцем по кругу, чтобы независимо поворачивать фонарь и вести непрерывную стрельбу.</p>
+    <div class="eyebrow">OPEN STORY UPDATE · REALITY 104</div>
+    <h1>Спасти Анну и выбраться</h1>
+    <p>Комплекс стал единой открытой картой. Ищи путь, восстанавливай питание, спаси выжившую, реши судьбу заражённого образца и доберись до лифта.</p>
     <div class="mission">
-      <div><b>1</b><span>Большой левый джойстик — движение героя</span></div>
-      <div><b>2</b><span>Круг «Огонь» — независимое круговое прицеливание и стрельба</span></div>
-      <div><b>3</b><span>Можно двигаться в одну сторону, а стрелять в другую</span></div>
+      <div><b>1</b><span>Свободно исследуй все шесть соединённых блоков</span></div>
+      <div><b>2</b><span>Монстры перемещаются по комплексу и реагируют на твой маршрут</span></div>
+      <div><b>3</b><span>Финал зависит от решения в лаборатории</span></div>
     </div>
-    <button class="start loading" id="start" type="button">ЗАГРУЗКА УПРАВЛЕНИЯ…</button>
+    <button class="start loading" id="start" type="button">УСТАНОВКА СВЯЗИ…</button>
     <button class="demo hidden" id="demo" type="button">ЗАПУСТИТЬ ДЕМО</button>
     <div class="error" id="startError"></div>
   </section>
 </div>
-<div class="overlay hidden" id="upgrade">
-  <section class="card upgradeCard">
-    <div class="eyebrow">СЕКТОР ЗАЧИЩЕН</div><h2 id="upgradeTitle">Выбери оружие или усиление</h2>
-    <div class="upgradeGrid" id="upgradeGrid"></div>
+<div class="overlay hidden" id="storyChoice">
+  <section class="card storyChoiceCard">
+    <div class="eyebrow">СЮЖЕТНЫЙ ВЫБОР</div><h2>Что делать с образцом?</h2>
+    <p>Он доказывает, что произошло в комплексе, но может вынести заражение наружу.</p>
+    <div class="storyChoiceGrid">
+      <button id="destroySample" type="button"><b>УНИЧТОЖИТЬ</b><small>Безопасная эвакуация и хорошая концовка</small></button>
+      <button id="takeSample" type="button"><b>ВЗЯТЬ С СОБОЙ</b><small>Больше очков, но последствия неизвестны</small></button>
+    </div>
   </section>
+</div>
+<div class="overlay hidden" id="upgrade">
+  <section class="card upgradeCard"><div class="eyebrow">НАЙДЕНО СНАРЯЖЕНИЕ</div><h2 id="upgradeTitle">Выбери оружие или усиление</h2><div class="upgradeGrid" id="upgradeGrid"></div></section>
 </div>
 <div class="overlay hidden" id="finish">
   <section class="card result">
     <div class="resultIcon" id="resultIcon">☣</div><div class="eyebrow" id="resultEyebrow">ОПЕРАЦИЯ ЗАВЕРШЕНА</div>
-    <h1 id="resultTitle">Комплекс зачищен</h1><p id="resultText">Последний заражённый уничтожен.</p>
+    <h1 id="resultTitle">Эвакуация завершена</h1><p id="resultText">Анна спасена.</p>
     <div class="resultGrid">
       <div><small>ОЧКИ</small><b id="resultScore">0</b></div><div><small>УБИЙСТВА</small><b id="resultKills">0</b></div>
-      <div><small>СЕКТОРЫ</small><b id="resultRooms">0/6</b></div><div><small>ТОЧНОСТЬ</small><b id="resultAccuracy">0%</b></div>
+      <div><small>ЭТАПЫ</small><b id="resultRooms">0/6</b></div><div><small>ТОЧНОСТЬ</small><b id="resultAccuracy">0%</b></div>
     </div>
     <div class="reward" id="reward">Сохраняем результат…</div>
-    <button class="start" id="again" type="button">ЕЩЁ ОДНА ЗАЧИСТКА</button><button class="secondary" id="toGames" type="button">В ИГРОВОЙ ЦЕНТР</button>
+    <button class="start" id="again" type="button">ЕЩЁ ОДНА ОПЕРАЦИЯ</button><button class="secondary" id="toGames" type="button">В ИГРОВОЙ ЦЕНТР</button>
   </section>
 </div>
-<script src="/games/night-hunter/game-v103.js?v=103"></script>
+<script src="/games/night-hunter/game-v104.js?v=104"></script>
 </body>
 </html>
