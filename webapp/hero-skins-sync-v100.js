@@ -3,9 +3,9 @@
 
   const tg=window.Telegram?.WebApp;
   const API_ROOT='/boss-app/api/boss/';
-  const SKINS=Array.from({length:6},(_,index)=>({
+  const SKINS=Array.from({length:7},(_,index)=>({
     id:index+1,
-    src:`/boss-app/assets/hero_skin_${index+1}.svg`
+    src:`/boss-app/assets/hero_skin_${index+1}.svg?v=102`
   }));
   const params=new URLSearchParams(location.search);
   const bossId=String(tg?.initDataUnsafe?.start_param||params.get('boss')||params.get('tgWebAppStartParam')||'').trim();
@@ -28,9 +28,7 @@
 
   window.fetch=async function(...args){
     const response=await nativeFetch(...args);
-    if(isBossStateUrl(args[0])){
-      response.clone().json().then(acceptState).catch(()=>{});
-    }
+    if(isBossStateUrl(args[0]))response.clone().json().then(acceptState).catch(()=>{});
     return response;
   };
 
@@ -77,6 +75,7 @@
       image=document.createElement('img');
       image.className='fighter-skin-image';
       image.alt='';
+      image.decoding='async';
       avatar.prepend(image);
     }
     if(image.getAttribute('src')!==skin.src)image.setAttribute('src',skin.src);
@@ -106,13 +105,13 @@
     const filled=SKINS.map(skin=>`
       <button class="page-skin-slot hero-skin-card ${selected===skin.id?'selected':''}" type="button" data-hero-skin="${skin.id}" aria-label="Выбрать образ ${skin.id}">
         <em>${skin.id}/8</em>
-        <span class="page-skin-picture"><img src="${skin.src}" alt=""></span>
+        <span class="page-skin-picture"><img src="${skin.src}" alt="" decoding="async"></span>
         <b>ОБРАЗ</b>
       </button>`).join('');
-    const empty=[7,8].map(number=>`
-      <button class="page-skin-slot hero-skin-empty" type="button" data-empty-skin="${number}">
-        <em>${number}/8</em><span class="slot-orb">◇</span><b>ПУСТОЙ СЛОТ</b><small>Образ появится позже</small>
-      </button>`).join('');
+    const empty=`
+      <button class="page-skin-slot hero-skin-empty" type="button" data-empty-skin="8">
+        <em>8/8</em><span class="slot-orb">◇</span><b>ПУСТОЙ СЛОТ</b><small>Образ появится позже</small>
+      </button>`;
     return filled+empty;
   }
 
@@ -121,7 +120,7 @@
     if(!page?.classList.contains('open')||page.dataset.page!=='skins')return;
     const grid=page.querySelector('.page-skin-grid');
     if(!grid)return;
-    const key=`${selectedSkinId()}:${SKINS.length}`;
+    const key=`${selectedSkinId()}:${SKINS.length}:102`;
     if(grid.dataset.heroSkinsKey===key&&grid.querySelector('[data-hero-skin]'))return;
     setData(grid,'heroSkinsKey',key);
     grid.innerHTML=galleryMarkup();
@@ -158,17 +157,13 @@
   async function chooseSkin(skinId,button){
     if(!bossId||!tg?.initData){
       const toast=document.getElementById('toast');
-      if(toast){
-        toast.textContent='Открой рейд через Telegram, чтобы сохранить образ.';
-        toast.className='toast show error';
-      }
+      if(toast){toast.textContent='Открой рейд через Telegram, чтобы сохранить образ.';toast.className='toast show error';}
       return;
     }
     button?.classList.add('saving');
     try{
       const response=await nativeFetch(`${API_ROOT}action`,{
-        method:'POST',
-        headers,
+        method:'POST',headers,
         body:JSON.stringify({boss_id:bossId,action:'select_skin',skin_id:skinId})
       });
       const data=await response.json().catch(()=>({ok:false,reason:'Сервер вернул непонятный ответ.'}));
@@ -207,7 +202,7 @@
   const observer=new MutationObserver(queueRender);
   observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-page']});
 
-  SKINS.forEach(skin=>{const image=new Image();image.src=skin.src});
+  SKINS.forEach(skin=>{const image=new Image();image.decoding='async';image.src=skin.src});
   setTimeout(loadState,350);
   setTimeout(loadState,1400);
   setInterval(loadState,12000);
