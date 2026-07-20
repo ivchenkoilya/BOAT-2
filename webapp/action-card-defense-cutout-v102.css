@@ -1,0 +1,20 @@
+/* Reality 102 · вырезанный фон карты «Защита» */
+.combat .side-action.defend{
+  background-color:transparent!important;
+  background-size:auto 100%!important;
+  background-position:center bottom!important;
+  background-repeat:no-repeat!important;
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 188'%3E%3Cpath fill='white' d='M18 0H110L128 17L121 75L128 94L121 113L128 171L110 188H18L0 171L7 113L0 94L7 75L0 17Z'/%3E%3C/svg%3E")!important;
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 188'%3E%3Cpath fill='white' d='M18 0H110L128 17L121 75L128 94L121 113L128 171L110 188H18L0 171L7 113L0 94L7 75L0 17Z'/%3E%3C/svg%3E")!important;
+  -webkit-mask-size:auto 100%!important;
+  mask-size:auto 100%!important;
+  -webkit-mask-position:center bottom!important;
+  mask-position:center bottom!important;
+  -webkit-mask-repeat:no-repeat!important;
+  mask-repeat:no-repeat!important;
+}
+
+/* Свечение строится уже вокруг вырезанного силуэта, а не вокруг чёрного прямоугольника. */
+.combat .side-action.defend:not(:disabled){
+  filter:drop-shadow(0 0 4px #2f9dff) drop-shadow(0 0 13px #176ee488)!important;
+}
