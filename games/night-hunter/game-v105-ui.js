@@ -68,7 +68,7 @@ updateHud=function(now){
  v105HudBase(now);
  const dashPct=player.dashReadyAt<=now?1:clamp(1-(player.dashReadyAt-now)/4000,0,1);
  const reloadPct=player.reloading?clamp(1-(player.reloadEnd-now)/(player.weapon==='shotgun'?1450:1100),0,1):1;
- if(v105Dash){v105Dash.style.setProperty('--cool',dashPct);v105Dash.classList.toggle('cooldown',dashPct<.999)}
- if(v105Reload){v105Reload.style.setProperty('--cool',reloadPct);v105Reload.classList.toggle('cooldown',player.reloading)}
- if(v105Grenade){v105Grenade.style.setProperty('--cool',player.grenades>0?1:0);v105Grenade.classList.toggle('cooldown',player.grenades<=0)}
+ if(v105Dash){v105Dash.style.setProperty('--cool-angle',dashPct.toFixed(3)+'turn');v105Dash.classList.toggle('cooldown',dashPct<.999)}
+ if(v105Reload){v105Reload.style.setProperty('--cool-angle',reloadPct.toFixed(3)+'turn');v105Reload.classList.toggle('cooldown',player.reloading)}
+ if(v105Grenade){v105Grenade.style.setProperty('--cool-angle',(player.grenades>0?'1turn':'0turn'));v105Grenade.classList.toggle('cooldown',player.grenades<=0)}
 };
