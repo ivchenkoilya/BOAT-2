@@ -7,9 +7,10 @@ from aiogram.filters import Command
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from finance_route_fix_v116 import install_finance_route_fix_v116
+from finance_loan_requests_v118 import install_finance_loan_requests_v118
 
 
-VERSION = "Reality 117 · Обновлённый Финансовый центр"
+VERSION = "Reality 118 · Заявки на заём"
 FINANCE_PREFIX = "finance_"
 
 
@@ -21,8 +22,8 @@ def _finance_link(core: Any, chat_id: int) -> str:
         )
     if core.WEBAPP_PUBLIC_URL:
         return (
-            f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/finance-v114/"
-            f"?chat_id={int(chat_id)}&build=117-{int(time.time())}"
+            f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/finance-v118/"
+            f"?chat_id={int(chat_id)}&build=118-{int(time.time())}"
         )
     return ""
 
@@ -33,9 +34,11 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     core._finance_entry_fix_v115_installed = True
     core.FINANCE_SYSTEM_VERSION = VERSION
 
-    # Reality 117 извлекает обработчики страницы и API из Reality 114,
-    # регистрирует надёжные маршруты и добавляет настоящую историю операций.
+    # Reality 117 подключает стабильные маршруты состояния, действий и истории.
     install_finance_route_fix_v116(core)
+    # Reality 118 ставится после него и добавляет новый экран, API заявок,
+    # адресные кнопки одобрения/отклонения и таблицу запросов на заём.
+    install_finance_loan_requests_v118(core)
 
     # Старые /finance-обработчики удаляются полностью, чтобы текстовое меню
     # Reality 112 больше не могло перехватить команду раньше Mini App.
@@ -62,9 +65,9 @@ def install_finance_entry_fix_v115(core: Any) -> None:
             )
             return
         await message.answer(
-            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 117</b>\n\n"
-            "Переводы, займы, история операций и погашение долгов доступны кнопками. "
-            "Договоры и платежи автоматически публикуются в этой беседе.",
+            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 118</b>\n\n"
+            "Переводи влияние, выдавай займы или публикуй заявку, если влияние нужно тебе. "
+            "Выбранный кредитор сможет одобрить или отклонить заявку прямо в беседе.",
             reply_markup=InlineKeyboardMarkup(
                 inline_keyboard=[[
                     InlineKeyboardButton(
