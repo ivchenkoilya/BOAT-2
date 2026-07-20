@@ -8,7 +8,7 @@ from aiohttp import web
 import game_center_v75 as base
 
 
-VERSION = "Reality 106 · Living Mission"
+VERSION = "Reality 107 · Last Shift"
 GAME_KEY = "night-hunter"
 GAME_PATH = Path(__file__).resolve().parent / "games" / GAME_KEY
 STYLE_FILENAMES = (
@@ -18,8 +18,11 @@ STYLE_FILENAMES = (
     "style-v104.css",
     "style-v105.css",
     "style-v106.css",
+    "style-v107.css",
 )
 SCRIPT_FILENAMES = (
+    "game-v107.js",
+    "game-v107-prologue.js",
     "game-v106.js",
     "game-v106-interactions.js",
     "game-v106-fixes.js",
@@ -43,14 +46,14 @@ SCRIPT_FILENAMES = (
 
 
 def install_night_hunter_v93(core: Any) -> None:
-    """Подключает Reality 106: контекстные действия, анимации и мягкую камеру."""
+    """Подключает Reality 107: солнечный пролог и сюжет «Последняя смена»."""
     if getattr(core, "_night_hunter_v93_installed", False):
         return
     core._night_hunter_v93_installed = True
 
     base.GAME_INFO[GAME_KEY] = {
-        "title": "Ночной охотник: Эвакуация",
-        "emoji": "🔫",
+        "title": "Ночной охотник: Последняя смена",
+        "emoji": "🔦",
         "duration": 360,
         "max_reward": 180,
     }
