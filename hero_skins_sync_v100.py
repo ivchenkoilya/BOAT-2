@@ -5,15 +5,15 @@ from typing import Any
 
 
 MIN_SKIN_ID = 1
-MAX_SKIN_ID = 6
+MAX_SKIN_ID = 7
 
 
 def install_hero_skins_sync_v100(core: Any) -> None:
     """Сохраняет выбранный образ на сервере и отдаёт его всему отряду."""
-    if getattr(core, "_hero_skins_sync_v100_installed", False):
+    if getattr(core, "_hero_skins_sync_v101_installed", False):
         return
 
-    core._hero_skins_sync_v100_installed = True
+    core._hero_skins_sync_v101_installed = True
 
     original_connect = core.Database.connect
 
@@ -23,15 +23,22 @@ def install_hero_skins_sync_v100(core: Any) -> None:
         async with self.lock:
             await conn.executescript(
                 """
-                CREATE TABLE IF NOT EXISTS hero_skin_choices_v100 (
+                CREATE TABLE IF NOT EXISTS hero_skin_choices_v101 (
                     user_id INTEGER PRIMARY KEY,
                     skin_id INTEGER NOT NULL,
                     updated_at INTEGER NOT NULL,
-                    CHECK (skin_id BETWEEN 1 AND 6)
+                    CHECK (skin_id BETWEEN 1 AND 7)
                 );
 
-                CREATE INDEX IF NOT EXISTS idx_hero_skin_choices_v100_updated
-                ON hero_skin_choices_v100 (updated_at);
+                CREATE INDEX IF NOT EXISTS idx_hero_skin_choices_v101_updated
+                ON hero_skin_choices_v101 (updated_at);
+
+                INSERT OR IGNORE INTO hero_skin_choices_v101 (
+                    user_id, skin_id, updated_at
+                )
+                SELECT user_id, skin_id, updated_at
+                FROM hero_skin_choices_v100
+                WHERE skin_id BETWEEN 1 AND 6;
                 """
             )
             await conn.commit()
@@ -48,7 +55,7 @@ def install_hero_skins_sync_v100(core: Any) -> None:
         cursor = await conn.execute(
             f"""
             SELECT user_id, skin_id
-            FROM hero_skin_choices_v100
+            FROM hero_skin_choices_v101
             WHERE user_id IN ({placeholders})
             """,
             tuple(unique_ids),
@@ -66,7 +73,7 @@ def install_hero_skins_sync_v100(core: Any) -> None:
         async with database.lock:
             await conn.execute(
                 """
-                INSERT INTO hero_skin_choices_v100 (user_id, skin_id, updated_at)
+                INSERT INTO hero_skin_choices_v101 (user_id, skin_id, updated_at)
                 VALUES (?, ?, ?)
                 ON CONFLICT(user_id) DO UPDATE SET
                     skin_id = excluded.skin_id,
