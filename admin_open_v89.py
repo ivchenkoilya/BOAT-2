@@ -6,7 +6,7 @@ from typing import Any
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, WebAppInfo
 
 
-VERSION = "Reality 95 · Админ-центр Pro"
+VERSION = "Reality 96 · События реальности"
 
 
 def install_admin_open_v89(core: Any) -> None:
@@ -49,12 +49,12 @@ def install_admin_open_v89(core: Any) -> None:
 
         url = (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/admin-v76/"
-            f"?chat_id={chat_id}&user_id={int(target.user_id)}&build=95-{int(time.time())}"
+            f"?chat_id={chat_id}&user_id={int(target.user_id)}&build=96-{int(time.time())}"
         )
         markup = InlineKeyboardMarkup(
             inline_keyboard=[[
                 InlineKeyboardButton(
-                    text="🛠 Открыть админ-центр Reality 95",
+                    text="🛠 Открыть админ-центр Reality 96",
                     web_app=WebAppInfo(url=url),
                 )
             ]]
@@ -62,12 +62,12 @@ def install_admin_open_v89(core: Any) -> None:
         try:
             await bot.send_message(
                 message.from_user.id,
-                "🛠 <b>АДМИН-ЦЕНТР REALITY 95</b>\n\n"
+                "🛠 <b>АДМИН-ЦЕНТР REALITY 96</b>\n\n"
                 f"Беседа: <code>{chat_id}</code>\n"
                 f"Участник: <b>{target.full_name}</b>\n\n"
-                "Теперь в игровом разделе поддерживаются три Mini App: "
-                "Бег по крышам, Ограбление хранилища и Ночной охотник. "
-                "Для каждой игры можно отдельно выдавать персональные попытки.",
+                "Добавлен отдельный раздел «Событие»: автоматический ежедневный выбор, "
+                "ручной запуск, перевыбор, участники, прогресс и история наград. "
+                "Игровой центр по-прежнему поддерживает все три Mini App и персональные попытки.",
                 reply_markup=markup,
             )
         except Exception:
@@ -76,7 +76,7 @@ def install_admin_open_v89(core: Any) -> None:
         if core.is_group(message):
             await core.ephemeral_reply(
                 message,
-                "🔒 Админ-центр Reality 95 отправлен в личные сообщения.",
+                "🔒 Админ-центр Reality 96 отправлен в личные сообщения.",
                 delay_seconds=3,
             )
 
