@@ -21,6 +21,7 @@ from boss_autostart_v108 import install_boss_autostart_v108
 from boss_upgrade_v52 import install_boss_upgrade_v52
 from bot_game_balance_v101 import install_bot_game_balance_v101
 from economy_fate_ui_v74 import install_economy_fate_ui_v74
+from finance_entry_fix_v115 import install_finance_entry_fix_v115
 from finance_miniapp_v114 import install_finance_miniapp_v114
 from finance_safety_v113 import install_finance_safety_v113
 from finance_system_v112 import install_finance_system_v112
@@ -223,13 +224,15 @@ install_finance_safety_v113(core)
 # Reality 114 добавляет отдельный Финансовый центр: переводы, договоры и
 # погашение долгов выполняются кнопками, а результаты публикуются в беседе.
 install_finance_miniapp_v114(core)
+# Reality 115 удаляет старый текстовый /finance и открывает Mini App через
+# официальный Telegram startapp-вход из групповой беседы.
+install_finance_entry_fix_v115(core)
 
 # В main.py есть общий обработчик F.text, зарегистрированный раньше расширений.
 # Переносим команды древа, мастерства, игр, события и финансов в начало списка.
 _priority_names = {
     "cmd_event_view_v110",
-    "cmd_finance_app_v114",
-    "cmd_finance_v112",
+    "cmd_finance_app_v115",
     "cmd_transfer_v112",
     "cmd_loan_v112",
     "cmd_repay_v112",
