@@ -3,21 +3,29 @@ from __future__ import annotations
 import asyncio
 import html
 import logging
+import time
 from typing import Any
 
 from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError
+from aiogram.filters import Command
+from aiogram.types import Message
 
 import reality_events_v96 as events
 
 
 LOGGER = logging.getLogger(__name__)
-VERSION = "Reality 109 · Живые события"
-LIVE_PROCESS_INTERVAL = 2
-EDIT_DEBOUNCE_SECONDS = 1.2
+VERSION = "Reality 119 · Автообновление карточек событий"
+WATCH_INTERVAL = 2.0
+IMMEDIATE_DELAY = 0.18
+HEARTBEAT_SECONDS = 45
 
-_LAST_FINGERPRINTS: dict[str, tuple[Any, ...]] = {}
-_PENDING_EDITS: dict[str, asyncio.Task[Any]] = {}
+_RUNTIME_BOT: Any | None = None
+_WATCHER_STARTED = False
+_LAST_TEXT: dict[str, str] = {}
+_LAST_EDIT_AT: dict[str, float] = {}
+_CHAT_LOCKS: dict[int, asyncio.Lock] = {}
 _SYNC_TASKS: dict[int, asyncio.Task[Any]] = {}
+_DIRTY_CHATS: set[int] = set()
 
 
 def _safe_int(value: Any) -> int:
@@ -41,37 +49,6 @@ async def _participant_rows(core: Any, event_id: str) -> list[Any]:
         (event_id,),
     )
     return list(await cursor.fetchall())
-
-
-async def _event_fingerprint(core: Any, event: Any) -> tuple[Any, ...]:
-    event_id = str(event["event_id"])
-    rows = await _participant_rows(core, event_id)
-    participant_state = tuple(
-        (
-            _safe_int(row["user_id"]),
-            _safe_int(row["contribution"]),
-            _safe_int(row["game_runs"]),
-            _safe_int(row["task_done"]),
-            _safe_int(row["influence_done"]),
-            _safe_int(row["boss_attacks"]),
-            _safe_int(row["boss_damage"]),
-            _safe_int(row["event_bonus"]),
-            _safe_int(row["tax_amount"]),
-            _safe_int(row["tax_refunded"]),
-            _safe_int(row["reward_influence"]),
-            _safe_int(row["reward_tree"]),
-            _safe_int(row["completed"]),
-        )
-        for row in rows
-    )
-    return (
-        str(event["status"]),
-        _safe_int(event["progress"]),
-        _safe_int(event["target"]),
-        str(event["meta_json"] or ""),
-        str(event["result_text"] or ""),
-        participant_state,
-    )
 
 
 def _top_lines(rows: list[Any], field: str, *, suffix: str = "") -> list[str]:
@@ -99,14 +76,12 @@ async def _live_summary(core: Any, event: Any) -> str:
         lines.append(f"👥 Внесли влияние: <b>{len(contributors)}</b>")
         lines.append(f"⭐ Общий вклад: <b>{total}</b>")
         lines.extend(_top_lines(rows, "contribution"))
-
     elif key == "game_night":
         players = [row for row in rows if _safe_int(row["game_runs"]) > 0]
         runs = sum(_safe_int(row["game_runs"]) for row in players)
         lines.append(f"👥 Уникальных игроков: <b>{len(players)}</b>")
         lines.append(f"🎮 Засчитано забегов: <b>{runs}</b>")
         lines.extend(_top_lines(rows, "game_runs", suffix=" заб."))
-
     elif key == "boss_fall":
         fighters = [row for row in rows if _safe_int(row["boss_attacks"]) > 0]
         attacks = sum(_safe_int(row["boss_attacks"]) for row in fighters)
@@ -114,7 +89,6 @@ async def _live_summary(core: Any, event: Any) -> str:
         lines.append(f"⚔️ Бойцов: <b>{len(fighters)}</b>")
         lines.append(f"💢 Ударов: <b>{attacks}</b> · урон: <b>{damage}</b>")
         lines.extend(_top_lines(rows, "boss_damage", suffix=" урона"))
-
     elif key == "tree_awakening":
         influence = sum(1 for row in rows if _safe_int(row["influence_done"]) > 0)
         tasks = sum(1 for row in rows if _safe_int(row["task_done"]) > 0)
@@ -132,7 +106,6 @@ async def _live_summary(core: Any, event: Any) -> str:
                 f"🌳 Завершили всё: <b>{completed}</b>",
             ]
         )
-
     elif key == "ego_tax":
         taxed = [row for row in rows if _safe_int(row["tax_amount"]) > 0]
         refunded = [row for row in taxed if _safe_int(row["tax_refunded"]) > 0]
@@ -140,83 +113,208 @@ async def _live_summary(core: Any, event: Any) -> str:
         returned = sum(_safe_int(row["tax_amount"]) for row in refunded)
         lines.append(f"🧾 Налог получили: <b>{len(taxed)}</b> участников · <b>{total_tax}</b> влияния")
         lines.append(f"✅ Вернули налог: <b>{len(refunded)}</b> · возвращено <b>{returned}</b>")
-
     elif key == "influence_day":
         players = [row for row in rows if _safe_int(row["event_bonus"]) > 0]
         total = sum(_safe_int(row["event_bonus"]) for row in players)
         lines.append(f"👥 Получили усиление: <b>{len(players)}</b>")
         lines.append(f"🔥 Дополнительно начислено: <b>{total}</b> влияния")
         lines.extend(_top_lines(rows, "event_bonus", suffix=" бонуса"))
-
     elif key == "popularity":
         rewarded = [row for row in rows if _safe_int(row["reward_influence"]) > 0]
         total = sum(_safe_int(row["reward_influence"]) for row in rewarded)
         lines.append(f"🌟 Награждено участников: <b>{len(rewarded)}</b>")
         lines.append(f"⭐ Выдано влияния: <b>{total}</b>")
-
     else:
         lines.append(f"👥 Участников: <b>{len(rows)}</b>")
 
     return "\n".join(lines)
 
 
-async def _edit_event_message_now(core: Any, bot: Any, event_id: str) -> None:
-    event = await events._event_by_id(core, event_id)
+async def _save_message_id(core: Any, event_id: str, message_id: int) -> None:
+    conn = core.db._require_connection()
+    async with core.db.lock:
+        await conn.execute(
+            "UPDATE reality_events_v96 SET message_id=? WHERE event_id=?",
+            (int(message_id), str(event_id)),
+        )
+        await conn.commit()
+
+
+async def _send_replacement_card(core: Any, bot: Any, event: Any, text: str) -> None:
+    sent = await bot.send_message(int(event["chat_id"]), text)
+    event_id = str(event["event_id"])
+    await _save_message_id(core, event_id, int(sent.message_id))
+    _LAST_TEXT[event_id] = text
+    _LAST_EDIT_AT[event_id] = time.monotonic()
+
+
+async def _edit_shared_card(core: Any, bot: Any, event: Any, *, force: bool = False) -> None:
     if event is None or str(event["status"]) != "active":
         return
+    event_id = str(event["event_id"])
+    text = await events._event_text(core, event, None)
+    now = time.monotonic()
+    if (
+        not force
+        and _LAST_TEXT.get(event_id) == text
+        and now - _LAST_EDIT_AT.get(event_id, 0.0) < HEARTBEAT_SECONDS
+    ):
+        return
+
     message_id = _safe_int(event["message_id"])
     if message_id <= 0:
+        await _send_replacement_card(core, bot, event, text)
         return
+
     try:
         await bot.edit_message_text(
             chat_id=_safe_int(event["chat_id"]),
             message_id=message_id,
-            text=await events._event_text(core, event, None),
+            text=text,
         )
+        _LAST_TEXT[event_id] = text
+        _LAST_EDIT_AT[event_id] = now
     except TelegramBadRequest as exc:
-        if "message is not modified" not in str(exc).casefold():
-            LOGGER.warning("Не удалось обновить карточку события %s: %s", event_id, exc)
+        error = str(exc).casefold()
+        if "message is not modified" in error:
+            _LAST_TEXT[event_id] = text
+            _LAST_EDIT_AT[event_id] = now
+            return
+        if any(
+            marker in error
+            for marker in (
+                "message to edit not found",
+                "message can't be edited",
+                "message can not be edited",
+            )
+        ):
+            try:
+                await _send_replacement_card(core, bot, event, text)
+            except Exception:
+                LOGGER.exception("Не удалось восстановить карточку события %s", event_id)
+            return
+        LOGGER.warning("Не удалось обновить карточку события %s: %s", event_id, exc)
     except TelegramForbiddenError:
-        LOGGER.warning("Бот больше не может редактировать событие %s", event_id)
+        LOGGER.warning("Бот не может редактировать карточку события %s", event_id)
     except Exception:
-        LOGGER.exception("Ошибка живого обновления события %s", event_id)
+        LOGGER.exception("Ошибка автообновления карточки события %s", event_id)
 
 
-async def _delayed_edit(core: Any, bot: Any, event_id: str) -> None:
-    try:
-        await asyncio.sleep(EDIT_DEBOUNCE_SECONDS)
-        await _edit_event_message_now(core, bot, event_id)
-    finally:
-        _PENDING_EDITS.pop(event_id, None)
-
-
-def _schedule_edit(core: Any, bot: Any, event_id: str) -> None:
-    current = _PENDING_EDITS.get(event_id)
-    if current is not None and not current.done():
+async def _sync_chat_now(core: Any, bot: Any, chat_id: int, *, force: bool = False) -> None:
+    chat = int(chat_id)
+    if chat >= 0:
         return
-    task = core.spawn_background_task(_delayed_edit(core, bot, event_id))
-    _PENDING_EDITS[event_id] = task
+    lock = _CHAT_LOCKS.setdefault(chat, asyncio.Lock())
+    async with lock:
+        try:
+            async with events._PROCESS_LOCK:
+                event = await events._active_event(core, chat)
+                if event is None:
+                    return
+                await events._process_event(core, bot, event)
+            refreshed = await events._active_event(core, chat)
+            if refreshed is not None:
+                await _edit_shared_card(core, bot, refreshed, force=force)
+        except Exception:
+            LOGGER.exception("Не удалось синхронизировать событие в чате %s", chat)
 
 
-async def _sync_chat(core: Any, bot: Any, chat_id: int) -> None:
+async def _queued_sync(core: Any, bot: Any, chat_id: int) -> None:
+    chat = int(chat_id)
     try:
-        event = await events._active_event(core, chat_id)
-        if event is not None:
-            await events._process_event(core, bot, event)
-    except Exception:
-        LOGGER.exception("Не удалось синхронизировать живое событие в чате %s", chat_id)
+        while chat in _DIRTY_CHATS:
+            _DIRTY_CHATS.discard(chat)
+            await asyncio.sleep(IMMEDIATE_DELAY)
+            await _sync_chat_now(core, bot, chat, force=True)
     finally:
-        _SYNC_TASKS.pop(chat_id, None)
+        _SYNC_TASKS.pop(chat, None)
+        if chat in _DIRTY_CHATS:
+            _schedule_chat_sync(core, bot, chat)
 
 
 def _schedule_chat_sync(core: Any, bot: Any, chat_id: int) -> None:
-    if int(chat_id) >= 0:
+    chat = int(chat_id)
+    if chat >= 0:
         return
-    current = _SYNC_TASKS.get(int(chat_id))
+    _DIRTY_CHATS.add(chat)
+    current = _SYNC_TASKS.get(chat)
     if current is not None and not current.done():
         return
-    task = core.spawn_background_task(_sync_chat(core, bot, int(chat_id)))
-    _SYNC_TASKS[int(chat_id)] = task
+    _SYNC_TASKS[chat] = core.spawn_background_task(_queued_sync(core, bot, chat))
+
+
+async def _watch_loop(core: Any, bot: Any) -> None:
+    await asyncio.sleep(3)
+    while True:
+        try:
+            conn = core.db._require_connection()
+            cursor = await conn.execute(
+                "SELECT DISTINCT chat_id FROM reality_events_v96 WHERE status='active'"
+            )
+            chats = [int(row["chat_id"]) for row in await cursor.fetchall()]
+            for chat_id in chats:
+                await _sync_chat_now(core, bot, chat_id)
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            LOGGER.exception("Ошибка сторожа ежедневных событий")
+        await asyncio.sleep(WATCH_INTERVAL)
+
+
+def _install_event_start_override(core: Any, bot: Any) -> None:
+    if getattr(core, "_event_start_card_v119_installed", False):
+        return
+    handlers = core.router.message.handlers
+    old_handler = next(
+        (
+            handler
+            for handler in handlers
+            if getattr(handler.callback, "__name__", "") == "cmd_event_start_v98"
+        ),
+        None,
+    )
+    if old_handler is None:
+        return
+    original_callback = old_handler.callback
+    handlers[:] = [handler for handler in handlers if handler is not old_handler]
+
+    @core.router.message(Command("event_start", "start_event", "event_vote"))
+    async def cmd_event_start_card_v119(message: Message, bot: Any) -> None:
+        if not message.from_user or not core.is_group(message):
+            return
+        chat_id = int(message.chat.id)
+        active = await events._active_event(core, chat_id)
+        if active is None:
+            await original_callback(message, bot)
+            return
+
+        await core.db.upsert_player(chat_id, message.from_user)
+        await events._ensure_participant(
+            core,
+            str(active["event_id"]),
+            int(message.from_user.id),
+        )
+        await _sync_chat_now(core, bot, chat_id, force=True)
+        notice = (
+            "🌠 Событие уже запущено. Общая карточка обновлена и дальше "
+            "обновляется автоматически — повторно запускать её не нужно."
+        )
+        ephemeral = getattr(core, "ephemeral_reply", None)
+        if callable(ephemeral):
+            try:
+                await ephemeral(message, notice, delay_seconds=5)
+                return
+            except Exception:
+                pass
+        await message.answer(notice)
+
+    preferred = [
+        handler
+        for handler in handlers
+        if getattr(handler.callback, "__name__", "") == "cmd_event_start_card_v119"
+    ]
+    handlers[:] = preferred + [handler for handler in handlers if handler not in preferred]
+    core._event_start_card_v119_installed = True
 
 
 def install_reality_event_live_v109(core: Any) -> None:
@@ -224,7 +322,7 @@ def install_reality_event_live_v109(core: Any) -> None:
         return
     core._reality_event_live_v109_installed = True
     core.REALITY_EVENT_LIVE_VERSION = VERSION
-    events.PROCESS_INTERVAL = LIVE_PROCESS_INTERVAL
+    events.PROCESS_INTERVAL = min(_safe_int(getattr(events, "PROCESS_INTERVAL", 2)) or 2, 2)
 
     original_event_text = events._event_text
 
@@ -239,45 +337,50 @@ def install_reality_event_live_v109(core: Any) -> None:
         try:
             summary = await _live_summary(core_arg, event)
         except Exception:
-            LOGGER.exception("Не удалось построить живую сводку события %s", event["event_id"])
+            LOGGER.exception("Не удалось построить сводку события %s", event["event_id"])
             return base
         return f"{base}\n\n{summary}"[:4096]
 
     events._event_text = event_text_with_live_summary
 
-    original_update_message = events._update_message
-
-    async def update_message_live(core_arg: Any, bot: Any, event: Any) -> None:
-        if str(event["status"]) != "active" or _safe_int(event["message_id"]) <= 0:
-            return
-        _schedule_edit(core_arg, bot, str(event["event_id"]))
+    async def update_message_live(core_arg: Any, bot_arg: Any, event: Any) -> None:
+        await _edit_shared_card(core_arg, bot_arg, event, force=True)
 
     events._update_message = update_message_live
 
-    original_process_event = events._process_event
+    original_add_points = core.Database.add_points
 
-    async def process_event_live(core_arg: Any, bot: Any, event: Any) -> None:
-        event_id = str(event["event_id"])
-        await original_process_event(core_arg, bot, event)
-        refreshed = await events._event_by_id(core_arg, event_id)
-        if refreshed is None:
-            _LAST_FINGERPRINTS.pop(event_id, None)
-            return
-        fingerprint = await _event_fingerprint(core_arg, refreshed)
-        previous = _LAST_FINGERPRINTS.get(event_id)
-        _LAST_FINGERPRINTS[event_id] = fingerprint
-        if str(refreshed["status"]) == "active" and fingerprint != previous:
-            _schedule_edit(core_arg, bot, event_id)
+    async def add_points_with_event_refresh(
+        self: Any,
+        chat_id: int,
+        user_id: int,
+        delta: int,
+        reason: str,
+        *args: Any,
+        **kwargs: Any,
+    ):
+        result = await original_add_points(
+            self,
+            chat_id,
+            user_id,
+            delta,
+            reason,
+            *args,
+            **kwargs,
+        )
+        if (
+            _RUNTIME_BOT is not None
+            and int(chat_id) < 0
+            and not str(reason or "").startswith("reality_event_")
+        ):
+            _schedule_chat_sync(core, _RUNTIME_BOT, int(chat_id))
+        return result
 
-    events._process_event = process_event_live
+    core.Database.add_points = add_points_with_event_refresh
 
-    # В Reality 97 начисления через add_points уже запускают быструю синхронизацию.
-    # Здесь дополнительно охватываем add_points_with_balance, которым пользуются
-    # команды, задания и многие награды новых модулей.
-    runtime_bot: dict[str, Any] = {"bot": None}
-    balance_method = getattr(core.Database, "add_points_with_balance", None)
-    if balance_method is not None:
-        async def add_points_with_live_refresh(
+    original_balance = getattr(core.Database, "add_points_with_balance", None)
+    if original_balance is not None:
+        async def add_points_with_balance_event_refresh(
             self: Any,
             chat_id: int,
             user_id: int,
@@ -286,7 +389,7 @@ def install_reality_event_live_v109(core: Any) -> None:
             *args: Any,
             **kwargs: Any,
         ):
-            result = await balance_method(
+            result = await original_balance(
                 self,
                 chat_id,
                 user_id,
@@ -295,22 +398,32 @@ def install_reality_event_live_v109(core: Any) -> None:
                 *args,
                 **kwargs,
             )
-            bot = runtime_bot["bot"]
-            if bot is not None and int(chat_id) < 0 and not str(reason or "").startswith("reality_event_"):
-                _schedule_chat_sync(core, bot, int(chat_id))
+            if (
+                _RUNTIME_BOT is not None
+                and int(chat_id) < 0
+                and not str(reason or "").startswith("reality_event_")
+            ):
+                _schedule_chat_sync(core, _RUNTIME_BOT, int(chat_id))
             return result
 
-        core.Database.add_points_with_balance = add_points_with_live_refresh
+        core.Database.add_points_with_balance = add_points_with_balance_event_refresh
 
     original_start_server = core.start_webapp_server
 
-    async def start_server_with_live_event_updates(bot: Any):
-        runtime_bot["bot"] = bot
-        runner = await original_start_server(bot)
+    async def start_server_with_live_event_updates(bot_arg: Any):
+        global _RUNTIME_BOT, _WATCHER_STARTED
+        _RUNTIME_BOT = bot_arg
+        _install_event_start_override(core, bot_arg)
+        runner = await original_start_server(bot_arg)
+        if not _WATCHER_STARTED:
+            _WATCHER_STARTED = True
+            core.spawn_background_task(_watch_loop(core, bot_arg))
         LOGGER.info("%s активирован", VERSION)
         return runner
 
     core.start_webapp_server = start_server_with_live_event_updates
-    core.refresh_reality_event_message = lambda bot, chat_id: _schedule_chat_sync(
-        core, bot, int(chat_id)
+    core.refresh_reality_event_message = lambda bot_arg, chat_id: _schedule_chat_sync(
+        core,
+        bot_arg,
+        int(chat_id),
     )
