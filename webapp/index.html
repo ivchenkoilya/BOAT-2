@@ -25,6 +25,12 @@
       var tg=window.Telegram&&window.Telegram.WebApp;
       var start=(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.start_param)||new URLSearchParams(location.search).get('tgWebAppStartParam')||'';
       var search=new URLSearchParams(location.search);
+      if(start.indexOf('finance_')===0){
+        document.documentElement.style.visibility='hidden';
+        search.set('chat_id',start.slice(8));
+        location.replace('/finance-v114/?'+search.toString()+location.hash);
+        return;
+      }
       if(start.indexOf('talent_')===0){
         document.documentElement.style.visibility='hidden';
         search.set('chat_id',start.slice(7));
