@@ -5,6 +5,9 @@ from typing import Any
 
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, WebAppInfo
 
+import reality_event_vote_v97 as event_vote
+import reality_events_v96 as events
+
 
 VERSION = "Reality 97 · Голосование событий"
 
@@ -13,6 +16,18 @@ def install_admin_open_v89(core: Any) -> None:
     if getattr(core, "_admin_open_v89_installed", False):
         return
     core._admin_open_v89_installed = True
+
+    # Даже если изменение уже попало в базу до обновления карточки, принудительно
+    # перерисовываем сообщение события. Это устраняет зависшие значения 0/2500.
+    original_sync_event = event_vote._sync_event_now
+
+    async def sync_event_and_refresh(core_arg: Any, bot: Any, chat_id: int) -> None:
+        await original_sync_event(core_arg, bot, chat_id)
+        refreshed = await events._active_event(core_arg, chat_id)
+        if refreshed is not None:
+            await events._update_message(core_arg, bot, refreshed)
+
+    event_vote._sync_event_now = sync_event_and_refresh
 
     async def open_admin(message: Message, bot: Any) -> None:
         if not message.from_user or int(message.from_user.id) != int(core.DEVELOPER_ID):
