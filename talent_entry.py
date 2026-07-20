@@ -38,6 +38,7 @@ from raid_v61 import install_raid_v61
 from raid_v61_safety import install_raid_v61_safety
 from raid_v64_direct_tree import install_raid_v64_direct_tree
 from raid_v65_balance import install_raid_v65_balance
+from reality_event_command_v98 import install_reality_event_command_v98
 from reality_event_vote_v97 import install_reality_event_vote_v97
 from reality_events_admin_bridge_v96 import install_reality_events_admin_bridge_v96
 from reality_events_boss_autostart_v96 import install_reality_events_boss_autostart_v96
@@ -173,6 +174,9 @@ install_influence_reward_v88(core)
 # Reality 97 заменяет автоматический запуск события голосованием участников и
 # обновляет прогресс сразу после начисления влияния.
 install_reality_event_vote_v97(core)
+# Reality 98 добавляет команду /event_start: команда сама засчитывает голос
+# участника и запускает событие после достижения общего порога.
+install_reality_event_command_v98(core)
 # Финальный слой меняет карточку и кнопку /admin на актуальную версию.
 install_admin_open_v89(core)
 # Reality 100 устанавливается последним: выбранные образы сохраняются в SQLite
@@ -189,6 +193,7 @@ _priority_names = {
     "cmd_active_talents",
     "cmd_community_tree",
     "cmd_games",
+    "cmd_event_start_v98",
     "cmd_event_vote_v97",
     "cmd_event",
 }
