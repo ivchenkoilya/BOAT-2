@@ -3,26 +3,60 @@
 
   const tg=window.Telegram?.WebApp;
   const API_ROOT='/boss-app/api/boss/';
+  const HERO_LABELS={
+    1:{name:'Каблучий',title:'Узник обручального кольца'},
+    2:{name:'Вайбус',title:'Призрак общей сходки'},
+    3:{name:'Солёний',title:'Владыка тухлых кроссовок'},
+    4:{name:'Сейфзоний',title:'Безопасная зона'},
+    5:{name:'Самозваний',title:'Ложный главный герой'},
+    6:{name:'Сливариус',title:'Малый дипломат'},
+    7:{name:'Былогерий',title:'Наследник былой славы'}
+  };
   const SKINS=Array.from({length:7},(_,index)=>({
     id:index+1,
     src:`/boss-app/assets/hero_skin_${index+1}.svg?v=102`
   }));
   const params=new URLSearchParams(location.search);
-  const bossId=String(tg?.initDataUnsafe?.start_param||params.get('boss')||params.get('tgWebAppStartParam')||'').trim();
   const headers={'Content-Type':'application/json','X-Telegram-Init-Data':tg?.initData||''};
   const nativeFetch=window.fetch.bind(window);
+  let bossId='';
   let latestState=null;
   let renderQueued=false;
   let loadingState=false;
 
+  function readBossId(){
+    let stored='';
+    try{stored=sessionStorage.getItem('raid:last-boss-id')||'';}catch(_error){}
+    return String(
+      window.__raidBossId||
+      tg?.initDataUnsafe?.start_param||
+      params.get('boss')||
+      params.get('tgWebAppStartParam')||
+      stored||
+      ''
+    ).trim();
+  }
+
+  function rememberBossId(value){
+    const id=String(value||'').trim();
+    if(!id)return;
+    bossId=id;
+    window.__raidBossId=id;
+    try{sessionStorage.setItem('raid:last-boss-id',id);}catch(_error){}
+  }
+
+  bossId=readBossId();
+
   function isBossStateUrl(value){
     const url=typeof value==='string'?value:String(value?.url||'');
-    return url.includes('/boss-app/api/boss/session')||url.includes('/boss-app/api/boss/state');
+    return url.includes('/boss-app/api/boss/session')||url.includes('/boss-app/api/boss/state')||url.includes('/boss-app/api/boss/action');
   }
 
   function acceptState(data){
     if(!data||!data.ok||!Array.isArray(data.fighters))return;
+    rememberBossId(data?.battle?.boss_id||data?.boss_id||readBossId());
     latestState=data;
+    window.__raidBossState=data;
     queueRender();
   }
 
@@ -102,12 +136,15 @@
 
   function galleryMarkup(){
     const selected=selectedSkinId();
-    const filled=SKINS.map(skin=>`
-      <button class="page-skin-slot hero-skin-card ${selected===skin.id?'selected':''}" type="button" data-hero-skin="${skin.id}" aria-label="Открыть героя ${skin.id}">
-        <em>${skin.id}/8</em>
-        <span class="page-skin-picture"><img src="${skin.src}" alt="" decoding="async"></span>
-        <b>ОБРАЗ</b>
-      </button>`).join('');
+    const filled=SKINS.map(skin=>{
+      const hero=HERO_LABELS[skin.id];
+      return `
+       <button class="page-skin-slot hero-skin-card ${selected===skin.id?'selected':''}" type="button" data-hero-skin="${skin.id}" aria-label="Открыть героя ${hero.name}">
+         <em>${skin.id}/8</em>
+         <span class="page-skin-picture"><img src="${skin.src}" alt="" decoding="async"></span>
+         <span class="hero-card-copy"><strong>${hero.name}</strong><small>${hero.title}</small></span>
+       </button>`;
+    }).join('');
     const empty=`
       <button class="page-skin-slot hero-skin-empty" type="button" data-empty-skin="8">
         <em>8/8</em><span class="slot-orb">◇</span><b>ПУСТОЙ СЛОТ</b><small>Образ появится позже</small>
@@ -120,7 +157,7 @@
     if(!page?.classList.contains('open')||page.dataset.page!=='skins')return;
     const grid=page.querySelector('.page-skin-grid');
     if(!grid)return;
-    const key=`${selectedSkinId()}:${SKINS.length}:104`;
+    const key=`${selectedSkinId()}:${SKINS.length}:107`;
     if(grid.dataset.heroSkinsKey===key&&grid.querySelector('[data-hero-skin]'))return;
     setData(grid,'heroSkinsKey',key);
     grid.innerHTML=galleryMarkup();
@@ -143,6 +180,7 @@
   }
 
   async function loadState(){
+    bossId=readBossId();
     if(loadingState||!bossId||!tg?.initData)return;
     loadingState=true;
     try{
@@ -155,9 +193,10 @@
   }
 
   async function chooseSkin(skinId,button){
+    bossId=readBossId();
     if(!bossId||!tg?.initData){
       const toast=document.getElementById('toast');
-      if(toast){toast.textContent='Открой рейд через Telegram, чтобы сохранить образ.';toast.className='toast show error';}
+      if(toast){toast.textContent='Не удалось определить активный рейд. Закрой и снова открой бой.';toast.className='toast show error';}
       return false;
     }
     button?.classList.add('saving');
@@ -212,11 +251,15 @@
     if(directSelection)chooseSkin(heroId,button);
   },true);
 
+  window.addEventListener('raid-state-updated',event=>acceptState(event.detail));
+  if(window.__raidBossState)acceptState(window.__raidBossState);
+
   const observer=new MutationObserver(queueRender);
   observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-page']});
 
   SKINS.forEach(skin=>{const image=new Image();image.decoding='async';image.src=skin.src});
-  setTimeout(loadState,350);
+  setTimeout(loadState,100);
+  setTimeout(loadState,500);
   setTimeout(loadState,1400);
   setInterval(loadState,12000);
   queueRender();
