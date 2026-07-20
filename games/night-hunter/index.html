@@ -3,97 +3,149 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#05080b">
+  <meta name="theme-color" content="#071012">
   <title>Ночной охотник: Последняя смена</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="/games/game-attempts-v89.js?v=89"></script>
-  <link rel="stylesheet" href="/games/night-hunter/style.css?v=107">
-  <link rel="stylesheet" href="/games/night-hunter/style-v101.css?v=107">
-  <link rel="stylesheet" href="/games/night-hunter/style-v102.css?v=107">
-  <link rel="stylesheet" href="/games/night-hunter/style-v104.css?v=107">
-  <link rel="stylesheet" href="/games/night-hunter/style-v105.css?v=107">
-  <link rel="stylesheet" href="/games/night-hunter/style-v106.css?v=107">
-  <link rel="stylesheet" href="/games/night-hunter/style-v107.css?v=107">
+  <link rel="stylesheet" href="/games/night-hunter/style-v108.css?v=108">
 </head>
 <body>
 <main class="app">
   <header class="topbar">
     <button id="back" class="back" type="button">← ИГРЫ</button>
-    <div class="brand"><b>НОЧНОЙ ОХОТНИК</b><small id="roomName">ДОРОГА НА СМЕНУ</small></div>
+    <div class="brand"><b>ПОСЛЕДНЯЯ СМЕНА</b><small id="location">ДОРОГА К ЗАВОДУ</small></div>
     <div class="score"><small>ОЧКИ</small><b id="score">0</b></div>
   </header>
+
   <section class="stage" id="stage">
-    <canvas id="game" aria-label="Сюжетная хоррор-смена ночного охранника"></canvas>
-    <div class="scanlines"></div><div class="vignette"></div><div class="damageFx" id="damageFx"></div>
-    <div class="topHud">
-      <span class="pill timer" id="timer">17:42</span>
-      <span class="pill objective" id="objective">ДОЙДИ ДО СЛУЖЕБНОГО ВХОДА</span>
-      <span class="pill hp"><em>HP</em><i><b id="hpBar"></b></i><strong id="hpText">100/100</strong></span>
+    <canvas id="game" aria-label="Мистическая ночная смена на заводе"></canvas>
+    <div class="scanlines"></div><div class="vignette"></div><div class="staticFx" id="staticFx"></div>
+
+    <div class="hudTop">
+      <span class="clock" id="clock">17:42</span>
+      <div class="objective"><small>ТЕКУЩАЯ ЗАДАЧА</small><b id="objective">ДОЙДИ ДО ПРОХОДНОЙ</b></div>
     </div>
-    <div class="weaponHud">
-      <div class="weaponName"><span id="weaponIcon">🔫</span><div><small id="weaponName">ПИСТОЛЕТ</small><b id="ammoText">12 / 84</b></div></div>
-      <div class="ammoBar"><i id="ammoBar"></i></div><span class="streak" id="streak">СЕРИЯ ×0</span>
+
+    <div class="battery hidden" id="batteryHud">
+      <small>ФОНАРЬ</small><i><b id="batteryBar"></b></i><strong id="batteryText">100%</strong>
     </div>
-    <div class="radioHud" id="radioHud"><div class="radioPortrait">◉</div><div><small id="radioSpeaker">ДИСПЕТЧЕР</small><p id="radioText">Смена простая. Проверяй камеры и реагируй на тревоги.</p><b id="survivorHp">СЛУЖЕБНЫЙ КАНАЛ</b></div></div>
-    <canvas class="miniMap" id="miniMap" width="190" height="110" aria-label="Карта здания"></canvas>
-    <div class="bossHud hidden" id="bossHud"><small id="bossPhase">НАЧАЛЬНИК СМЕНЫ · ФАЗА 1</small><i><b id="bossBar"></b></i></div>
-    <div class="waveBanner" id="waveBanner"><small>СМЕНА №184</small><b>ПРИБЫТИЕ</b></div>
-    <div class="caption" id="caption">Тёплый вечер. До первой ночной смены осталось несколько минут.</div>
-    <div class="direction hidden" id="direction"><span>➜</span><b>ЦЕЛЬ</b><small id="directionDistance">120 м</small></div>
+
+    <div class="caption" id="caption">Тёплый вечер. Ты идёшь на первую ночную смену.</div>
+    <div class="eventBanner" id="eventBanner"><small>СМЕНА №184</small><b>ПРИБЫТИЕ</b></div>
+
     <div class="joystick" id="joystick"><div class="joystickRing"></div><div class="joystickKnob" id="joystickKnob"></div></div>
-    <button class="contextAction hidden" id="action" type="button" aria-label="Взаимодействовать">
-      <span class="actionIcon" id="actionIcon">✋</span><b id="actionLabel">ДЕЙСТВИЕ</b><small id="actionSub">ПОДОЙДИ К ОБЪЕКТУ</small>
+
+    <button class="action hidden" id="action" type="button">
+      <span id="actionIcon">✋</span><b id="actionLabel">ДЕЙСТВИЕ</b><small id="actionSub">ПОДОЙДИ БЛИЖЕ</small>
     </button>
-    <div class="actions">
-      <button class="fire" id="fire" type="button"><span>✹</span><b>ОГОНЬ</b><small>ВЕДИ ПАЛЬЦЕМ</small></button>
-      <button class="round reload" id="reload" type="button"><span>↻</span><b>МАГАЗИН</b><small>ПЕРЕЗАРЯДКА</small></button>
-      <button class="round grenade" id="grenade" type="button"><span>●</span><b id="grenades">2</b><small>ГРАНАТА</small></button>
-      <button class="round dash" id="dash" type="button"><span>➤</span><b id="dashText">РЫВОК</b><small>УКЛОНЕНИЕ</small></button>
+
+    <div class="toolButtons">
+      <button class="tool hidden" id="flashlight" type="button"><span>🔦</span><b>СВЕТ</b><small id="flashlightState">ВКЛ</small></button>
+      <button class="tool" id="notes" type="button"><span>▤</span><b>ЗАПИСКИ</b><small id="notesCount">0</small></button>
     </div>
-    <div class="reloadText hidden" id="reloadText">ПЕРЕЗАРЯДКА</div>
   </section>
 </main>
+
 <div class="overlay" id="intro">
-  <section class="card">
-    <div class="poster"><div class="hero"></div><div class="beam"></div><div class="muzzle"></div><div class="horde"></div></div>
-    <div class="eyebrow">LAST SHIFT UPDATE · REALITY 107</div>
-    <h1>Последняя смена начинается до темноты</h1>
-    <p>Сначала ты сам пройдёшь по солнечной улице, войдёшь через служебный вход, отметишься в журнале, поднимешься на лифте и сядешь за камеры. Только после наступления ночи здание начнёт менять правила.</p>
-    <div class="mission">
-      <div><b>1</b><span>Играбельный солнечный пролог вместо мгновенного старта в бою</span></div>
-      <div><b>2</b><span>Вестибюль, журнал смен, лифт, служебный этаж и пост охраны</span></div>
-      <div><b>3</b><span>Новая история без спасения человека: память, камера 06 и Начальник смены</span></div>
+  <section class="introCard">
+    <div class="factoryPoster">
+      <div class="sun"></div><div class="factorySilhouette"></div><div class="workerSilhouette"></div><div class="nightLayer"></div>
     </div>
-    <button class="start loading" id="start" type="button">ЗАГРУЗКА ПОСЛЕДНЕЙ СМЕНЫ…</button>
-    <button class="demo hidden" id="demo" type="button">ЗАПУСТИТЬ ДЕМО</button>
+    <div class="eyebrow">REALITY 108 · FACTORY LOOP</div>
+    <h1>Ночной охотник:<br>Последняя смена</h1>
+    <p>Обычная смена на остановленном заводе. Камеры, обходы с фонариком, журналы, ремонт станков и правила, которые лучше не нарушать.</p>
+    <div class="features">
+      <div><b>БЕЗ ОРУЖИЯ</b><span>Ты техник, а не боец</span></div>
+      <div><b>ЖИВЫЕ РЕМОНТЫ</b><span>Щиты, клапаны, компрессор и станок №0</span></div>
+      <div><b>ЦИКЛ</b><span>Каждая подпись уже была поставлена раньше</span></div>
+    </div>
+    <button class="primary loading" id="start" type="button">ПОДГОТОВКА СМЕНЫ…</button>
+    <button class="secondary hidden" id="demo" type="button">ЗАПУСТИТЬ ДЕМО</button>
     <div class="error" id="startError"></div>
   </section>
 </div>
-<div class="overlay hidden" id="storyChoice">
-  <section class="card storyChoiceCard">
-    <div class="eyebrow">СЮЖЕТНЫЙ ВЫБОР</div><h2>Что делать с системой?</h2>
-    <p>Этот экран оставлен для будущей альтернативной концовки «Последней смены».</p>
-    <div class="storyChoiceGrid">
-      <button id="destroySample" type="button"><b>ОТКЛЮЧИТЬ</b><small>Уничтожить цикл здания</small></button>
-      <button id="takeSample" type="button"><b>УЙТИ</b><small>Закончить смену и сохранить тайну</small></button>
+
+<div class="overlay hidden" id="journalModal">
+  <section class="paperCard">
+    <div class="paperHeader"><small>АО «ОРФЕЙ-МЕХАНИКА»</small><b id="journalTitle">ЖУРНАЛ ПРИЁМА СМЕНЫ</b><span id="shiftStamp">СМЕНА №184</span></div>
+    <div class="journalTable" id="journalTable"></div>
+    <div class="signatureBlock">
+      <div class="signatureLabel" id="signatureLabel">ПОСТАВЬТЕ ПОДПИСЬ В ВЫДЕЛЕННОМ ПОЛЕ</div>
+      <canvas id="signatureCanvas" width="640" height="190"></canvas>
+      <div class="signatureActions"><button id="clearSignature" type="button">ОЧИСТИТЬ</button><button class="paperConfirm" id="confirmSignature" type="button" disabled>ПОДТВЕРДИТЬ</button></div>
+    </div>
+    <button class="paperClose" id="closeJournal" type="button">ЗАКРЫТЬ ЖУРНАЛ</button>
+  </section>
+</div>
+
+<div class="overlay hidden" id="cameraModal">
+  <section class="cameraCard">
+    <div class="cameraTop"><div><small>СИСТЕМА ВИДЕОНАБЛЮДЕНИЯ</small><b id="cameraTitle">ПОСТ ДЕЖУРНОГО</b></div><span id="cameraTime">18:00:00</span></div>
+    <div class="cameraScreen"><canvas id="cameraFeed" width="960" height="540"></canvas><div class="cameraNoise"></div><div class="rec">● REC</div></div>
+    <div class="cameraControls" id="cameraControls"></div>
+    <div class="cameraStatus" id="cameraStatus">Проверьте обязательные камеры.</div>
+    <button class="primary" id="closeCameras" type="button" disabled>ЗАВЕРШИТЬ ПРОВЕРКУ</button>
+  </section>
+</div>
+
+<div class="overlay hidden" id="repairModal">
+  <section class="repairCard">
+    <div class="repairHead"><div><small>ТЕХНИЧЕСКОЕ ОБСЛУЖИВАНИЕ</small><b id="repairTitle">ДИАГНОСТИКА</b></div><span id="repairCode">ЗАЯВКА 014</span></div>
+    <p id="repairDescription"></p>
+    <div class="repairWorkspace" id="repairWorkspace"></div>
+    <div class="repairHint" id="repairHint"></div>
+    <button class="primary" id="repairConfirm" type="button" disabled>ЗАВЕРШИТЬ РЕМОНТ</button>
+  </section>
+</div>
+
+<div class="overlay hidden" id="noteModal">
+  <section class="noteCard">
+    <div class="paperClip"></div>
+    <div class="eyebrow" id="noteKind">НАЙДЕНА ЗАПИСКА</div>
+    <h2 id="noteTitle">Правила ночной смены</h2>
+    <div class="noteBody" id="noteBody"></div>
+    <button class="primary" id="closeNote" type="button">УБРАТЬ В ЖУРНАЛ</button>
+  </section>
+</div>
+
+<div class="overlay hidden" id="notesModal">
+  <section class="notesCard">
+    <div class="notesHead"><div><small>ЛИЧНЫЙ ЖУРНАЛ</small><b>НАЙДЕННЫЕ ДОКУМЕНТЫ</b></div><button id="closeNotes" type="button">✕</button></div>
+    <div class="notesList" id="notesList"></div>
+  </section>
+</div>
+
+<div class="overlay hidden" id="choiceModal">
+  <section class="choiceCard">
+    <div class="eyebrow">06:00 · ПЕРЕДАЧА СМЕНЫ</div>
+    <h1>Кому ты передаёшь смену?</h1>
+    <p>На камере проходной стоит человек в твоей одежде. Система требует подпись в графе «Смену принял».</p>
+    <div class="choiceCamera"><canvas id="choiceFeed" width="800" height="360"></canvas><span>КАМЕРА 01 · ПРОХОДНАЯ</span></div>
+    <div class="choiceGrid">
+      <button id="signAgain" type="button"><b>ПОСТАВИТЬ ПОДПИСЬ</b><small>Передать смену самому себе</small></button>
+      <button id="refuseSign" type="button"><b>ОТКАЗАТЬСЯ</b><small>Попытаться выйти без передачи смены</small></button>
     </div>
   </section>
 </div>
-<div class="overlay hidden" id="upgrade">
-  <section class="card upgradeCard"><div class="eyebrow">НАЙДЕНО СНАРЯЖЕНИЕ</div><h2 id="upgradeTitle">Выбери оружие или усиление</h2><div class="upgradeGrid" id="upgradeGrid"></div></section>
-</div>
-<div class="overlay hidden" id="finish">
-  <section class="card result">
-    <div class="resultIcon" id="resultIcon">◷</div><div class="eyebrow" id="resultEyebrow">СМЕНА ЗАВЕРШЕНА</div>
-    <h1 id="resultTitle">06:00</h1><p id="resultText">Следующая смена начинается сегодня в 23:47.</p>
+
+<div class="overlay hidden" id="endingModal">
+  <section class="endingCard">
+    <div class="endingVisual" id="endingVisual"><div class="endingSun"></div><div class="endingFactory"></div><div class="endingWorker one"></div><div class="endingWorker two"></div></div>
+    <div class="eyebrow" id="endingEyebrow">СМЕНА №185 ПРИНЯТА</div>
+    <h1 id="endingTitle">Ты уже был здесь</h1>
+    <p id="endingText"></p>
+    <blockquote id="endingQuote">«В следующий раз не ремонтируй станок №0»</blockquote>
     <div class="resultGrid">
-      <div><small>ОЧКИ</small><b id="resultScore">0</b></div><div><small>УБИЙСТВА</small><b id="resultKills">0</b></div>
-      <div><small>ЭТАПЫ</small><b id="resultRooms">0/6</b></div><div><small>ТОЧНОСТЬ</small><b id="resultAccuracy">0%</b></div>
+      <div><small>ОЧКИ</small><b id="resultScore">0</b></div>
+      <div><small>РЕМОНТЫ</small><b id="resultRepairs">0/4</b></div>
+      <div><small>ЗАПИСКИ</small><b id="resultNotes">0/4</b></div>
     </div>
     <div class="reward" id="reward">Сохраняем результат…</div>
-    <button class="start" id="again" type="button">ЕЩЁ ОДНА СМЕНА</button><button class="secondary" id="toGames" type="button">В ИГРОВОЙ ЦЕНТР</button>
+    <button class="primary" id="again" type="button">ПРИНЯТЬ СМЕНУ СНОВА</button>
+    <button class="secondary" id="toGames" type="button">В ИГРОВОЙ ЦЕНТР</button>
   </section>
 </div>
-<script src="/games/night-hunter/game-v107.js?v=107"></script>
+
+<script src="/games/night-hunter/game-v108.js?v=108"></script>
 </body>
 </html>
