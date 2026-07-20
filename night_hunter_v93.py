@@ -8,7 +8,7 @@ from aiohttp import web
 import game_center_v75 as base
 
 
-VERSION = "Reality 105 · Night Combat"
+VERSION = "Reality 106 · Living Mission"
 GAME_KEY = "night-hunter"
 GAME_PATH = Path(__file__).resolve().parent / "games" / GAME_KEY
 STYLE_FILENAMES = (
@@ -17,8 +17,11 @@ STYLE_FILENAMES = (
     "style-v102.css",
     "style-v104.css",
     "style-v105.css",
+    "style-v106.css",
 )
 SCRIPT_FILENAMES = (
+    "game-v106.js",
+    "game-v106-interactions.js",
     "game-v105.js",
     "game-v105-ui.js",
     "game-v104.js",
@@ -39,7 +42,7 @@ SCRIPT_FILENAMES = (
 
 
 def install_night_hunter_v93(core: Any) -> None:
-    """Подключает Reality 105: тёмный режим, multitouch и новый боевой HUD."""
+    """Подключает Reality 106: контекстные действия, анимации и мягкую камеру."""
     if getattr(core, "_night_hunter_v93_installed", False):
         return
     core._night_hunter_v93_installed = True
