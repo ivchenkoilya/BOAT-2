@@ -1,0 +1,29 @@
+/* Server-synchronised hero portraits. Loaded last by webapp_inline_fix.py. */
+.page-skin-slot.hero-skin-card{min-height:224px!important;padding:0 0 12px!important;justify-content:flex-start!important;overflow:hidden!important;border-color:#6d4779!important;background:linear-gradient(180deg,#21112c,#09060d 83%)!important;box-shadow:inset 0 0 28px #000,0 0 13px #8f45a844!important;transition:transform .16s ease,filter .16s ease,border-color .16s ease,box-shadow .16s ease!important}
+.page-skin-slot.hero-skin-card:active{transform:scale(.975);filter:brightness(1.12)}
+.page-skin-slot.hero-skin-card.selected{border-color:#efc366!important;box-shadow:inset 0 0 30px #5d267977,0 0 20px #d85cff88,0 0 0 1px #d5a74f!important}
+.page-skin-slot.hero-skin-card.selected:before{content:"ВЫБРАН";position:absolute;z-index:6;left:8px;top:8px;padding:4px 7px;border:1px solid #f0c56c;background:#291226e8;color:#ffe4a0;font:700 7px Georgia,"Times New Roman",serif;letter-spacing:.5px;box-shadow:0 0 10px #de6dff88}
+.page-skin-slot.hero-skin-card.saving:after{content:"СОХРАНЕНИЕ…";position:absolute;z-index:8;inset:0;display:grid;place-items:center;background:#08050dcc;color:#ffe091;font:700 11px Georgia,"Times New Roman",serif;letter-spacing:.7px}
+.page-skin-picture{display:block;width:100%;height:174px;overflow:hidden;border-bottom:1px solid #5b3866;background:#0e0714}
+.page-skin-picture img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 18%;filter:saturate(1.06) contrast(1.05);transition:transform .24s ease,filter .24s ease}
+.hero-skin-card.selected .page-skin-picture img{transform:scale(1.025);filter:saturate(1.14) contrast(1.07) brightness(1.05)}
+.page-skin-slot.hero-skin-card>b{margin-top:11px!important;color:#eadcf0!important;font:700 13px Georgia,"Times New Roman",serif!important;letter-spacing:.8px;text-shadow:0 0 8px #b95adc88}
+.page-skin-slot.hero-skin-card>em{z-index:7!important;right:8px!important;top:8px!important;padding:3px 6px;background:#08050ddb;border:1px solid #75517e;color:#e1c3e8!important;font:700 8px Georgia,"Times New Roman",serif!important}
+.page-skin-slot.hero-skin-empty{min-height:224px!important}
+
+.fighter[data-hero-skin] .fighter-avatar{position:relative!important;width:70px!important;height:70px!important;margin:0 auto 5px!important;border-radius:10px!important;overflow:hidden!important;background:#100717!important;border:1px solid color-mix(in srgb,var(--role,#a65aca) 70%,#f3d68e 30%)!important;box-shadow:inset 0 0 15px #000,0 0 13px color-mix(in srgb,var(--role,#a65aca) 65%,transparent)!important}
+.fighter[data-hero-skin] .fighter-avatar>svg{display:none!important}
+.fighter[data-hero-skin] .fighter-avatar>i{z-index:4!important;right:2px!important;bottom:2px!important;background:#08050ddd!important;box-shadow:0 0 7px #000}
+.fighter-skin-image{position:absolute;z-index:1;inset:0;display:block;width:100%;height:100%;object-fit:cover;object-position:center 17%;animation:heroSkinPortraitIn .28s ease-out both}
+@keyframes heroSkinPortraitIn{from{opacity:0;transform:scale(1.08)}to{opacity:1;transform:scale(1)}}
+
+.page-heroes-grid .fighter[data-hero-skin] .fighter-avatar{width:78px!important;height:78px!important;margin-top:0!important}
+
+@media(max-width:370px){
+  .page-skin-slot.hero-skin-card,.page-skin-slot.hero-skin-empty{min-height:198px!important}
+  .page-skin-picture{height:150px}
+  .page-skin-slot.hero-skin-card>b{font-size:11px!important;margin-top:9px!important}
+  .fighter[data-hero-skin] .fighter-avatar{width:65px!important;height:65px!important}
+  .page-heroes-grid .fighter[data-hero-skin] .fighter-avatar{width:70px!important;height:70px!important}
+}
+@media(prefers-reduced-motion:reduce){.fighter-skin-image{animation:none!important}}
