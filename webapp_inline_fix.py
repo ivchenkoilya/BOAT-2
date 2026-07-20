@@ -46,6 +46,8 @@ def install_inline_webapp_fix(core: Any) -> None:
         core.WEBAPP_DIR / "hero-loadouts-v103.css",
         # Reality 104 добавляет подробное окно лора, предметов и баффов.
         core.WEBAPP_DIR / "hero-preview-v104.css",
+        # Reality 105 задаёт каждому герою свой цвет и расширяет карточки отряда.
+        core.WEBAPP_DIR / "hero-content-v105.css",
     ]
     js_paths = [
         core.WEBAPP_DIR / "fixed-combat-v18.js",
@@ -69,6 +71,8 @@ def install_inline_webapp_fix(core: Any) -> None:
         core.WEBAPP_DIR / "hero-loadouts-v103.js",
         # Reality 104 перехватывает выбор героя и сначала показывает подробности.
         core.WEBAPP_DIR / "hero-preview-v104.js",
+        # Reality 105 показывает краткие баффы экипировки прямо в карточках отряда.
+        core.WEBAPP_DIR / "hero-content-v105.js",
     ]
 
     async def webapp_index_with_inline_combat(request: Any):
@@ -78,13 +82,13 @@ def install_inline_webapp_fix(core: Any) -> None:
             script = "\n\n".join(path.read_text(encoding="utf-8") for path in js_paths)
 
             page = re.sub(
-                r"\s*<link[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|action-card-ego-v21|action-card-defense-v21|action-card-heal-v21|action-cards-layout-v21|raid-hotfix-v22|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v65-balance-layout|hero-skins-sync-v100|action-card-defense-cutout-v102|hero-loadouts-v103|hero-preview-v104)\.css[^>]*>",
+                r"\s*<link[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|action-card-ego-v21|action-card-defense-v21|action-card-heal-v21|action-cards-layout-v21|raid-hotfix-v22|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v65-balance-layout|hero-skins-sync-v100|action-card-defense-cutout-v102|hero-loadouts-v103|hero-preview-v104|hero-content-v105)\.css[^>]*>",
                 "",
                 page,
                 flags=re.IGNORECASE,
             )
             page = re.sub(
-                r"\s*<script[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v64-direct-tree|raid-v65-balance-layout|hero-skins-sync-v100|hero-loadouts-v103|hero-preview-v104)\.js[^>]*></script>",
+                r"\s*<script[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v64-direct-tree|raid-v65-balance-layout|hero-skins-sync-v100|hero-loadouts-v103|hero-preview-v104|hero-content-v105)\.js[^>]*></script>",
                 "",
                 page,
                 flags=re.IGNORECASE,
@@ -105,12 +109,12 @@ def install_inline_webapp_fix(core: Any) -> None:
 </script>
 """
             inline_style = (
-                "\n<style id=\"raid-ui-v104-inline\">\n"
+                "\n<style id=\"raid-ui-v105-inline\">\n"
                 + css
                 + "\n</style>\n"
             )
             inline_script = (
-                "\n<script id=\"raid-ui-v104-inline-script\">\n"
+                "\n<script id=\"raid-ui-v105-inline-script\">\n"
                 + script
                 + "\n</script>\n"
             )
@@ -125,7 +129,7 @@ def install_inline_webapp_fix(core: Any) -> None:
                     "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
                     "Pragma": "no-cache",
                     "Expires": "0",
-                    "X-Mini-App-UI": "raid-ui-v104-inline",
+                    "X-Mini-App-UI": "raid-ui-v105-inline",
                 },
             )
         except Exception:
