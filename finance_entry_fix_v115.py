@@ -6,8 +6,10 @@ from typing import Any
 from aiogram.filters import Command
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
+from finance_route_fix_v116 import install_finance_route_fix_v116
 
-VERSION = "Reality 115 · Исправленный вход в Финансовый центр"
+
+VERSION = "Reality 116 · Исправленный вход и маршруты Финансового центра"
 FINANCE_PREFIX = "finance_"
 
 
@@ -20,7 +22,7 @@ def _finance_link(core: Any, chat_id: int) -> str:
     if core.WEBAPP_PUBLIC_URL:
         return (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/finance-v114/"
-            f"?chat_id={int(chat_id)}&build=115-{int(time.time())}"
+            f"?chat_id={int(chat_id)}&build=116-{int(time.time())}"
         )
     return ""
 
@@ -30,6 +32,11 @@ def install_finance_entry_fix_v115(core: Any) -> None:
         return
     core._finance_entry_fix_v115_installed = True
     core.FINANCE_SYSTEM_VERSION = VERSION
+
+    # Reality 116 извлекает обработчики страницы и API из Reality 114,
+    # обходит хрупкую подмену web.Application и добавляет маршруты прямо
+    # перед AppRunner.setup(), пока роутер aiohttp ещё не заморожен.
+    install_finance_route_fix_v116(core)
 
     # Старые /finance-обработчики удаляются полностью, чтобы текстовое меню
     # Reality 112 больше не могло перехватить команду раньше Mini App.
