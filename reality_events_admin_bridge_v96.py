@@ -9,7 +9,7 @@ from aiohttp import web
 BASE_DIR = Path(__file__).resolve().parent
 ADMIN_HTML = BASE_DIR / "adminapp_v76" / "index.html"
 REWARD_EDITOR = BASE_DIR / "adminapp_v96" / "reward-editor.js"
-VERSION = "Reality 96 · События реальности"
+VERSION = "Reality 112 · Финансовый центр"
 
 
 def install_reality_events_admin_bridge_v96(core: Any) -> None:
@@ -29,22 +29,23 @@ def install_reality_events_admin_bridge_v96(core: Any) -> None:
             )
         if request.method == "GET" and request.path in {"/admin-v76", "/admin-v76/"}:
             source = ADMIN_HTML.read_text(encoding="utf-8")
-            source = source.replace("<title>Админ-центр Reality 89</title>", "<title>Админ-центр Reality 96</title>")
+            source = source.replace("<title>Админ-центр Reality 89</title>", "<title>Админ-центр Reality 112</title>")
             source = source.replace(
                 '<strong id="versionText">Reality 89</strong>',
-                '<strong id="versionText">Reality 96</strong>',
+                '<strong id="versionText">Reality 112</strong>',
             )
             source = source.replace(
                 '<div class="loading" id="loading"><div class="spinner"></div><b>Загрузка Reality 89</b><span>Синхронизируем участников, игры и древо</span></div>',
-                '<div class="loading" id="loading"><div class="spinner"></div><b>Загрузка Reality 96</b><span>Синхронизируем игроков, игры, древо и событие дня</span></div>',
+                '<div class="loading" id="loading"><div class="spinner"></div><b>Загрузка Reality 112</b><span>Синхронизируем игроков, игры, события и финансы</span></div>',
             )
             source = source.replace(
                 '<script src="/admin-v89/admin-v89.js?v=89"></script>\n  <script src="/admin-v76/admin.js?v=89"></script>',
-                '<script src="/admin-v89/admin-v89.js?v=96"></script>\n'
-                '  <script src="/admin-v95/night-hunter-admin.js?v=96"></script>\n'
-                '  <script src="/admin-v96/events-admin.js?v=96"></script>\n'
-                '  <script src="/admin-v96/reward-editor.js?v=96"></script>\n'
-                '  <script src="/admin-v76/admin.js?v=96"></script>',
+                '<script src="/admin-v89/admin-v89.js?v=112"></script>\n'
+                '  <script src="/admin-v95/night-hunter-admin.js?v=112"></script>\n'
+                '  <script src="/admin-v96/events-admin.js?v=112"></script>\n'
+                '  <script src="/admin-v96/reward-editor.js?v=112"></script>\n'
+                '  <script src="/admin-v112/finance-admin.js?v=112"></script>\n'
+                '  <script src="/admin-v76/admin.js?v=112"></script>',
             )
             return web.Response(
                 text=source,
