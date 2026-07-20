@@ -1,0 +1,81 @@
+/* Reality 105 · персональные цвета героев и расширенные карточки отряда */
+.hero-preview-overlay{
+  --hero-accent:#d594ff;
+  --hero-accent-soft:#f4d17a;
+  --hero-accent-rgb:213,148,255;
+  --hero-deep:#24102f;
+}
+.hero-preview-overlay[data-hero-id="1"]{--hero-accent:#62b8ff;--hero-accent-soft:#d8f2ff;--hero-accent-rgb:98,184,255;--hero-deep:#102b49}
+.hero-preview-overlay[data-hero-id="2"]{--hero-accent:#a86cff;--hero-accent-soft:#e1c8ff;--hero-accent-rgb:168,108,255;--hero-deep:#261245}
+.hero-preview-overlay[data-hero-id="3"]{--hero-accent:#a7d75f;--hero-accent-soft:#f0c860;--hero-accent-rgb:167,215,95;--hero-deep:#26321a}
+.hero-preview-overlay[data-hero-id="4"]{--hero-accent:#58d0c8;--hero-accent-soft:#c6fff7;--hero-accent-rgb:88,208,200;--hero-deep:#123b38}
+.hero-preview-overlay[data-hero-id="5"]{--hero-accent:#5f9cff;--hero-accent-soft:#c9ddff;--hero-accent-rgb:95,156,255;--hero-deep:#14294d}
+.hero-preview-overlay[data-hero-id="6"]{--hero-accent:#e35e53;--hero-accent-soft:#f2c760;--hero-accent-rgb:227,94,83;--hero-deep:#421a18}
+.hero-preview-overlay[data-hero-id="7"]{--hero-accent:#b15ee6;--hero-accent-soft:#e3c4ff;--hero-accent-rgb:177,94,230;--hero-deep:#25102f}
+
+.hero-preview-overlay .hero-preview-dialog{
+  border-color:rgba(var(--hero-accent-rgb),.58)!important;
+  background:radial-gradient(circle at 50% 0,rgba(var(--hero-accent-rgb),.24),transparent 33%),linear-gradient(180deg,var(--hero-deep) 0,#0b0711 44%,#07050b 100%)!important;
+  box-shadow:0 -10px 52px rgba(0,0,0,.64),inset 0 0 46px rgba(var(--hero-accent-rgb),.08),0 0 26px rgba(var(--hero-accent-rgb),.15)!important;
+}
+.hero-preview-overlay .hero-preview-dialog:before{background:linear-gradient(90deg,transparent,var(--hero-accent-soft),transparent)!important;box-shadow:0 0 17px var(--hero-accent)!important}
+.hero-preview-overlay .hero-preview-close{border-color:rgba(var(--hero-accent-rgb),.5)!important;color:var(--hero-accent-soft)!important;box-shadow:0 0 14px rgba(var(--hero-accent-rgb),.24)!important}
+.hero-preview-overlay .hero-preview-hero{border-bottom-color:rgba(var(--hero-accent-rgb),.36)!important;background:linear-gradient(90deg,rgba(var(--hero-accent-rgb),.25),rgba(12,7,18,.9))!important}
+.hero-preview-overlay .hero-preview-image{border-color:var(--hero-accent-soft)!important;box-shadow:0 0 24px rgba(var(--hero-accent-rgb),.38)!important}
+.hero-preview-overlay .hero-preview-identity small{color:var(--hero-accent)!important}
+.hero-preview-overlay .hero-preview-identity h2{color:var(--hero-accent-soft)!important;text-shadow:0 0 16px rgba(var(--hero-accent-rgb),.42)!important}
+.hero-preview-overlay .hero-preview-section.lore,
+.hero-preview-overlay .hero-preview-section.ability{border-color:rgba(var(--hero-accent-rgb),.44)!important;background:radial-gradient(circle at 12% 0,rgba(var(--hero-accent-rgb),.15),transparent 42%),linear-gradient(145deg,rgba(26,14,42,.96),rgba(8,5,14,.98))!important}
+.hero-preview-overlay .hero-preview-heading span{border-color:rgba(var(--hero-accent-rgb),.52)!important;background:rgba(var(--hero-accent-rgb),.14)!important;color:var(--hero-accent)!important}
+.hero-preview-overlay .hero-preview-heading h3,
+.hero-preview-overlay .hero-preview-ability-title strong{color:var(--hero-accent-soft)!important}
+.hero-preview-overlay .hero-preview-ability-title em{border-color:rgba(var(--hero-accent-rgb),.4)!important;background:rgba(var(--hero-accent-rgb),.12)!important;color:var(--hero-accent-soft)!important}
+.hero-preview-overlay .hero-preview-section li:before{color:var(--hero-accent)!important;text-shadow:0 0 8px rgba(var(--hero-accent-rgb),.55)!important}
+.hero-preview-overlay .hero-preview-select{border-color:var(--hero-accent-soft)!important;background:linear-gradient(180deg,var(--hero-accent),var(--hero-deep))!important;color:#fff8e8!important;box-shadow:0 0 22px rgba(var(--hero-accent-rgb),.34),inset 0 1px rgba(255,255,255,.18)!important}
+.hero-preview-overlay .hero-preview-select.selected,
+.hero-preview-overlay .hero-preview-select:disabled{border-color:rgba(126,104,139,.42)!important;background:linear-gradient(180deg,#302435,#1a141d)!important;color:#8f8297!important;box-shadow:none!important}
+
+/* В галерее оставляем только имя и титул: номер героя больше ничего не перекрывает. */
+.page-skin-slot .hero-card-copy>em,
+.page-skin-slot .hero-card-copy>p{display:none!important}
+
+/* Четыре расширенные карточки всегда помещаются в один ряд. */
+#fighters.squad{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:6px!important;
+  overflow:visible!important;
+  padding-bottom:4px!important;
+  align-items:stretch!important;
+}
+#fighters .fighter{
+  min-width:0!important;
+  width:auto!important;
+  height:228px!important;
+  padding:8px 4px 9px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  overflow:hidden!important;
+}
+#fighters .fighter-avatar{order:1;width:58px!important;height:58px!important;margin:1px auto 4px!important;flex:0 0 58px!important}
+#fighters .fighter>strong{order:2;min-height:13px;font-size:9px!important;line-height:1.15!important;padding:0 2px}
+#fighters .fighter>small{order:3;min-height:16px;margin:2px 0 1px!important;font-size:5.8px!important;line-height:1.2!important;white-space:normal!important;display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+#fighters .fighter-hero-name{order:4;min-height:25px;margin:2px 0 1px!important;padding:0 1px}
+#fighters .fighter-hero-name b{font-size:7px!important;line-height:1.05!important}
+#fighters .fighter-hero-name small{min-height:12px;margin-top:2px!important;font-size:5px!important;line-height:1.15!important;white-space:normal!important;display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#fighters .fighter>em{order:5;width:100%;min-height:12px;margin:3px 0 0!important;padding:0 3px;font-size:7px!important;line-height:12px!important;overflow:visible!important;text-overflow:clip!important}
+#fighters .player-hp{order:6;width:calc(100% - 8px)!important;height:7px!important;margin:1px auto 0!important;flex:0 0 7px!important}
+#fighters .fighter-damage{order:7;min-height:11px;margin-top:3px!important;font-size:5.8px!important;line-height:1.2!important}
+#fighters .fighter-equipped-item{order:8;max-width:100%!important;min-height:24px;margin:4px 0 0!important;padding:3px 3px!important;border-radius:5px!important;white-space:normal!important;display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden!important;font-size:5.2px!important;line-height:1.15!important}
+#fighters .fighter-item-buff{order:9;min-height:22px;margin-top:3px;padding:3px 2px;border-top:1px solid rgba(92,174,215,.22);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-align:center;font:700 5.2px/1.22 Arial,sans-serif;color:#a7dfff;text-shadow:0 0 7px rgba(75,170,219,.25)}
+#fighters .empty-fighter{justify-content:flex-start!important}
+#fighters .empty-fighter .fighter-damage{margin-top:auto!important}
+
+@media(max-width:370px){
+  #fighters.squad{gap:4px!important}
+  #fighters .fighter{height:222px!important;padding-inline:3px!important}
+  #fighters .fighter-avatar{width:52px!important;height:52px!important;flex-basis:52px!important}
+  #fighters .fighter>strong{font-size:8px!important}
+  #fighters .fighter-equipped-item,#fighters .fighter-item-buff{font-size:4.8px!important}
+}
