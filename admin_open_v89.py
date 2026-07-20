@@ -6,7 +6,7 @@ from typing import Any
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, WebAppInfo
 
 
-VERSION = "Reality 96 · События реальности"
+VERSION = "Reality 97 · Голосование событий"
 
 
 def install_admin_open_v89(core: Any) -> None:
@@ -49,12 +49,12 @@ def install_admin_open_v89(core: Any) -> None:
 
         url = (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/admin-v76/"
-            f"?chat_id={chat_id}&user_id={int(target.user_id)}&build=96-{int(time.time())}"
+            f"?chat_id={chat_id}&user_id={int(target.user_id)}&build=97-{int(time.time())}"
         )
         markup = InlineKeyboardMarkup(
             inline_keyboard=[[
                 InlineKeyboardButton(
-                    text="🛠 Открыть админ-центр Reality 96",
+                    text="🛠 Открыть админ-центр Reality 97",
                     web_app=WebAppInfo(url=url),
                 )
             ]]
@@ -62,12 +62,12 @@ def install_admin_open_v89(core: Any) -> None:
         try:
             await bot.send_message(
                 message.from_user.id,
-                "🛠 <b>АДМИН-ЦЕНТР REALITY 96</b>\n\n"
+                "🛠 <b>АДМИН-ЦЕНТР REALITY 97</b>\n\n"
                 f"Беседа: <code>{chat_id}</code>\n"
                 f"Участник: <b>{target.full_name}</b>\n\n"
-                "Добавлен отдельный раздел «Событие»: автоматический ежедневный выбор, "
-                "ручной запуск, перевыбор, участники, прогресс и история наград. "
-                "Игровой центр по-прежнему поддерживает все три Mini App и персональные попытки.",
+                "События теперь запускаются голосованием участников. После нужного "
+                "количества голосов бот случайно выбирает участника дня и событие. "
+                "Прогресс начислений обновляется почти сразу.",
                 reply_markup=markup,
             )
         except Exception:
@@ -76,8 +76,18 @@ def install_admin_open_v89(core: Any) -> None:
         if core.is_group(message):
             await core.ephemeral_reply(
                 message,
-                "🔒 Админ-центр Reality 96 отправлен в личные сообщения.",
+                "🔒 Админ-центр Reality 97 отправлен в личные сообщения.",
                 delay_seconds=3,
             )
 
     core.open_admin_panel = open_admin
+
+    # Старый обработчик /event был зарегистрирован раньше нового голосования.
+    # Переносим Reality 97 в начало, чтобы Telegram не останавливался на старом ответе.
+    handlers = core.router.message.handlers
+    vote_handlers = [
+        handler
+        for handler in handlers
+        if getattr(handler.callback, "__name__", "") == "cmd_event_vote_v97"
+    ]
+    handlers[:] = vote_handlers + [handler for handler in handlers if handler not in vote_handlers]
