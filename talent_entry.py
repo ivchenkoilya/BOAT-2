@@ -18,6 +18,7 @@ from admin_night_hunter_v95 import install_admin_night_hunter_v95
 from admin_open_v89 import install_admin_open_v89
 from admin_webapp_v62 import install_admin_webapp_v62
 from boss_upgrade_v52 import install_boss_upgrade_v52
+from bot_game_balance_v101 import install_bot_game_balance_v101
 from economy_fate_ui_v74 import install_economy_fate_ui_v74
 from game_center_runtime_v75 import install_game_center_runtime_v75
 from heist_asset_routes_v78 import install_heist_asset_routes_v78
@@ -192,6 +193,8 @@ install_hero_loadouts_v103(core)
 install_hero_loadouts_v103_fix(core)
 # Reality 105 обновляет имена, лор и предмет Солёния, сохраняя старые покупки.
 install_hero_content_v105(core)
+# Reality 101 поднимает шанс победы игрока против бота до 60% в монетке и кубике.
+install_bot_game_balance_v101(core)
 
 # В main.py есть общий обработчик F.text, зарегистрированный раньше расширений.
 # Переносим команды древа, мастерства, игр и события в начало списка.
