@@ -38,6 +38,8 @@ from raid_v61 import install_raid_v61
 from raid_v61_safety import install_raid_v61_safety
 from raid_v64_direct_tree import install_raid_v64_direct_tree
 from raid_v65_balance import install_raid_v65_balance
+from reality_events_admin_bridge_v96 import install_reality_events_admin_bridge_v96
+from reality_events_v96 import install_reality_events_v96
 from talent_bonus_display_v73 import install_talent_bonus_display_v73
 from talent_expansion import install_expansion
 from talent_explanations import install_explanations
@@ -66,8 +68,11 @@ core.EXTRAS_MIN_POINTS = 3000
 core.SECONDARY_MIN_POINTS = 6000
 core.HERO_MIN_POINTS = 10000
 
-# Reality 95 и Reality 92 ставятся первыми. Первый слой добавляет интерфейс
-# Ночного охотника, второй — персональные лимиты попыток через стабильные API.
+# Reality 96 ставится раньше всех Mini App. Мост всегда отдаёт новый интерфейс
+# на стабильном /admin-v76/, а ядро создаёт таблицы, API и ежедневный цикл.
+install_reality_events_admin_bridge_v96(core)
+install_reality_events_v96(core)
+# Reality 95 и Reality 92 добавляют третью игру и персональные лимиты попыток.
 install_admin_night_hunter_v95(core)
 install_admin_attempts_hotfix_v92(core)
 
@@ -161,15 +166,14 @@ install_influence_balance_v87(core)
 # Reality 88 поднимает базовую выплату команды до 50–150 влияния до применения
 # всех бонусов Древа знаний.
 install_influence_reward_v88(core)
-# Финальный слой меняет карточку и кнопку /admin на актуальную Reality 95.
+# Финальный слой меняет карточку и кнопку /admin на актуальную версию.
 install_admin_open_v89(core)
 # Reality 100 устанавливается последним: выбранные образы сохраняются в SQLite
 # и добавляются в состояние рейда для всех участников и устройств.
 install_hero_skins_sync_v100(core)
 
 # В main.py есть общий обработчик F.text, зарегистрированный раньше расширений.
-# Переносим команды древа, мастерства и игр в начало списка, чтобы общий
-# обработчик обычного текста не перехватывал их раньше специальных обработчиков.
+# Переносим команды древа, мастерства, игр и события в начало списка.
 _priority_names = {
     "cmd_talents",
     "cmd_buffs",
@@ -178,6 +182,7 @@ _priority_names = {
     "cmd_active_talents",
     "cmd_community_tree",
     "cmd_games",
+    "cmd_event",
 }
 _handlers = core.router.message.handlers
 _priority = [
