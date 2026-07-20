@@ -32,11 +32,11 @@
     </div>
     <div class="bossHud hidden" id="bossHud"><small id="bossPhase">ТЯЖЁЛЫЙ ОХОТНИК · ФАЗА 1</small><i><b id="bossBar"></b></i></div>
     <div class="waveBanner" id="waveBanner"><small>СЕКТОР 1</small><b>ЗАЧИСТКА НАЧАТА</b></div>
-    <div class="caption" id="caption">Направление задаёт джойстик. Кнопка огня только стреляет.</div>
+    <div class="caption" id="caption">Левый джойстик — движение. Круг огня — направление луча и стрельба.</div>
     <div class="direction hidden" id="direction"><span>➜</span><b>СЕКТОР 2</b><small id="directionDistance">120 м</small></div>
     <div class="joystick" id="joystick"><div class="joystickRing"></div><div class="joystickKnob" id="joystickKnob"></div></div>
     <div class="actions">
-      <button class="fire" id="fire" type="button"><span>✹</span><b>ОГОНЬ</b><small>СТРЕЛЯТЬ</small></button>
+      <button class="fire" id="fire" type="button"><span>✹</span><b>ОГОНЬ</b><small>ВЕДИ ПАЛЬЦЕМ — ЦЕЛЬСЯ</small></button>
       <button class="round reload" id="reload" type="button"><span>↻</span><b>ПЕРЕЗАРЯДКА</b></button>
       <button class="round grenade" id="grenade" type="button"><span>💣</span><b id="grenades">2</b></button>
       <button class="round dash" id="dash" type="button"><span>➤</span><b id="dashText">РЫВОК</b></button>
@@ -47,13 +47,13 @@
 <div class="overlay" id="intro">
   <section class="card">
     <div class="poster"><div class="hero"></div><div class="beam"></div><div class="muzzle"></div><div class="horde"></div></div>
-    <div class="eyebrow">COMBAT CONTROLS UPDATE · REALITY 102</div>
+    <div class="eyebrow">CIRCULAR AIM UPDATE · REALITY 103</div>
     <h1>Зачистка комплекса</h1>
-    <p>Большой джойстик одновременно двигает героя и задаёт направление фонаря. После остановки направление сохраняется, а кнопка «Огонь» только стреляет.</p>
+    <p>Большой левый джойстик отвечает только за движение. Удерживай кнопку «Огонь» и веди пальцем по кругу, чтобы независимо поворачивать фонарь и вести непрерывную стрельбу.</p>
     <div class="mission">
-      <div><b>1</b><span>Большой левый джойстик — движение и направление взгляда</span></div>
-      <div><b>2</b><span>«Огонь» — стрельба строго по сохранённому направлению фонаря</span></div>
-      <div><b>3</b><span>Граната, перезарядка и рывок находятся рядом с большим пальцем</span></div>
+      <div><b>1</b><span>Большой левый джойстик — движение героя</span></div>
+      <div><b>2</b><span>Круг «Огонь» — независимое круговое прицеливание и стрельба</span></div>
+      <div><b>3</b><span>Можно двигаться в одну сторону, а стрелять в другую</span></div>
     </div>
     <button class="start loading" id="start" type="button">ЗАГРУЗКА УПРАВЛЕНИЯ…</button>
     <button class="demo hidden" id="demo" type="button">ЗАПУСТИТЬ ДЕМО</button>
@@ -78,6 +78,6 @@
     <button class="start" id="again" type="button">ЕЩЁ ОДНА ЗАЧИСТКА</button><button class="secondary" id="toGames" type="button">В ИГРОВОЙ ЦЕНТР</button>
   </section>
 </div>
-<script src="/games/night-hunter/game-v102.js?v=102"></script>
+<script src="/games/night-hunter/game-v103.js?v=103"></script>
 </body>
 </html>
