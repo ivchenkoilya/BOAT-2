@@ -4,8 +4,8 @@
   const tg=window.Telegram?.WebApp;
   const API_ROOT='/boss-app/api/boss/';
   const params=new URLSearchParams(location.search);
-  const bossId=String(tg?.initDataUnsafe?.start_param||params.get('boss')||params.get('tgWebAppStartParam')||'').trim();
   const headers={'Content-Type':'application/json','X-Telegram-Init-Data':tg?.initData||''};
+  let bossId='';
 
   const HERO_LABELS={
     1:{name:'Каблучий',title:'Узник обручального кольца'},
@@ -30,6 +30,42 @@
   let state=null;
   let loading=false;
   let queued=false;
+
+  function readBossId(){
+    let stored='';
+    try{stored=sessionStorage.getItem('raid:last-boss-id')||'';}catch(_error){}
+    return String(
+      window.__raidBossId||
+      tg?.initDataUnsafe?.start_param||
+      params.get('boss')||
+      params.get('tgWebAppStartParam')||
+      stored||
+      ''
+    ).trim();
+  }
+
+  function rememberBossId(value){
+    const id=String(value||'').trim();
+    if(!id)return;
+    bossId=id;
+    window.__raidBossId=id;
+    try{sessionStorage.setItem('raid:last-boss-id',id);}catch(_error){}
+  }
+
+  function acceptState(next){
+    if(!next||!next.ok||!Array.isArray(next.fighters))return;
+    rememberBossId(next?.battle?.boss_id||next?.boss_id||readBossId());
+    state=next;
+    window.__raidBossState=next;
+    const scroll=document.querySelector('#raidPage .raid-page-scroll');
+    if(scroll){
+      scroll.removeAttribute('data-v105-key');
+      scroll.removeAttribute('data-loadout-key');
+    }
+    queueRender();
+  }
+
+  bossId=readBossId();
 
   const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,char=>({
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
@@ -109,7 +145,7 @@
     Object.entries(HERO_LABELS).forEach(([id,hero])=>{
       const card=page.querySelector(`[data-hero-skin="${id}"]`);
       if(!card)return;
-      const fallback=card.querySelector(':scope > b');
+      const fallback=[...card.children].find(element=>element.tagName==='B');
       if(fallback)fallback.remove();
       let copy=card.querySelector('.hero-card-copy');
       if(!copy){
@@ -158,27 +194,29 @@
     }
     if(!state)return;
     if(page.dataset.page==='shop'){
-      const key=`v105-shop:${state.balance}:${state.equipped_item}:${(state.inventory||[]).join(',')}`;
+      const key=`v107-shop:${state.balance}:${state.equipped_item}:${(state.inventory||[]).join(',')}`;
       if(scroll.dataset.v105Key!==key){scroll.dataset.v105Key=key;scroll.innerHTML=shopMarkup();}
     }else if(page.dataset.page==='inventory'){
-      const key=`v105-inventory:${state.equipped_item}:${(state.inventory||[]).join(',')}`;
+      const key=`v107-inventory:${state.equipped_item}:${(state.inventory||[]).join(',')}`;
       if(scroll.dataset.v105Key!==key){scroll.dataset.v105Key=key;scroll.innerHTML=inventoryMarkup();}
     }
   }
 
   async function loadState(force=false){
+    bossId=readBossId();
     if(loading||!bossId||!tg?.initData)return;
     if(state&&!force){queueRender();return;}
     loading=true;
     try{
       const response=await fetch(`${API_ROOT}state?boss_id=${encodeURIComponent(bossId)}`,{headers});
       const data=await response.json().catch(()=>null);
-      if(data?.ok&&Array.isArray(data.fighters)){state=data;queueRender();}
+      acceptState(data);
     }catch(_error){}finally{loading=false;}
   }
 
   async function perform(actionName,itemKey=''){
-    if(!bossId||!tg?.initData){showToast('Открой рейд через Telegram.','error');return;}
+    bossId=readBossId();
+    if(!bossId||!tg?.initData){showToast('Не удалось определить активный рейд. Закрой и снова открой бой.','error');return;}
     try{
       const response=await fetch(`${API_ROOT}action`,{
         method:'POST',headers,
@@ -186,9 +224,7 @@
       });
       const data=await response.json().catch(()=>({ok:false,reason:'Сервер вернул непонятный ответ.'}));
       if(!response.ok||!data.ok)throw new Error(data.reason||'Действие не выполнено.');
-      state=data;
-      document.querySelector('#raidPage .raid-page-scroll')?.removeAttribute('data-v105-key');
-      queueRender();
+      acceptState(data);
       showToast(data.message||'Готово.');
       tg?.HapticFeedback?.notificationOccurred?.('success');
     }catch(error){
@@ -230,11 +266,15 @@
     if(nav)setTimeout(()=>{loadState(true);queueRender();},60);
   },true);
 
+  window.addEventListener('raid-state-updated',event=>acceptState(event.detail));
+  if(window.__raidBossState)acceptState(window.__raidBossState);
+
   new MutationObserver(queueRender).observe(document.body,{
     childList:true,subtree:true,attributes:true,attributeFilter:['class','data-page']
   });
 
-  setTimeout(()=>loadState(true),250);
+  setTimeout(()=>loadState(true),100);
+  setTimeout(()=>loadState(true),500);
   setTimeout(()=>loadState(true),1200);
   setInterval(()=>loadState(true),10000);
   setInterval(render,700);
