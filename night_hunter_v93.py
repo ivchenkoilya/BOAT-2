@@ -12,7 +12,14 @@ VERSION = "Reality 115 · Dense Factory"
 GAME_KEY = "night-hunter"
 GAME_PATH = Path(__file__).resolve().parent / "games" / GAME_KEY
 STYLE_FILENAMES = ("style-v108.css", "style-v110.css", "style-v115.css")
-SCRIPT_FILENAMES = ("game-v108.js", "game-v109.js", "game-v110.js", "game-v113.js", "game-v115.js")
+SCRIPT_FILENAMES = (
+    "game-v108.js",
+    "game-v109.js",
+    "game-v110.js",
+    "game-v113.js",
+    "game-v115.js",
+    "game-v115-ui.js",
+)
 ASSET_FILENAMES = (
     "assets/machine-cnc-blue-v114.svg",
     "assets/machine-cnc-green-v114.svg",
