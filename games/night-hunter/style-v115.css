@@ -1,0 +1,87 @@
+/* Reality 115 · Dense Factory & Living Street */
+body.reality115 .joystick{
+  left:18px!important;
+  bottom:22px!important;
+  width:158px!important;
+  height:158px!important;
+  background:radial-gradient(circle at 45% 42%,rgba(52,102,104,.54),rgba(4,15,18,.88) 68%)!important;
+  box-shadow:0 0 0 9px rgba(5,17,19,.34),0 16px 38px rgba(0,0,0,.72),inset 0 0 24px rgba(113,226,210,.12)!important;
+}
+body.reality115 .joystickRing{inset:13px!important;border-width:2px!important;opacity:.9}
+body.reality115 .joystickKnob{
+  width:70px!important;
+  height:70px!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.58),inset 0 0 18px rgba(170,255,239,.14)!important;
+}
+body.reality115 .toolButtons{
+  right:14px!important;
+  top:74px!important;
+  bottom:auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-end!important;
+  gap:9px!important;
+  z-index:24!important;
+}
+body.reality115 #notes{order:-2;min-width:92px!important;width:92px!important}
+body.reality115 #flashlight{order:-1;min-width:92px!important;width:92px!important}
+body.reality115 .tool{
+  height:58px!important;
+  border-radius:15px!important;
+  background:linear-gradient(145deg,rgba(15,35,39,.96),rgba(5,14,16,.94))!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.5),inset 0 0 0 1px rgba(135,225,211,.12)!important;
+  backdrop-filter:blur(9px);
+}
+body.reality115 .action{right:14px!important;bottom:24px!important}
+body.reality115 .objective{max-width:min(69vw,520px)}
+body.reality115 .objective .objectiveDetail{max-height:28px!important;font-size:6.5px!important;color:#8fb0aa!important}
+body.reality115 .caption{bottom:12px;max-width:58%;background:linear-gradient(145deg,rgba(4,13,15,.94),rgba(15,30,32,.91))!important}
+body.reality115 .stage:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:radial-gradient(circle at 70% 15%,rgba(121,228,208,.035),transparent 28%),linear-gradient(180deg,transparent 65%,rgba(0,0,0,.16));
+  z-index:3;
+}
+body.reality115 .noteCard{
+  position:relative;
+  background:linear-gradient(155deg,#eee0ba,#c7ad78 76%)!important;
+  color:#302718!important;
+  transform:rotate(-.45deg);
+  border:1px solid rgba(255,246,207,.64)!important;
+}
+body.reality115 .noteCard:before{
+  content:"АРХИВ 047";
+  position:absolute;
+  right:18px;
+  top:20px;
+  padding:5px 9px;
+  border:2px solid rgba(126,39,42,.42);
+  color:rgba(126,39,42,.52);
+  font:900 11px/1 monospace;
+  transform:rotate(8deg);
+}
+body.reality115 .noteBody{white-space:pre-line!important;line-height:1.6!important;font-family:ui-monospace,SFMono-Regular,Consolas,monospace!important}
+body.reality115 .notesList button{background:linear-gradient(145deg,rgba(31,45,45,.96),rgba(10,18,20,.96))!important;border-color:rgba(112,194,181,.18)!important}
+body.reality115 .cameraCard{border-color:rgba(92,191,179,.45)!important}
+body.reality115 .cameraScreen:after{
+  content:"SIGNAL / 047";
+  position:absolute;
+  left:14px;
+  bottom:10px;
+  color:rgba(145,238,222,.64);
+  font:900 10px/1 monospace;
+  letter-spacing:.12em;
+}
+body.reality115 .cameraControls button.anomaly{animation:r115Anomaly 1.35s ease-in-out infinite}
+@keyframes r115Anomaly{50%{box-shadow:0 0 0 1px rgba(255,76,104,.6),0 0 24px rgba(255,50,83,.2);transform:translateY(-1px)}}
+body.reality115 .repairWorkspace{background:radial-gradient(circle at 50% 20%,rgba(91,177,165,.09),transparent 48%),rgba(3,9,11,.44)!important}
+body.reality115 .eventBanner.show{animation:r115Banner 1.8s cubic-bezier(.18,.9,.22,1)}
+@keyframes r115Banner{0%{opacity:0;transform:translate(-50%,-18px) scale(.88);filter:blur(3px)}18%,76%{opacity:1;transform:translate(-50%,0) scale(1);filter:none}100%{opacity:0;transform:translate(-50%,-8px) scale(.98)}}
+@media(max-height:720px){
+  body.reality115 .joystick{width:138px!important;height:138px!important;bottom:14px!important}
+  body.reality115 .joystickKnob{width:62px!important;height:62px!important}
+  body.reality115 .toolButtons{top:64px!important;bottom:auto!important}
+  body.reality115 .tool{height:50px!important}
+}
