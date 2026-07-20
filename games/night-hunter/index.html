@@ -4,40 +4,41 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#05080b">
-  <title>Ночной охотник: Эвакуация</title>
+  <title>Ночной охотник: Последняя смена</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="/games/game-attempts-v89.js?v=89"></script>
-  <link rel="stylesheet" href="/games/night-hunter/style.css?v=100">
-  <link rel="stylesheet" href="/games/night-hunter/style-v101.css?v=101">
-  <link rel="stylesheet" href="/games/night-hunter/style-v102.css?v=102">
-  <link rel="stylesheet" href="/games/night-hunter/style-v104.css?v=105">
-  <link rel="stylesheet" href="/games/night-hunter/style-v105.css?v=105">
-  <link rel="stylesheet" href="/games/night-hunter/style-v106.css?v=106">
+  <link rel="stylesheet" href="/games/night-hunter/style.css?v=107">
+  <link rel="stylesheet" href="/games/night-hunter/style-v101.css?v=107">
+  <link rel="stylesheet" href="/games/night-hunter/style-v102.css?v=107">
+  <link rel="stylesheet" href="/games/night-hunter/style-v104.css?v=107">
+  <link rel="stylesheet" href="/games/night-hunter/style-v105.css?v=107">
+  <link rel="stylesheet" href="/games/night-hunter/style-v106.css?v=107">
+  <link rel="stylesheet" href="/games/night-hunter/style-v107.css?v=107">
 </head>
 <body>
 <main class="app">
   <header class="topbar">
     <button id="back" class="back" type="button">← ИГРЫ</button>
-    <div class="brand"><b>НОЧНОЙ ОХОТНИК</b><small id="roomName">ПОСТ ОХРАНЫ</small></div>
+    <div class="brand"><b>НОЧНОЙ ОХОТНИК</b><small id="roomName">ДОРОГА НА СМЕНУ</small></div>
     <div class="score"><small>ОЧКИ</small><b id="score">0</b></div>
   </header>
   <section class="stage" id="stage">
-    <canvas id="game" aria-label="Сюжетная эвакуация из заражённого комплекса"></canvas>
+    <canvas id="game" aria-label="Сюжетная хоррор-смена ночного охранника"></canvas>
     <div class="scanlines"></div><div class="vignette"></div><div class="damageFx" id="damageFx"></div>
     <div class="topHud">
-      <span class="pill timer" id="timer">06:00</span>
-      <span class="pill objective" id="objective">АКТИВИРУЙ ТЕРМИНАЛ ОХРАНЫ</span>
+      <span class="pill timer" id="timer">17:42</span>
+      <span class="pill objective" id="objective">ДОЙДИ ДО СЛУЖЕБНОГО ВХОДА</span>
       <span class="pill hp"><em>HP</em><i><b id="hpBar"></b></i><strong id="hpText">100/100</strong></span>
     </div>
     <div class="weaponHud">
       <div class="weaponName"><span id="weaponIcon">🔫</span><div><small id="weaponName">ПИСТОЛЕТ</small><b id="ammoText">12 / 84</b></div></div>
       <div class="ammoBar"><i id="ammoBar"></i></div><span class="streak" id="streak">СЕРИЯ ×0</span>
     </div>
-    <div class="radioHud" id="radioHud"><div class="radioPortrait">◉</div><div><small id="radioSpeaker">АННА</small><p id="radioText">Если кто-нибудь слышит… я в медицинском блоке.</p><b id="survivorHp">СИГНАЛ ПО РАЦИИ</b></div></div>
-    <canvas class="miniMap" id="miniMap" width="190" height="110" aria-label="Карта комплекса"></canvas>
-    <div class="bossHud hidden" id="bossHud"><small id="bossPhase">ТЯЖЁЛЫЙ ОХОТНИК · ФАЗА 1</small><i><b id="bossBar"></b></i></div>
-    <div class="waveBanner" id="waveBanner"><small>ОПЕРАЦИЯ</small><b>СИГНАЛ НАЙДЕН</b></div>
-    <div class="caption" id="caption">Подойди к отмеченному объекту и используй кнопку действия.</div>
+    <div class="radioHud" id="radioHud"><div class="radioPortrait">◉</div><div><small id="radioSpeaker">ДИСПЕТЧЕР</small><p id="radioText">Смена простая. Проверяй камеры и реагируй на тревоги.</p><b id="survivorHp">СЛУЖЕБНЫЙ КАНАЛ</b></div></div>
+    <canvas class="miniMap" id="miniMap" width="190" height="110" aria-label="Карта здания"></canvas>
+    <div class="bossHud hidden" id="bossHud"><small id="bossPhase">НАЧАЛЬНИК СМЕНЫ · ФАЗА 1</small><i><b id="bossBar"></b></i></div>
+    <div class="waveBanner" id="waveBanner"><small>СМЕНА №184</small><b>ПРИБЫТИЕ</b></div>
+    <div class="caption" id="caption">Тёплый вечер. До первой ночной смены осталось несколько минут.</div>
     <div class="direction hidden" id="direction"><span>➜</span><b>ЦЕЛЬ</b><small id="directionDistance">120 м</small></div>
     <div class="joystick" id="joystick"><div class="joystickRing"></div><div class="joystickKnob" id="joystickKnob"></div></div>
     <button class="contextAction hidden" id="action" type="button" aria-label="Взаимодействовать">
@@ -55,26 +56,26 @@
 <div class="overlay" id="intro">
   <section class="card">
     <div class="poster"><div class="hero"></div><div class="beam"></div><div class="muzzle"></div><div class="horde"></div></div>
-    <div class="eyebrow">LIVING MISSION UPDATE · REALITY 106</div>
-    <h1>Теперь с настоящими действиями</h1>
-    <p>Терминалы, рубильники, ключ-карта, спасение Анны и эвакуация теперь выполняются отдельной контекстной кнопкой. Герой и заражённые получили более живую анимацию, а камера мягко покачивается при ходьбе.</p>
+    <div class="eyebrow">LAST SHIFT UPDATE · REALITY 107</div>
+    <h1>Последняя смена начинается до темноты</h1>
+    <p>Сначала ты сам пройдёшь по солнечной улице, войдёшь через служебный вход, отметишься в журнале, поднимешься на лифте и сядешь за камеры. Только после наступления ночи здание начнёт менять правила.</p>
     <div class="mission">
-      <div><b>1</b><span>Подойди к светящемуся объекту и удерживай кнопку действия</span></div>
-      <div><b>2</b><span>Ноги героя следуют движению, корпус и оружие — направлению прицела</span></div>
-      <div><b>3</b><span>Лёгкое покачивание камеры не мешает стрельбе и усиливает движение</span></div>
+      <div><b>1</b><span>Играбельный солнечный пролог вместо мгновенного старта в бою</span></div>
+      <div><b>2</b><span>Вестибюль, журнал смен, лифт, служебный этаж и пост охраны</span></div>
+      <div><b>3</b><span>Новая история без спасения человека: память, камера 06 и Начальник смены</span></div>
     </div>
-    <button class="start loading" id="start" type="button">ЗАГРУЗКА ЖИВОЙ МИССИИ…</button>
+    <button class="start loading" id="start" type="button">ЗАГРУЗКА ПОСЛЕДНЕЙ СМЕНЫ…</button>
     <button class="demo hidden" id="demo" type="button">ЗАПУСТИТЬ ДЕМО</button>
     <div class="error" id="startError"></div>
   </section>
 </div>
 <div class="overlay hidden" id="storyChoice">
   <section class="card storyChoiceCard">
-    <div class="eyebrow">СЮЖЕТНЫЙ ВЫБОР</div><h2>Что делать с образцом?</h2>
-    <p>Он доказывает, что произошло в комплексе, но может вынести заражение наружу.</p>
+    <div class="eyebrow">СЮЖЕТНЫЙ ВЫБОР</div><h2>Что делать с системой?</h2>
+    <p>Этот экран оставлен для будущей альтернативной концовки «Последней смены».</p>
     <div class="storyChoiceGrid">
-      <button id="destroySample" type="button"><b>УНИЧТОЖИТЬ</b><small>Безопасная эвакуация и хорошая концовка</small></button>
-      <button id="takeSample" type="button"><b>ВЗЯТЬ С СОБОЙ</b><small>Больше очков, но последствия неизвестны</small></button>
+      <button id="destroySample" type="button"><b>ОТКЛЮЧИТЬ</b><small>Уничтожить цикл здания</small></button>
+      <button id="takeSample" type="button"><b>УЙТИ</b><small>Закончить смену и сохранить тайну</small></button>
     </div>
   </section>
 </div>
@@ -83,16 +84,16 @@
 </div>
 <div class="overlay hidden" id="finish">
   <section class="card result">
-    <div class="resultIcon" id="resultIcon">☣</div><div class="eyebrow" id="resultEyebrow">ОПЕРАЦИЯ ЗАВЕРШЕНА</div>
-    <h1 id="resultTitle">Эвакуация завершена</h1><p id="resultText">Анна спасена.</p>
+    <div class="resultIcon" id="resultIcon">◷</div><div class="eyebrow" id="resultEyebrow">СМЕНА ЗАВЕРШЕНА</div>
+    <h1 id="resultTitle">06:00</h1><p id="resultText">Следующая смена начинается сегодня в 23:47.</p>
     <div class="resultGrid">
       <div><small>ОЧКИ</small><b id="resultScore">0</b></div><div><small>УБИЙСТВА</small><b id="resultKills">0</b></div>
       <div><small>ЭТАПЫ</small><b id="resultRooms">0/6</b></div><div><small>ТОЧНОСТЬ</small><b id="resultAccuracy">0%</b></div>
     </div>
     <div class="reward" id="reward">Сохраняем результат…</div>
-    <button class="start" id="again" type="button">ЕЩЁ ОДНА ОПЕРАЦИЯ</button><button class="secondary" id="toGames" type="button">В ИГРОВОЙ ЦЕНТР</button>
+    <button class="start" id="again" type="button">ЕЩЁ ОДНА СМЕНА</button><button class="secondary" id="toGames" type="button">В ИГРОВОЙ ЦЕНТР</button>
   </section>
 </div>
-<script src="/games/night-hunter/game-v106.js?v=106"></script>
+<script src="/games/night-hunter/game-v107.js?v=107"></script>
 </body>
 </html>
