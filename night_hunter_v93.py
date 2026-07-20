@@ -8,15 +8,15 @@ from aiohttp import web
 import game_center_v75 as base
 
 
-VERSION = "Reality 109 · Generated Worker"
+VERSION = "Reality 110 · Visual Overhaul"
 GAME_KEY = "night-hunter"
 GAME_PATH = Path(__file__).resolve().parent / "games" / GAME_KEY
-STYLE_FILENAMES = ("style-v108.css",)
-SCRIPT_FILENAMES = ("game-v108.js", "game-v109.js")
+STYLE_FILENAMES = ("style-v108.css", "style-v110.css")
+SCRIPT_FILENAMES = ("game-v108.js", "game-v109.js", "game-v110.js")
 
 
 def install_night_hunter_v93(core: Any) -> None:
-    """Подключает Reality 109: заводскую смену с новой моделью рабочего."""
+    """Подключает Reality 110: визуально переработанную заводскую смену."""
     if getattr(core, "_night_hunter_v93_installed", False):
         return
     core._night_hunter_v93_installed = True
