@@ -37,6 +37,9 @@ def install_inline_webapp_fix(core: Any) -> None:
         # Reality 65 загружен последним, чтобы заголовок отряда оставался
         # геометрически по центру независимо от кнопки выбора героя.
         core.WEBAPP_DIR / "raid-v65-balance-layout.css",
+        # Reality 100 финально заменяет пустые слоты настоящими изображениями
+        # и показывает выбранные образы на карточках всех участников.
+        core.WEBAPP_DIR / "hero-skins-sync-v100.css",
     ]
     js_paths = [
         core.WEBAPP_DIR / "fixed-combat-v18.js",
@@ -54,6 +57,9 @@ def install_inline_webapp_fix(core: Any) -> None:
         core.WEBAPP_DIR / "raid-v64-direct-tree.js",
         # Reality 65 актуализирует в справке 100 000 HP и новый баланс давления.
         core.WEBAPP_DIR / "raid-v65-balance-layout.js",
+        # Загружается последним: перехватывает серверные состояния, заменяет
+        # старую страницу пустых слотов и синхронизирует портреты отряда.
+        core.WEBAPP_DIR / "hero-skins-sync-v100.js",
     ]
 
     async def webapp_index_with_inline_combat(request: Any):
@@ -63,13 +69,13 @@ def install_inline_webapp_fix(core: Any) -> None:
             script = "\n\n".join(path.read_text(encoding="utf-8") for path in js_paths)
 
             page = re.sub(
-                r"\s*<link[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|action-card-ego-v21|action-card-defense-v21|action-card-heal-v21|action-cards-layout-v21|raid-hotfix-v22|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v65-balance-layout)\.css[^>]*>",
+                r"\s*<link[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|action-card-ego-v21|action-card-defense-v21|action-card-heal-v21|action-cards-layout-v21|raid-hotfix-v22|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v65-balance-layout|hero-skins-sync-v100)\.css[^>]*>",
                 "",
                 page,
                 flags=re.IGNORECASE,
             )
             page = re.sub(
-                r"\s*<script[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v64-direct-tree|raid-v65-balance-layout)\.js[^>]*></script>",
+                r"\s*<script[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v64-direct-tree|raid-v65-balance-layout|hero-skins-sync-v100)\.js[^>]*></script>",
                 "",
                 page,
                 flags=re.IGNORECASE,
@@ -110,7 +116,7 @@ def install_inline_webapp_fix(core: Any) -> None:
                     "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
                     "Pragma": "no-cache",
                     "Expires": "0",
-                    "X-Mini-App-UI": "raid-ui-v65-inline",
+                    "X-Mini-App-UI": "raid-ui-v100-inline",
                 },
             )
         except Exception:
