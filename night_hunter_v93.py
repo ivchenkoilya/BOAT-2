@@ -8,15 +8,23 @@ from aiohttp import web
 import game_center_v75 as base
 
 
-VERSION = "Reality 113 · ALIVSPORT Branding"
+VERSION = "Reality 114 · Machine Sprites"
 GAME_KEY = "night-hunter"
 GAME_PATH = Path(__file__).resolve().parent / "games" / GAME_KEY
 STYLE_FILENAMES = ("style-v108.css", "style-v110.css")
 SCRIPT_FILENAMES = ("game-v108.js", "game-v109.js", "game-v110.js", "game-v113.js")
+ASSET_FILENAMES = (
+    "assets/machine-cnc-blue-v114.svg",
+    "assets/machine-cnc-green-v114.svg",
+    "assets/machine-cnc-red-v114.svg",
+    "assets/machine-laser-v114.svg",
+    "assets/machine-press-v114.svg",
+    "assets/machine-zero-v114.svg",
+)
 
 
 def install_night_hunter_v93(core: Any) -> None:
-    """Подключает стабильную заводскую смену с брендингом ALIVSPORT и сотрудником Ивч."""
+    """Подключает стабильную заводскую смену с отдельными спрайтами оборудования."""
     if getattr(core, "_night_hunter_v93_installed", False):
         return
     core._night_hunter_v93_installed = True
@@ -83,7 +91,7 @@ def install_night_hunter_v93(core: Any) -> None:
                 "/games/night-hunter/index.html",
             ):
                 app.router.add_get(path, night_index)
-            for filename in STYLE_FILENAMES + SCRIPT_FILENAMES:
+            for filename in STYLE_FILENAMES + SCRIPT_FILENAMES + ASSET_FILENAMES:
                 app.router.add_get(
                     f"/games/night-hunter/{filename}",
                     make_static_handler(filename),
