@@ -4,12 +4,35 @@
   const tg=window.Telegram?.WebApp;
   const API_ROOT='/boss-app/api/boss/';
   const params=new URLSearchParams(location.search);
-  const bossId=String(tg?.initDataUnsafe?.start_param||params.get('boss')||params.get('tgWebAppStartParam')||'').trim();
   const headers={'Content-Type':'application/json','X-Telegram-Init-Data':tg?.initData||''};
   const chainedFetch=window.fetch.bind(window);
+  let bossId='';
   let state=null;
   let renderPending=false;
   let loadingState=false;
+
+  function readBossId(){
+    let stored='';
+    try{stored=sessionStorage.getItem('raid:last-boss-id')||'';}catch(_error){}
+    return String(
+      window.__raidBossId||
+      tg?.initDataUnsafe?.start_param||
+      params.get('boss')||
+      params.get('tgWebAppStartParam')||
+      stored||
+      ''
+    ).trim();
+  }
+
+  function rememberBossId(value){
+    const id=String(value||'').trim();
+    if(!id)return;
+    bossId=id;
+    window.__raidBossId=id;
+    try{sessionStorage.setItem('raid:last-boss-id',id);}catch(_error){}
+  }
+
+  bossId=readBossId();
 
   function isStateUrl(input){
     const url=typeof input==='string'?input:String(input?.url||'');
@@ -18,7 +41,9 @@
 
   function accept(next){
     if(!next||!next.ok||!Array.isArray(next.fighters))return;
+    rememberBossId(next?.battle?.boss_id||next?.boss_id||readBossId());
     state=next;
+    window.__raidBossState=next;
     queueRender();
   }
 
@@ -115,7 +140,7 @@
       if(!card)return;
       if(card.dataset.loadoutHero===String(hero.id))return;
       card.dataset.loadoutHero=String(hero.id);
-      const oldTitle=card.querySelector('b');
+      const oldTitle=card.querySelector(':scope > b');
       if(oldTitle)oldTitle.remove();
       card.querySelector('.hero-card-copy')?.remove();
       const copy=document.createElement('span');
@@ -124,7 +149,7 @@
       card.append(copy);
     });
     const intro=page.querySelector('.page-intro');
-    const text='Каждый образ теперь является отдельным героем со своим именем, характером и боевой способностью.';
+    const text='Нажми на героя, чтобы открыть его лор, уникальную способность, особый предмет и все баффы.';
     if(intro&&intro.textContent!==text)intro.textContent=text;
   }
 
@@ -204,6 +229,7 @@
   }
 
   async function loadState(){
+    bossId=readBossId();
     if(loadingState||!bossId||!tg?.initData)return;
     loadingState=true;
     try{
@@ -216,7 +242,8 @@
   }
 
   async function action(actionName,itemKey=''){
-    if(!bossId||!tg?.initData){showToast('Открой рейд через Telegram.','error');return;}
+    bossId=readBossId();
+    if(!bossId||!tg?.initData){showToast('Не удалось определить активный рейд. Закрой и снова открой бой.','error');return;}
     try{
       const response=await chainedFetch(`${API_ROOT}action`,{
         method:'POST',headers,
@@ -242,8 +269,12 @@
     if(unequip){event.preventDefault();event.stopImmediatePropagation();action('unequip_item');}
   },true);
 
+  window.addEventListener('raid-state-updated',event=>accept(event.detail));
+  if(window.__raidBossState)accept(window.__raidBossState);
+
   new MutationObserver(queueRender).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-page']});
-  setTimeout(loadState,450);
+  setTimeout(loadState,100);
+  setTimeout(loadState,500);
   setTimeout(loadState,1500);
   setInterval(()=>{renderAbility();renderPage();},700);
   queueRender();
