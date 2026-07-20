@@ -1,6 +1,81 @@
 <!doctype html>
-<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#05080b"><title>Ночной охотник: Зачистка</title><script src="https://telegram.org/js/telegram-web-app.js"></script><script src="/games/game-attempts-v89.js?v=89"></script><link rel="stylesheet" href="/games/night-hunter/style.css?v=99"></head>
-<body><main class="app"><header class="topbar"><button id="back" class="back" type="button">← ИГРЫ</button><div class="brand"><b>НОЧНОЙ ОХОТНИК</b><small id="roomName">ПОСТ ОХРАНЫ</small></div><div class="score"><small>ОЧКИ</small><b id="score">0</b></div></header><section class="stage" id="stage"><canvas id="game"></canvas><div class="scanlines"></div><div class="vignette"></div><div class="damageFx" id="damageFx"></div><div class="topHud"><span class="pill timer" id="timer">03:00</span><span class="pill objective" id="objective">ЗАЧИСТИ СЕКТОР 1/6</span><span class="pill hp"><i><b id="hpBar"></b></i><strong id="hpText">100</strong></span></div><div class="weaponHud"><div><small>ПИСТОЛЕТ</small><b id="ammoText">12 / 60</b></div><div class="ammoBar"><i id="ammoBar"></i></div><span id="kills">0 УБИЙСТВ</span></div><div class="bossHud hidden" id="bossHud"><small>ТЯЖЁЛЫЙ ОХОТНИК</small><i><b id="bossBar"></b></i></div><div class="waveBanner" id="waveBanner"><small>СЕКТОР 1</small><b>ЗАЧИСТКА НАЧАТА</b></div><div class="caption" id="caption">Оружие заряжено. Уничтожь всех заражённых.</div><div class="joystick" id="joystick"><div class="joystickRing"></div><div class="joystickKnob" id="joystickKnob"></div></div><div class="actions"><button class="fire" id="fire" type="button"><span>✹</span><b>ОГОНЬ</b></button><button class="round" id="reload" type="button"><span>↻</span><b>ПЕРЕЗАРЯДКА</b></button><button class="round grenade" id="grenade" type="button"><span>💣</span><b id="grenades">2</b></button></div><div class="reloadText hidden" id="reloadText">ПЕРЕЗАРЯДКА</div></section></main>
-<div class="overlay" id="intro"><section class="card"><div class="poster"><div class="hero"></div><div class="muzzle"></div><div class="horde"></div></div><div class="eyebrow">TOP-DOWN SURVIVAL SHOOTER · REALITY 99</div><h1>Зачистка комплекса</h1><p>Пробивайся через шесть заражённых секторов. После каждой комнаты выбирай усиление, собирай патроны и аптечки, а в финале уничтожь Тяжёлого охотника.</p><div class="mission"><div><b>1</b><span>Двигайся левым джойстиком</span></div><div><b>2</b><span>Удерживай «Огонь» — прицел выберет ближайшую цель</span></div><div><b>3</b><span>Зачисти все комнаты до окончания времени</span></div></div><button class="start loading" id="start" type="button">ПОДГОТОВКА ОРУЖИЯ…</button><button class="demo hidden" id="demo" type="button">ЗАПУСТИТЬ ДЕМО</button><div class="error" id="startError"></div></section></div>
-<div class="overlay hidden" id="upgrade"><section class="card upgradeCard"><div class="eyebrow">СЕКТОР ЗАЧИЩЕН</div><h2>Выбери усиление</h2><div class="upgradeGrid" id="upgradeGrid"></div></section></div>
-<div class="overlay hidden" id="finish"><section class="card result"><div class="resultIcon" id="resultIcon">☣</div><div class="eyebrow" id="resultEyebrow">ОПЕРАЦИЯ ЗАВЕРШЕНА</div><h1 id="resultTitle">Комплекс зачищен</h1><p id="resultText">Последний заражённый уничтожен.</p><div class="resultGrid"><div><small>ОЧКИ</small><b id="resultScore">0</b></div><div><small>УБИЙСТВА</small><b id="resultKills">0</b></div><div><small>СЕКТОРЫ</small><b id="resultRooms">0/6</b></div><div><small>ТОЧНОСТЬ</small><b id="resultAccuracy">0%</b></div></div><div class="reward" id="reward">Сохраняем результат…</div><button class="start" id="again" type="button">ЕЩЁ ОДНА ЗАЧИСТКА</button><button class="secondary" id="toGames" type="button">В ИГРОВОЙ ЦЕНТР</button></section></div><script src="/games/night-hunter/game-v99.js?v=99"></script></body></html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#05080b">
+  <title>Ночной охотник: Зачистка</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="/games/game-attempts-v89.js?v=89"></script>
+  <link rel="stylesheet" href="/games/night-hunter/style.css?v=100">
+</head>
+<body>
+<main class="app">
+  <header class="topbar">
+    <button id="back" class="back" type="button">← ИГРЫ</button>
+    <div class="brand"><b>НОЧНОЙ ОХОТНИК</b><small id="roomName">ПОСТ ОХРАНЫ</small></div>
+    <div class="score"><small>ОЧКИ</small><b id="score">0</b></div>
+  </header>
+  <section class="stage" id="stage">
+    <canvas id="game" aria-label="Зачистка исследовательского комплекса"></canvas>
+    <div class="scanlines"></div><div class="vignette"></div><div class="damageFx" id="damageFx"></div>
+    <div class="topHud">
+      <span class="pill timer" id="timer">04:00</span>
+      <span class="pill objective" id="objective">ЗАЧИСТИ СЕКТОР 1/6</span>
+      <span class="pill hp"><em>HP</em><i><b id="hpBar"></b></i><strong id="hpText">100/100</strong></span>
+    </div>
+    <div class="weaponHud">
+      <div class="weaponName"><span id="weaponIcon">🔫</span><div><small id="weaponName">ПИСТОЛЕТ</small><b id="ammoText">12 / 72</b></div></div>
+      <div class="ammoBar"><i id="ammoBar"></i></div><span class="streak" id="streak">СЕРИЯ ×0</span>
+    </div>
+    <div class="bossHud hidden" id="bossHud"><small id="bossPhase">ТЯЖЁЛЫЙ ОХОТНИК · ФАЗА 1</small><i><b id="bossBar"></b></i></div>
+    <div class="waveBanner" id="waveBanner"><small>СЕКТОР 1</small><b>ЗАЧИСТКА НАЧАТА</b></div>
+    <div class="caption" id="caption">Оружие стреляет строго по направлению луча.</div>
+    <div class="direction hidden" id="direction"><span>➜</span><b>СЕКТОР 2</b><small id="directionDistance">120 м</small></div>
+    <div class="joystick" id="joystick"><div class="joystickRing"></div><div class="joystickKnob" id="joystickKnob"></div></div>
+    <div class="actions">
+      <button class="fire" id="fire" type="button"><span>✹</span><b>ОГОНЬ</b><small>ВЕДИ ПАЛЬЦЕМ — ЦЕЛЬСЯ</small></button>
+      <button class="round reload" id="reload" type="button"><span>↻</span><b>ПЕРЕЗАРЯДКА</b></button>
+      <button class="round grenade" id="grenade" type="button"><span>💣</span><b id="grenades">2</b></button>
+      <button class="round dash" id="dash" type="button"><span>➤</span><b id="dashText">РЫВОК</b></button>
+    </div>
+    <div class="reloadText hidden" id="reloadText">ПЕРЕЗАРЯДКА</div>
+  </section>
+</main>
+<div class="overlay" id="intro">
+  <section class="card">
+    <div class="poster"><div class="hero"></div><div class="beam"></div><div class="muzzle"></div><div class="horde"></div></div>
+    <div class="eyebrow">TOP-DOWN SURVIVAL SHOOTER · REALITY 100</div>
+    <h1>Зачистка комплекса</h1>
+    <p>Стреляй строго по лучу фонаря, пробивайся через шесть разных операций, меняй оружие и уничтожь многофазного Тяжёлого охотника.</p>
+    <div class="mission">
+      <div><b>1</b><span>Левый джойстик — движение</span></div>
+      <div><b>2</b><span>Удерживай и веди кнопку «Огонь» — направляй луч</span></div>
+      <div><b>3</b><span>Рывок даёт короткую неуязвимость</span></div>
+    </div>
+    <button class="start loading" id="start" type="button">ПОДГОТОВКА ОРУЖИЯ…</button>
+    <button class="demo hidden" id="demo" type="button">ЗАПУСТИТЬ ДЕМО</button>
+    <div class="error" id="startError"></div>
+  </section>
+</div>
+<div class="overlay hidden" id="upgrade">
+  <section class="card upgradeCard">
+    <div class="eyebrow">СЕКТОР ЗАЧИЩЕН</div><h2 id="upgradeTitle">Выбери оружие или усиление</h2>
+    <div class="upgradeGrid" id="upgradeGrid"></div>
+  </section>
+</div>
+<div class="overlay hidden" id="finish">
+  <section class="card result">
+    <div class="resultIcon" id="resultIcon">☣</div><div class="eyebrow" id="resultEyebrow">ОПЕРАЦИЯ ЗАВЕРШЕНА</div>
+    <h1 id="resultTitle">Комплекс зачищен</h1><p id="resultText">Последний заражённый уничтожен.</p>
+    <div class="resultGrid">
+      <div><small>ОЧКИ</small><b id="resultScore">0</b></div><div><small>УБИЙСТВА</small><b id="resultKills">0</b></div>
+      <div><small>СЕКТОРЫ</small><b id="resultRooms">0/6</b></div><div><small>ТОЧНОСТЬ</small><b id="resultAccuracy">0%</b></div>
+    </div>
+    <div class="reward" id="reward">Сохраняем результат…</div>
+    <button class="start" id="again" type="button">ЕЩЁ ОДНА ЗАЧИСТКА</button><button class="secondary" id="toGames" type="button">В ИГРОВОЙ ЦЕНТР</button>
+  </section>
+</div>
+<script src="/games/night-hunter/game-v100.js?v=100"></script>
+</body>
+</html>
