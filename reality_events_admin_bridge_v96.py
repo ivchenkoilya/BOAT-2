@@ -6,7 +6,9 @@ from typing import Any
 from aiohttp import web
 
 
-ADMIN_HTML = Path(__file__).resolve().parent / "adminapp_v76" / "index.html"
+BASE_DIR = Path(__file__).resolve().parent
+ADMIN_HTML = BASE_DIR / "adminapp_v76" / "index.html"
+REWARD_EDITOR = BASE_DIR / "adminapp_v96" / "reward-editor.js"
 VERSION = "Reality 96 · События реальности"
 
 
@@ -17,6 +19,14 @@ def install_reality_events_admin_bridge_v96(core: Any) -> None:
 
     @web.middleware
     async def admin_html_bridge(request: web.Request, handler: Any) -> web.StreamResponse:
+        if request.method == "GET" and request.path == "/admin-v96/reward-editor.js":
+            return web.FileResponse(
+                REWARD_EDITOR,
+                headers={
+                    "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+                    "X-Admin-Center": VERSION,
+                },
+            )
         if request.method == "GET" and request.path in {"/admin-v76", "/admin-v76/"}:
             source = ADMIN_HTML.read_text(encoding="utf-8")
             source = source.replace("<title>Админ-центр Reality 89</title>", "<title>Админ-центр Reality 96</title>")
@@ -33,6 +43,7 @@ def install_reality_events_admin_bridge_v96(core: Any) -> None:
                 '<script src="/admin-v89/admin-v89.js?v=96"></script>\n'
                 '  <script src="/admin-v95/night-hunter-admin.js?v=96"></script>\n'
                 '  <script src="/admin-v96/events-admin.js?v=96"></script>\n'
+                '  <script src="/admin-v96/reward-editor.js?v=96"></script>\n'
                 '  <script src="/admin-v76/admin.js?v=96"></script>',
             )
             return web.Response(
