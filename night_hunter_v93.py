@@ -15,6 +15,7 @@ STYLE_FILENAMES = ("style.css", "style-v101.css", "style-v102.css", "style-v104.
 SCRIPT_FILENAMES = (
     "game-v104.js",
     "game-v104-story.js",
+    "game-v104-fixes.js",
     "game-v102.js",
     "game-v102-art.js",
     "game-v101-art.js",
