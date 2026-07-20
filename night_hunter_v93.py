@@ -8,7 +8,7 @@ from aiohttp import web
 import game_center_v75 as base
 
 
-VERSION = "Reality 115 · Dense Factory"
+VERSION = "Reality 115 · Early Access Gate"
 GAME_KEY = "night-hunter"
 GAME_PATH = Path(__file__).resolve().parent / "games" / GAME_KEY
 STYLE_FILENAMES = ("style-v108.css", "style-v110.css", "style-v115.css")
@@ -20,6 +20,7 @@ SCRIPT_FILENAMES = (
     "game-v115.js",
     "game-v115-loader.js",
     "game-v115-ui.js",
+    "game-v115-access.js",
 )
 ASSET_FILENAMES = (
     "assets/machine-cnc-blue-v114.svg",
@@ -32,7 +33,7 @@ ASSET_FILENAMES = (
 
 
 def install_night_hunter_v93(core: Any) -> None:
-    """Подключает расширенную заводскую смену Reality 115 с детализированными сценами."""
+    """Подключает закрытый ранний доступ Night Hunter с PIN для внутреннего тестирования."""
     if getattr(core, "_night_hunter_v93_installed", False):
         return
     core._night_hunter_v93_installed = True
