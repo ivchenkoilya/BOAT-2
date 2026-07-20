@@ -18,6 +18,7 @@ SCRIPT_FILENAMES = (
     "game-v110.js",
     "game-v113.js",
     "game-v115.js",
+    "game-v115-loader.js",
     "game-v115-ui.js",
 )
 ASSET_FILENAMES = (
