@@ -2,8 +2,9 @@
 'use strict';
 
 const TEST_PIN='6767';
-const UNLOCK_KEY='nightHunterDevUnlocked';
-const STABLE_GAME='/games/night-hunter/game-v113.js?v=1152';
+const UNLOCK_KEY='allGamesDevUnlocked';
+const LEGACY_UNLOCK_KEY='nightHunterDevUnlocked';
+const STABLE_GAME='/games/night-hunter/game-v113.js?v=116';
 let loading=false;
 
 function loadScript(src){
@@ -73,6 +74,7 @@ function initEarlyAccess(){
       return;
     }
     localStorage.setItem(UNLOCK_KEY,'1');
+    localStorage.removeItem(LEGACY_UNLOCK_KEY);
     launchTest();
   };
 
@@ -83,6 +85,7 @@ function initEarlyAccess(){
   input?.addEventListener('keydown',event=>{if(event.key==='Enter')unlock()});
   button?.addEventListener('click',unlock);
 
+  if(localStorage.getItem(LEGACY_UNLOCK_KEY)==='1')localStorage.setItem(UNLOCK_KEY,'1');
   if(localStorage.getItem(UNLOCK_KEY)==='1')launchTest();
 }
 
