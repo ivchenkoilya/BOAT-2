@@ -8,15 +8,15 @@ from aiohttp import web
 import game_center_v75 as base
 
 
-VERSION = "Reality 111 · World & Animation Overhaul"
+VERSION = "Reality 112 · Stability Rollback"
 GAME_KEY = "night-hunter"
 GAME_PATH = Path(__file__).resolve().parent / "games" / GAME_KEY
-STYLE_FILENAMES = ("style-v108.css", "style-v110.css", "style-v111.css")
-SCRIPT_FILENAMES = ("game-v108.js", "game-v109.js", "game-v110.js", "game-v111.js")
+STYLE_FILENAMES = ("style-v108.css", "style-v110.css")
+SCRIPT_FILENAMES = ("game-v108.js", "game-v109.js", "game-v110.js")
 
 
 def install_night_hunter_v93(core: Any) -> None:
-    """Подключает Reality 111: переработанный мир, анимации и физические ремонты."""
+    """Подключает стабильную заводскую смену без экспериментального слоя Reality 111."""
     if getattr(core, "_night_hunter_v93_installed", False):
         return
     core._night_hunter_v93_installed = True
