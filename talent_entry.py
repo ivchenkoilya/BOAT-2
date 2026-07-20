@@ -23,6 +23,7 @@ from game_center_runtime_v75 import install_game_center_runtime_v75
 from heist_asset_routes_v78 import install_heist_asset_routes_v78
 from heist_reward_v91 import install_heist_reward_v91
 from hero_day_v77 import install_hero_day_v77
+from hero_skins_sync_v100 import install_hero_skins_sync_v100
 from influence_balance_v87 import install_influence_balance_v87
 from influence_reward_v88 import install_influence_reward_v88
 from knowledge_economy_v85 import install_knowledge_economy_v85
@@ -162,6 +163,9 @@ install_influence_balance_v87(core)
 install_influence_reward_v88(core)
 # Финальный слой меняет карточку и кнопку /admin на актуальную Reality 95.
 install_admin_open_v89(core)
+# Reality 100 устанавливается последним: выбранные образы сохраняются в SQLite
+# и добавляются в состояние рейда для всех участников и устройств.
+install_hero_skins_sync_v100(core)
 
 # В main.py есть общий обработчик F.text, зарегистрированный раньше расширений.
 # Переносим команды древа, мастерства и игр в начало списка, чтобы общий
