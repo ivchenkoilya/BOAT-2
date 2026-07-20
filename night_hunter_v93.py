@@ -8,12 +8,13 @@ from aiohttp import web
 import game_center_v75 as base
 
 
-VERSION = "Reality 103 · Circular Aim"
+VERSION = "Reality 104 · Open Story"
 GAME_KEY = "night-hunter"
 GAME_PATH = Path(__file__).resolve().parent / "games" / GAME_KEY
-STYLE_FILENAMES = ("style.css", "style-v101.css", "style-v102.css")
+STYLE_FILENAMES = ("style.css", "style-v101.css", "style-v102.css", "style-v104.css")
 SCRIPT_FILENAMES = (
-    "game-v103.js",
+    "game-v104.js",
+    "game-v104-story.js",
     "game-v102.js",
     "game-v102-art.js",
     "game-v101-art.js",
@@ -29,16 +30,16 @@ SCRIPT_FILENAMES = (
 
 
 def install_night_hunter_v93(core: Any) -> None:
-    """Подключает Reality 103: круговое прицеливание правой кнопкой огня."""
+    """Подключает Reality 104: свободную карту, сюжет, эвакуацию и исправленный хитрег."""
     if getattr(core, "_night_hunter_v93_installed", False):
         return
     core._night_hunter_v93_installed = True
 
     base.GAME_INFO[GAME_KEY] = {
-        "title": "Ночной охотник: Зачистка",
+        "title": "Ночной охотник: Эвакуация",
         "emoji": "🔫",
-        "duration": 240,
-        "max_reward": 150,
+        "duration": 360,
+        "max_reward": 180,
     }
 
     previous_reward = base._base_reward
@@ -49,17 +50,17 @@ def install_night_hunter_v93(core: Any) -> None:
         value = max(0, int(score))
         if value <= 0:
             return 0
-        if value < 180:
+        if value < 250:
             return 15
-        if value < 420:
-            return 40
-        if value < 700:
-            return 70
-        if value < 1050:
-            return 105
-        if value < 1450:
-            return 130
-        return 150
+        if value < 600:
+            return 45
+        if value < 1000:
+            return 80
+        if value < 1500:
+            return 120
+        if value < 2100:
+            return 150
+        return 180
 
     base._base_reward = reward_with_night_hunter
 
