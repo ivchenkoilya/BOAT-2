@@ -7,7 +7,7 @@ updateObjective=updateObjectiveV100;
 function reset(){
  Object.assign(player,{x:260,y:225,r:14,facingX:1,facingY:0,hp:100,maxHp:100,speed:155,weapon:'pistol',mag:12,reserve:84,reloading:false,reloadEnd:0,lastShot:0,damageBonus:0,fireRateBonus:0,pierce:0,grenades:2,vamp:0,invulnUntil:0,dashUntil:0,dashReadyAt:0,dashX:1,dashY:0,muzzle:0,recoil:0,walk:0});
  Object.assign(state,{running:false,finished:false,paused:false,time:240,last:performance.now(),score:0,kills:0,shots:0,hits:0,roomsCleared:0,activeRoom:-1,unlockedThrough:0,spawnQueue:[],telegraphs:[],enemies:[],bullets:[],enemyBullets:[],grenadeObjs:[],pickups:[],particles:[],casings:[],smoke:[],corpses:[],floaters:[],messageUntil:0,shake:0,flash:0,combo:0,comboUntil:0,sectorTime:0,sectorStartedAt:0,pods:[],breakers:[],defenseProgress:0,defenseHp:100,nextQueueSpawn:0,nextExtraSpawn:0,bossPhase:1,chargeTelegraph:null,shockwaves:[],turret:null,shieldUntil:0});
- fireHeld=false;aim.active=false;joy.x=joy.y=0;$('bossHud').classList.add('hidden');$('upgrade').classList.add('hidden');$('finish').classList.add('hidden');$('reloadText').classList.add('hidden');$('grenades').textContent='2';setWeapon('pistol',true)
+ fireHeld=false;aim.active=false;aim.id=null;joy.x=joy.y=0;$('bossHud').classList.add('hidden');$('upgrade').classList.add('hidden');$('finish').classList.add('hidden');$('reloadText').classList.add('hidden');$('grenades').textContent='2';setWeapon('pistol',true)
 }
 function tick(now){
  if(!state.running||state.finished)return;const dt=Math.min(.04,(now-state.last)/1000||0);state.last=now;
@@ -20,7 +20,7 @@ function tick(now){
  updateHud(now);render(now);raf=requestAnimationFrame(tick)
 }
 function startGame(demo=false){
- state.demo=demo;initAudio();try{audio?.ac?.resume?.()}catch(_){}$('intro').classList.add('hidden');reset();state.running=true;startSector(0);setCaption('Стрельба идёт строго по направлению луча.',3);resize();raf=requestAnimationFrame(tick)
+ state.demo=demo;initAudio();try{audio?.ac?.resume?.()}catch(_){}$('intro').classList.add('hidden');reset();state.running=true;startSector(0);setCaption('Двигайся джойстиком: герой сохраняет направление взгляда и стреляет строго по фонарю.',4);resize();raf=requestAnimationFrame(tick)
 }
 async function prepare(){
  try{const d=await api('start',{game:'night-hunter'});state.sessionId=d.session_id;state.seed=Number(d.seed)||Date.now();state.time=Number(d.duration)||240;$('start').textContent='НАЧАТЬ ЗАЧИСТКУ';$('start').classList.remove('loading');$('start').onclick=()=>startGame(false)}
@@ -38,26 +38,23 @@ async function finish(success,reason){
 }
 
 function joyUpdate(e){
- const r=$('joystick').getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,max=r.width*.32,m=Math.hypot(dx,dy)||1,s=Math.min(1,max/m),x=dx*s,y=dy*s;
- joy.x=x/max;joy.y=y/max;$('joystickKnob').style.transform=`translate(calc(-50% + ${x}px),calc(-50% + ${y}px))`
+ const r=$('joystick').getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,max=r.width*.34,m=Math.hypot(dx,dy)||1,s=Math.min(1,max/m),x=dx*s,y=dy*s;
+ joy.x=x/max;joy.y=y/max;
+ if(Math.hypot(joy.x,joy.y)>.12){const q=Math.hypot(joy.x,joy.y)||1;player.facingX=joy.x/q;player.facingY=joy.y/q}
+ $('joystickKnob').style.transform=`translate(calc(-50% + ${x}px),calc(-50% + ${y}px))`
 }
 function joyReset(){joy.id=null;joy.x=joy.y=0;$('joystickKnob').style.transform='translate(-50%,-50%)'}
-function aimUpdate(e){
- const r=$('fire').getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,m=Math.hypot(dx,dy);
- if(m>8){aim.x=dx/m;aim.y=dy/m;player.facingX=aim.x;player.facingY=aim.y}
-}
 $('joystick').addEventListener('pointerdown',e=>{e.preventDefault();joy.id=e.pointerId;$('joystick').setPointerCapture?.(e.pointerId);joyUpdate(e)});
 $('joystick').addEventListener('pointermove',e=>{if(e.pointerId===joy.id)joyUpdate(e)});
 $('joystick').addEventListener('pointerup',joyReset);$('joystick').addEventListener('pointercancel',joyReset);
 
 const fire=$('fire');
-fire.addEventListener('pointerdown',e=>{e.preventDefault();fireHeld=true;aim.active=true;aim.id=e.pointerId;aimUpdate(e);fire.classList.add('firing');fire.setPointerCapture?.(e.pointerId)});
-fire.addEventListener('pointermove',e=>{if(e.pointerId===aim.id)aimUpdate(e)});
+fire.addEventListener('pointerdown',e=>{e.preventDefault();fireHeld=true;aim.active=false;aim.id=e.pointerId;fire.classList.add('firing');fire.setPointerCapture?.(e.pointerId)});
 const stopFire=e=>{if(e&&aim.id!==null&&e.pointerId!==aim.id)return;fireHeld=false;aim.active=false;aim.id=null;fire.classList.remove('firing')};
-fire.addEventListener('pointerup',stopFire);fire.addEventListener('pointercancel',stopFire);
+fire.addEventListener('pointerup',stopFire);fire.addEventListener('pointercancel',stopFire);fire.addEventListener('pointerleave',e=>{if(e.buttons===0)stopFire(e)});
 
 $('reload').onclick=reload;$('grenade').onclick=throwGrenade;$('dash').onclick=doDash;$('back').onclick=goGames;$('toGames').onclick=goGames;$('again').onclick=()=>location.reload();
-window.addEventListener('keydown',e=>{keys.add(e.key.toLowerCase());if(e.code==='Space'){fireHeld=true;aim.active=true;e.preventDefault()}if(e.key.toLowerCase()==='r')reload();if(e.key.toLowerCase()==='shift')doDash()});
+window.addEventListener('keydown',e=>{keys.add(e.key.toLowerCase());if(e.code==='Space'){fireHeld=true;aim.active=false;e.preventDefault()}if(e.key.toLowerCase()==='r')reload();if(e.key.toLowerCase()==='shift')doDash()});
 window.addEventListener('keyup',e=>{keys.delete(e.key.toLowerCase());if(e.code==='Space'){fireHeld=false;aim.active=false}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){fireHeld=false;aim.active=false;joyReset()}});
 new ResizeObserver(resize).observe(canvas);window.addEventListener('resize',resize);prepare();
