@@ -1,0 +1,23 @@
+/* Reality 110 · Visual Overhaul */
+*{user-select:none!important;-webkit-user-select:none!important;-webkit-touch-callout:none!important}
+body.reality110 .topbar{height:54px;grid-template-columns:82px 1fr 60px;padding:6px 9px;background:linear-gradient(180deg,#0d2024f5,#071114f5);backdrop-filter:blur(12px)}
+body.reality110 .brand b{font-size:12px}body.reality110 .brand small{font-size:6px}body.reality110 .score b{font-size:15px}
+body.reality110 .hudTop{top:8px;gap:6px}body.reality110 .clock{min-width:66px;padding:7px 8px;font-size:14px;border-radius:11px;background:#101a1de8}
+body.reality110 .objective{padding:6px 11px 7px;border-radius:11px;background:linear-gradient(145deg,#0a171be9,#101f22e6)}
+body.reality110 .objective b{font-size:8.5px;white-space:normal;line-height:1.15}body.reality110 .objective .objectiveDetail{display:block;max-height:20px;margin-top:3px;overflow:hidden;color:#779892;font-size:6px;line-height:1.25;letter-spacing:.02em;text-transform:none}
+body.reality110 .battery{top:66px;width:116px;padding:6px 8px;background:#091619e8}.caption{bottom:9px;max-width:72%;padding:7px 11px;font-size:8px;opacity:.94}
+body.reality110 .joystick{left:16px;bottom:28px;width:116px;height:116px;background:radial-gradient(circle,#1b3d416f,#061012a8);box-shadow:0 0 0 8px #07101230,0 12px 28px #0009}
+body.reality110 .joystickKnob{width:48px;height:48px}.toolButtons{right:14px;bottom:110px}.tool{width:64px;height:56px;border-radius:14px}.action{right:14px;bottom:30px;width:164px;min-height:60px;padding-left:53px;border-radius:16px}
+body.reality110 .stage{background:#071012}.scanlines{opacity:.045}.vignette{box-shadow:inset 0 0 90px #0009}
+.paperCard{position:relative;overflow:hidden!important;border-radius:8px!important;background:radial-gradient(circle at 30% 8%,#fff5d9,#e3d2a9 45%,#cfb986)!important;box-shadow:0 35px 100px #000f,0 0 0 1px #fff8 inset!important;animation:paperOpen .42s cubic-bezier(.2,.8,.2,1)}
+.paperCard:before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 22px,#6c563d10 23px),radial-gradient(circle at 13% 16%,#76552e16 0 3px,transparent 4px),radial-gradient(circle at 84% 72%,#4c321818 0 5px,transparent 6px);mix-blend-mode:multiply}
+.paperCard:after{content:"";position:absolute;right:-35px;bottom:-35px;width:85px;height:85px;background:linear-gradient(135deg,#b89e6d,#f5e4b8);transform:rotate(45deg);box-shadow:-10px -10px 20px #5e482534}
+@keyframes paperOpen{from{opacity:0;transform:translateY(30px) rotate(-2deg) scale(.94)}to{opacity:1;transform:translateY(0) rotate(-.35deg) scale(1)}}
+#journalModal.stamping .paperCard{animation:paperStamp .75s ease}@keyframes paperStamp{0%,100%{transform:rotate(-.35deg)}45%{transform:rotate(-.35deg) scale(.985);filter:sepia(.15)}}
+.signatureBlock canvas{height:112px!important;border-radius:3px;box-shadow:inset 0 2px 10px #5d472122}.journalRow{min-height:32px}.paperClose{position:relative;z-index:2}
+.cameraCard{background:linear-gradient(155deg,#102429,#05090b 70%)!important;border-color:#4b7679!important;box-shadow:0 28px 100px #000f,0 0 38px #5ed8ca10!important}.cameraScreen{box-shadow:inset 0 0 45px #000,0 0 22px #6de3d517}.cameraNoise{animation:cameraNoise .13s steps(2) infinite}@keyframes cameraNoise{50%{transform:translate(2px,-1px)}}
+#cameraModal.opening .cameraCard{animation:cameraZoom .55s cubic-bezier(.2,.8,.2,1)}@keyframes cameraZoom{from{opacity:0;transform:scale(.86) translateY(18px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.cameraControls{grid-template-columns:repeat(2,1fr)!important}.cameraControls button{min-height:48px!important}.cameraControls button.checked:after{content:" ✓";color:#f0cf80}
+.notesCard,.noteCard,.repairCard{box-shadow:0 30px 100px #000f,0 0 40px #76dfd412!important}
+.tool:not(.hidden){animation:toolIn .28s ease}@keyframes toolIn{from{opacity:0;transform:translateY(8px) scale(.94)}}
+@media(max-height:720px){body.reality110 .caption{display:none}.joystick{bottom:18px!important}.action{bottom:20px!important}.toolButtons{bottom:96px!important}.paperCard{padding:13px!important}.signatureBlock canvas{height:90px!important}}
