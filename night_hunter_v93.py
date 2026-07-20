@@ -8,23 +8,32 @@ from aiohttp import web
 import game_center_v75 as base
 
 
-VERSION = "Reality 97 · Иммерсивный визуал"
+VERSION = "Reality 99 · Зачистка комплекса"
 GAME_KEY = "night-hunter"
 GAME_PATH = Path(__file__).resolve().parent / "games" / GAME_KEY
-SCRIPT_FILENAMES = ("game.js", "game-v96.js", "visual-v97.js")
+SCRIPT_FILENAMES = (
+    "game-v99.js",
+    "game-v99-a.js",
+    "game-v99-b.js",
+    "game-v99-c.js",
+    "game-v99-d.js",
+    "game-v99-e.js",
+    "game-v99-f.js",
+    "game-v99-g.js",
+)
 
 
 def install_night_hunter_v93(core: Any) -> None:
-    """Подключает третью игру и её статические файлы поверх стабильного runtime."""
+    """Подключает режим зачистки комплекса и его статические файлы."""
     if getattr(core, "_night_hunter_v93_installed", False):
         return
     core._night_hunter_v93_installed = True
 
     base.GAME_INFO[GAME_KEY] = {
-        "title": "Ночной охотник",
-        "emoji": "🔦",
-        "duration": 150,
-        "max_reward": 130,
+        "title": "Ночной охотник: Зачистка",
+        "emoji": "🔫",
+        "duration": 180,
+        "max_reward": 140,
     }
 
     previous_reward = base._base_reward
@@ -35,17 +44,17 @@ def install_night_hunter_v93(core: Any) -> None:
         value = max(0, int(score))
         if value <= 0:
             return 0
-        if value < 35:
+        if value < 120:
             return 15
-        if value < 80:
+        if value < 280:
             return 35
-        if value < 130:
-            return 60
-        if value < 190:
-            return 90
-        if value < 245:
-            return 110
-        return 130
+        if value < 480:
+            return 65
+        if value < 720:
+            return 95
+        if value < 980:
+            return 120
+        return 140
 
     base._base_reward = reward_with_night_hunter
 
