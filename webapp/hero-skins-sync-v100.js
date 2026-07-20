@@ -103,7 +103,7 @@
   function galleryMarkup(){
     const selected=selectedSkinId();
     const filled=SKINS.map(skin=>`
-      <button class="page-skin-slot hero-skin-card ${selected===skin.id?'selected':''}" type="button" data-hero-skin="${skin.id}" aria-label="Выбрать образ ${skin.id}">
+      <button class="page-skin-slot hero-skin-card ${selected===skin.id?'selected':''}" type="button" data-hero-skin="${skin.id}" aria-label="Открыть героя ${skin.id}">
         <em>${skin.id}/8</em>
         <span class="page-skin-picture"><img src="${skin.src}" alt="" decoding="async"></span>
         <b>ОБРАЗ</b>
@@ -120,12 +120,12 @@
     if(!page?.classList.contains('open')||page.dataset.page!=='skins')return;
     const grid=page.querySelector('.page-skin-grid');
     if(!grid)return;
-    const key=`${selectedSkinId()}:${SKINS.length}:102`;
+    const key=`${selectedSkinId()}:${SKINS.length}:104`;
     if(grid.dataset.heroSkinsKey===key&&grid.querySelector('[data-hero-skin]'))return;
     setData(grid,'heroSkinsKey',key);
     grid.innerHTML=galleryMarkup();
     const intro=page.querySelector('.page-intro');
-    const text='Выбери образ героя. Выбранный портрет будет виден в карточке отряда у тебя и у остальных участников рейда.';
+    const text='Нажми на героя, чтобы открыть его лор, уникальную способность, особый предмет и все баффы.';
     if(intro&&intro.textContent!==text)intro.textContent=text;
   }
 
@@ -158,7 +158,7 @@
     if(!bossId||!tg?.initData){
       const toast=document.getElementById('toast');
       if(toast){toast.textContent='Открой рейд через Telegram, чтобы сохранить образ.';toast.className='toast show error';}
-      return;
+      return false;
     }
     button?.classList.add('saving');
     try{
@@ -172,20 +172,22 @@
       tg?.HapticFeedback?.notificationOccurred?.('success');
       const toast=document.getElementById('toast');
       if(toast){
-        toast.textContent='Образ сохранён и виден всему отряду.';
+        toast.textContent='Герой выбран и виден всему отряду.';
         toast.className='toast show success';
         clearTimeout(chooseSkin.toastTimer);
         chooseSkin.toastTimer=setTimeout(()=>{toast.className='toast'},2300);
       }
+      return true;
     }catch(error){
       tg?.HapticFeedback?.notificationOccurred?.('error');
       const toast=document.getElementById('toast');
       if(toast){
-        toast.textContent=error.message||'Не удалось выбрать образ.';
+        toast.textContent=error.message||'Не удалось выбрать героя.';
         toast.className='toast show error';
         clearTimeout(chooseSkin.toastTimer);
         chooseSkin.toastTimer=setTimeout(()=>{toast.className='toast'},2600);
       }
+      return false;
     }finally{
       button?.classList.remove('saving');
     }
@@ -196,7 +198,18 @@
     if(!button)return;
     event.preventDefault();
     event.stopImmediatePropagation();
-    chooseSkin(Number(button.dataset.heroSkin),button);
+    const heroId=Number(button.dataset.heroSkin);
+    const previewEvent=new CustomEvent('hero-preview-request',{
+      cancelable:true,
+      detail:{
+        heroId,
+        button,
+        state:latestState,
+        choose:()=>chooseSkin(heroId,button)
+      }
+    });
+    const directSelection=window.dispatchEvent(previewEvent);
+    if(directSelection)chooseSkin(heroId,button);
   },true);
 
   const observer=new MutationObserver(queueRender);
