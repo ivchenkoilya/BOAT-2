@@ -6,10 +6,23 @@ from typing import Any
 
 
 def install_hero_loadouts_v103_fix(core: Any) -> None:
-    """Доводит провокацию Самозвания до полноценного перенаправления удара."""
+    """Доводит провокацию и данные карточек героев до финального состояния."""
     if getattr(core, "_hero_loadouts_v103_fix_installed", False):
         return
     core._hero_loadouts_v103_fix_installed = True
+
+    original_state = core.build_boss_web_state
+
+    async def state_with_complete_catalog(
+        boss_id: str,
+        user_id: int,
+    ) -> dict[str, Any]:
+        result = await original_state(boss_id, user_id)
+        for hero in result.get("hero_catalog") or []:
+            hero["ability_hint"] = str(hero.get("hint") or "")
+        return result
+
+    core.build_boss_web_state = state_with_complete_catalog
 
     original_boss_action = core.Database.boss_perform_action
 
@@ -136,7 +149,11 @@ def install_hero_loadouts_v103_fix(core: Any) -> None:
             name = html.escape(str(provoke["full_name"] or "Самозваний"))
             log = (
                 f"👑 {name} крикнул «Я здесь главный» и забрал удар на себя"
-                + (", но отразил его щитом." if protected else f": −{redirected_damage} HP.")
+                + (
+                    ", но отразил его щитом."
+                    if protected
+                    else f": −{redirected_damage} HP."
+                )
             )
             await conn.execute(
                 "INSERT INTO boss_logs (boss_id, log_text, created_at) VALUES (?, ?, ?)",
