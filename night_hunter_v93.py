@@ -8,12 +8,13 @@ from aiohttp import web
 import game_center_v75 as base
 
 
-VERSION = "Reality 101 · Tactical Visual"
+VERSION = "Reality 102 · Combat Controls"
 GAME_KEY = "night-hunter"
 GAME_PATH = Path(__file__).resolve().parent / "games" / GAME_KEY
-STYLE_FILENAMES = ("style.css", "style-v101.css")
+STYLE_FILENAMES = ("style.css", "style-v101.css", "style-v102.css")
 SCRIPT_FILENAMES = (
-    "game-v101.js",
+    "game-v102.js",
+    "game-v102-art.js",
     "game-v101-art.js",
     "game-v100-a.js",
     "game-v100-b.js",
@@ -27,7 +28,7 @@ SCRIPT_FILENAMES = (
 
 
 def install_night_hunter_v93(core: Any) -> None:
-    """Подключает Reality 101: детализированный визуал поверх стабильного режима зачистки."""
+    """Подключает Reality 102: крупное управление и статичную стрельбу по фонарю."""
     if getattr(core, "_night_hunter_v93_installed", False):
         return
     core._night_hunter_v93_installed = True
