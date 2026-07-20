@@ -1,0 +1,63 @@
+(()=>{
+'use strict';
+const tg=window.Telegram?.WebApp;tg?.ready();tg?.expand();tg?.setHeaderColor?.('#020608');tg?.setBackgroundColor?.('#020608');
+const $=id=>document.getElementById(id),params=new URLSearchParams(location.search),chatId=params.get('chat_id')||'';
+const headers={'Content-Type':'application/json','X-Telegram-Init-Data':tg?.initData||''};
+const canvas=$('game'),ctx=canvas.getContext('2d',{alpha:false}),minimap=$('minimap'),mctx=minimap.getContext('2d');
+const lightCanvas=document.createElement('canvas'),lctx=lightCanvas.getContext('2d');
+const roomName=$('roomName'),scoreEl=$('score'),timerEl=$('timer'),objectiveEl=$('objective'),livesEl=$('lives');
+const batteryEl=$('battery'),batteryBar=$('batteryBar'),threatEl=$('threat'),threatBar=$('threatBar'),caption=$('caption'),warning=$('warning'),dangerFilter=$('dangerFilter');
+const interactButton=$('interact'),interactLabel=$('interactLabel'),contextHint=$('contextHint'),soundIndicator=$('soundIndicator');
+const joystick=$('joystick'),joystickKnob=$('joystickKnob'),hideOverlay=$('hideOverlay'),hideShadow=$('hideShadow'),hideTitle=$('hideTitle'),hideMessage=$('hideMessage');
+const searchOverlay=$('searchOverlay'),searchPanel=$('searchPanel'),searchScene=$('searchScene'),searchGrid=$('searchGrid'),searchLocation=$('searchLocation'),searchTargetIcon=$('searchTargetIcon'),searchTargetName=$('searchTargetName'),searchTime=$('searchTime'),searchTimerBar=$('searchTimerBar'),searchHint=$('searchHint'),searchDanger=$('searchDanger');
+
+const WORLD={w:1500,h:1100};
+const rooms=[
+{id:'security',name:'ПОСТ ОХРАНЫ',x:40,y:40,w:420,h:360,color:'#15383d',accent:'#59f3da',material:'tech'},
+{id:'lab',name:'ЛАБОРАТОРИЯ',x:540,y:40,w:420,h:360,color:'#242d4e',accent:'#8ea8ff',material:'lab'},
+{id:'archive',name:'АРХИВ',x:1040,y:40,w:420,h:360,color:'#443823',accent:'#e0bd72',material:'archive'},
+{id:'med',name:'МЕДИЦИНСКИЙ БЛОК',x:40,y:700,w:420,h:360,color:'#21433c',accent:'#b3ffe9',material:'medical'},
+{id:'elevator',name:'ЛИФТОВОЙ ХОЛЛ',x:540,y:700,w:420,h:360,color:'#2c3d43',accent:'#a7d3d8',material:'metal'},
+{id:'generator',name:'ГЕНЕРАТОРНАЯ',x:1040,y:700,w:420,h:360,color:'#4c381f',accent:'#ffbd5f',material:'industrial'}];
+const corridors=[
+{x:440,y:170,w:120,h:100},{x:940,y:170,w:120,h:100},{x:440,y:830,w:120,h:100},{x:940,y:830,w:120,h:100},
+{x:205,y:390,w:90,h:330},{x:705,y:390,w:90,h:330},{x:1205,y:390,w:90,h:330},{x:205,y:515,w:1090,h:110}];
+const walkZones=[...rooms,...corridors];
+const solids=[
+{id:'sec-desk',type:'desk',x:105,y:108,w:165,h:48,draw:{x:88,y:94,w:204,h:74}},{id:'sec-locker',type:'locker',x:62,y:252,w:42,h:70,draw:{x:53,y:237,w:60,h:95}},{id:'sec-cabinet',type:'cabinet',x:378,y:76,w:32,h:82,draw:{x:369,y:65,w:48,h:106}},
+{id:'lab-capsule',type:'capsule',x:675,y:82,w:108,h:146,draw:{x:654,y:67,w:150,h:180}},{id:'lab-console-a',type:'console',x:566,y:306,w:92,h:30,draw:{x:554,y:295,w:116,h:50}},{id:'lab-console-b',type:'console',x:846,y:306,w:72,h:30,draw:{x:832,y:294,w:98,h:52}},
+{id:'archive-shelf-a',type:'shelf',x:1080,y:78,w:300,h:25,draw:{x:1064,y:67,w:332,h:42}},{id:'archive-shelf-b',type:'shelf',x:1080,y:150,w:250,h:25,draw:{x:1064,y:139,w:282,h:42}},{id:'archive-locker',type:'locker',x:1390,y:260,w:38,h:72,draw:{x:1379,y:245,w:57,h:94}},
+{id:'med-bed-a',type:'bed',x:112,y:755,w:145,h:37,draw:{x:95,y:741,w:180,h:62}},{id:'med-bed-b',type:'bed',x:112,y:930,w:145,h:37,draw:{x:95,y:916,w:180,h:62}},{id:'med-locker',type:'locker',x:62,y:850,w:42,h:72,draw:{x:52,y:834,w:60,h:100}},{id:'med-cabinet',type:'cabinet',x:382,y:735,w:30,h:82,draw:{x:373,y:722,w:46,h:108}},
+{id:'generator-main',type:'generator',x:1175,y:790,w:145,h:88,draw:{x:1149,y:769,w:198,h:130}},{id:'generator-locker',type:'locker',x:1387,y:934,w:40,h:75,draw:{x:1377,y:919,w:59,h:99}},{id:'generator-crate',type:'crate',x:1068,y:965,w:62,h:38,draw:{x:1055,y:952,w:86,h:59}},
+{id:'elevator-console',type:'elevatorConsole',x:895,y:842,w:30,h:61,draw:{x:883,y:827,w:51,h:89}}];
+const decor=[
+{room:'security',type:'chair',x:230,y:210},{room:'security',type:'papers',x:320,y:125},{room:'security',type:'cable',x:320,y:285},{room:'security',type:'camera',x:420,y:55},{room:'security',type:'mug',x:178,y:112},{room:'security',type:'vent',x:82,y:82},
+{room:'lab',type:'glass',x:610,y:215},{room:'lab',type:'puddle',x:850,y:170},{room:'lab',type:'cable',x:590,y:275},{room:'lab',type:'warningStripe',x:720,y:360},{room:'lab',type:'claw',x:915,y:95},{room:'lab',type:'tube',x:820,y:95},
+{room:'archive',type:'papers',x:1160,y:245},{room:'archive',type:'papers',x:1280,y:300},{room:'archive',type:'box',x:1075,y:300},{room:'archive',type:'cable',x:1360,y:180},{room:'archive',type:'stamp',x:1250,y:105},{room:'archive',type:'lamp',x:1430,y:70},
+{room:'med',type:'curtain',x:300,y:760},{room:'med',type:'curtain',x:300,y:935},{room:'med',type:'blood',x:330,y:900},{room:'med',type:'cart',x:350,y:980},{room:'med',type:'tray',x:315,y:785},{room:'med',type:'light',x:215,y:720},
+{room:'elevator',type:'bench',x:610,y:920},{room:'elevator',type:'panel',x:750,y:740},{room:'elevator',type:'warningStripe',x:750,y:1035},{room:'elevator',type:'number',x:760,y:735},{room:'elevator',type:'vent',x:920,y:735},
+{room:'generator',type:'pipe',x:1080,y:735},{room:'generator',type:'pipe',x:1400,y:770},{room:'generator',type:'fan',x:1100,y:870},{room:'generator',type:'cable',x:1330,y:980},{room:'generator',type:'spark',x:1320,y:770},{room:'generator',type:'gauge',x:1415,y:870}];
+const doors=[
+{x:460,y:170,w:80,h:100,o:'v',number:'A1'},{x:960,y:170,w:80,h:100,o:'v',number:'A2'},{x:460,y:830,w:80,h:100,o:'v',number:'B1'},{x:960,y:830,w:80,h:100,o:'v',number:'B2'},
+{x:205,y:400,w:90,h:45,o:'h',number:'C1'},{x:205,y:655,w:90,h:45,o:'h',number:'C2'},{x:705,y:400,w:90,h:45,o:'h',number:'C3'},{x:705,y:655,w:90,h:45,o:'h',number:'C4'},{x:1205,y:400,w:90,h:45,o:'h',number:'C5'},{x:1205,y:655,w:90,h:45,o:'h',number:'C6'}].map((d,i)=>({...d,id:'door-'+i,open:0,target:0,lastTarget:0}));
+const covers=[{id:'sec-locker',x:123,y:284,label:'ШКАФ ПОСТА ОХРАНЫ'},{id:'archive-locker',x:1372,y:296,label:'АРХИВНЫЙ ШКАФ'},{id:'med-locker',x:123,y:886,label:'МЕДИЦИНСКИЙ ШКАФ'},{id:'generator-locker',x:1370,y:970,label:'ТЕХНИЧЕСКИЙ ШКАФ'}];
+const searchables=[
+{id:'security-terminal',x:195,y:181,label:'ТЕРМИНАЛ',group:'a',theme:'terminal'},{id:'security-cabinet',x:360,y:205,label:'ЯЩИК ОХРАНЫ',group:'a',theme:'tools'},
+{id:'lab-console',x:608,y:290,label:'КОНСОЛЬ ЛАБОРАТОРИИ',group:'a',theme:'lab'},{id:'lab-cabinet',x:890,y:145,label:'ШКАФ С ОБРАЗЦАМИ',group:'a',theme:'lab'},
+{id:'archive-shelf',x:1160,y:130,label:'АРХИВНЫЙ СТЕЛЛАЖ',group:'b',theme:'archive'},{id:'archive-box',x:1325,y:305,label:'КОРОБ С ДОКУМЕНТАМИ',group:'b',theme:'archive'},{id:'archive-desk',x:1120,y:320,label:'СТОЛ АРХИВАРИУСА',group:'b',theme:'archive'},
+{id:'med-cabinet',x:392,y:840,label:'МЕДИЦИНСКИЙ ШКАФ',group:'c',theme:'medical'},{id:'med-cart',x:350,y:980,label:'МЕДИЦИНСКАЯ ТЕЛЕЖКА',group:'c',theme:'medical'},
+{id:'generator-toolbox',x:1090,y:1015,label:'ЯЩИК ИНСТРУМЕНТОВ',group:'c',theme:'tools'},{id:'generator-panel',x:1350,y:845,label:'ПАНЕЛЬ ГЕНЕРАТОРА',group:'c',theme:'tools'}];
+const generatorTarget={id:'generator',x:1248,y:925,label:'ГЛАВНЫЙ РУБИЛЬНИК'},elevatorTarget={id:'elevator',x:760,y:1005,label:'КНОПКА ЛИФТА'};
+const patrolPoints=[{x:240,y:230},{x:720,y:230},{x:1240,y:220},{x:250,y:565},{x:750,y:565},{x:1250,y:565},{x:240,y:900},{x:750,y:900},{x:1260,y:900},{x:510,y:220},{x:990,y:220},{x:510,y:880},{x:990,y:880}];
+const lootCatalog=[
+{key:'card',name:'КЛЮЧ-КАРТУ',icon:'💳',color:'#ffc96b'},{key:'battery',name:'БАТАРЕЮ',icon:'🔋',color:'#7fffe9'},{key:'bottle',name:'КОЛБУ',icon:'🧪',color:'#b7a0ff'},{key:'medkit',name:'АПТЕЧКУ',icon:'🩹',color:'#ff7187'},{key:'record',name:'ЗАПИСЬ',icon:'💾',color:'#a8c7ff'}];
+const sceneItems={
+terminal:[['⌨️','КЛАВИАТУРА'],['🖱️','МЫШЬ'],['💾','ДИСК'],['🔌','КАБЕЛЬ'],['🪛','ОТВЁРТКА'],['📟','ПЕЙДЖЕР'],['🔋','БАТАРЕЯ'],['💳','КАРТА'],['🧪','КОЛБА'],['🩹','АПТЕЧКА'],['📷','КАМЕРА'],['🔑','КЛЮЧ']],
+medical:[['🩹','АПТЕЧКА'],['💉','ШПРИЦ'],['🧤','ПЕРЧАТКА'],['✂️','НОЖНИЦЫ'],['🧴','ФЛАКОН'],['🩺','СТЕТОСКОП'],['🔋','БАТАРЕЯ'],['💳','КАРТА'],['🧪','КОЛБА'],['💾','ЗАПИСЬ'],['🧻','БИНТ'],['🌡️','ТЕРМОМЕТР']],
+archive:[['📁','ПАПКА'],['📷','ФОТО'],['✉️','КОНВЕРТ'],['🗝️','КЛЮЧ'],['📎','СКРЕПКА'],['📚','КНИГИ'],['🔋','БАТАРЕЯ'],['💳','КАРТА'],['🧪','КОЛБА'],['🩹','АПТЕЧКА'],['💾','ЗАПИСЬ'],['🖋️','ПЕЧАТЬ']],
+lab:[['🧫','ЧАШКА'],['🧬','ОБРАЗЕЦ'],['🔬','ЛИНЗА'],['🧪','КОЛБА'],['🧯','БАЛЛОН'],['🧲','МАГНИТ'],['🔋','БАТАРЕЯ'],['💳','КАРТА'],['🩹','АПТЕЧКА'],['💾','ЗАПИСЬ'],['⚗️','РЕАКТИВ'],['🔌','КАБЕЛЬ']],
+tools:[['🔧','КЛЮЧ'],['🪛','ОТВЁРТКА'],['🔩','БОЛТ'],['⚙️','ШЕСТЕРНЯ'],['🧰','ЯЩИК'],['🪚','ПИЛА'],['🔋','БАТАРЕЯ'],['💳','КАРТА'],['🧪','КОЛБА'],['🩹','АПТЕЧКА'],['💾','ЗАПИСЬ'],['🔌','КАБЕЛЬ']]};
+const searchSlots=[
+{x:4,y:6,w:20,h:24,r:-8},{x:28,y:5,w:20,h:24,r:5},{x:52,y:7,w:20,h:24,r:-3},{x:76,y:5,w:19,h:24,r:7},
+{x:6,y:36,w:21,h:25,r:4},{x:31,y:34,w:20,h:25,r:-6},{x:55,y:36,w:20,h:25,r:6},{x:78,y:34,w:18,h:25,r:-4},
+{x:5,y:67,w:20,h:25,r:-5},{x:29,y:66,w:20,h:25,r:5},{x:53,y:68,w:20,h:24,r:-7},{x:77,y:66,w:19,h:25,r:4}];
