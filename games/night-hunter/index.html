@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="/games/night-hunter/style-v102.css?v=102">
   <link rel="stylesheet" href="/games/night-hunter/style-v104.css?v=105">
   <link rel="stylesheet" href="/games/night-hunter/style-v105.css?v=105">
+  <link rel="stylesheet" href="/games/night-hunter/style-v106.css?v=106">
 </head>
 <body>
 <main class="app">
@@ -36,9 +37,12 @@
     <canvas class="miniMap" id="miniMap" width="190" height="110" aria-label="Карта комплекса"></canvas>
     <div class="bossHud hidden" id="bossHud"><small id="bossPhase">ТЯЖЁЛЫЙ ОХОТНИК · ФАЗА 1</small><i><b id="bossBar"></b></i></div>
     <div class="waveBanner" id="waveBanner"><small>ОПЕРАЦИЯ</small><b>СИГНАЛ НАЙДЕН</b></div>
-    <div class="caption" id="caption">Двигайся, стреляй и используй способности одновременно.</div>
+    <div class="caption" id="caption">Подойди к отмеченному объекту и используй кнопку действия.</div>
     <div class="direction hidden" id="direction"><span>➜</span><b>ЦЕЛЬ</b><small id="directionDistance">120 м</small></div>
     <div class="joystick" id="joystick"><div class="joystickRing"></div><div class="joystickKnob" id="joystickKnob"></div></div>
+    <button class="contextAction hidden" id="action" type="button" aria-label="Взаимодействовать">
+      <span class="actionIcon" id="actionIcon">✋</span><b id="actionLabel">ДЕЙСТВИЕ</b><small id="actionSub">ПОДОЙДИ К ОБЪЕКТУ</small>
+    </button>
     <div class="actions">
       <button class="fire" id="fire" type="button"><span>✹</span><b>ОГОНЬ</b><small>ВЕДИ ПАЛЬЦЕМ</small></button>
       <button class="round reload" id="reload" type="button"><span>↻</span><b>МАГАЗИН</b><small>ПЕРЕЗАРЯДКА</small></button>
@@ -51,15 +55,15 @@
 <div class="overlay" id="intro">
   <section class="card">
     <div class="poster"><div class="hero"></div><div class="beam"></div><div class="muzzle"></div><div class="horde"></div></div>
-    <div class="eyebrow">NIGHT COMBAT UPDATE · REALITY 105</div>
-    <h1>Спасти Анну и выбраться</h1>
-    <p>Темнота снова опасна: фонарь открывает путь, а новое multitouch-управление позволяет бежать, стрелять, перезаряжаться, бросать гранаты и делать рывок одновременно.</p>
+    <div class="eyebrow">LIVING MISSION UPDATE · REALITY 106</div>
+    <h1>Теперь с настоящими действиями</h1>
+    <p>Терминалы, рубильники, ключ-карта, спасение Анны и эвакуация теперь выполняются отдельной контекстной кнопкой. Герой и заражённые получили более живую анимацию, а камера мягко покачивается при ходьбе.</p>
     <div class="mission">
-      <div><b>1</b><span>Левый палец — движение, правый круг — независимое прицеливание</span></div>
-      <div><b>2</b><span>Граната, рывок и перезарядка работают без остановки героя</span></div>
-      <div><b>3</b><span>Понятные маркеры показывают текущую цель и реальную угрозу</span></div>
+      <div><b>1</b><span>Подойди к светящемуся объекту и удерживай кнопку действия</span></div>
+      <div><b>2</b><span>Ноги героя следуют движению, корпус и оружие — направлению прицела</span></div>
+      <div><b>3</b><span>Лёгкое покачивание камеры не мешает стрельбе и усиливает движение</span></div>
     </div>
-    <button class="start loading" id="start" type="button">ЗАГРУЗКА НОЧНОГО РЕЖИМА…</button>
+    <button class="start loading" id="start" type="button">ЗАГРУЗКА ЖИВОЙ МИССИИ…</button>
     <button class="demo hidden" id="demo" type="button">ЗАПУСТИТЬ ДЕМО</button>
     <div class="error" id="startError"></div>
   </section>
@@ -89,6 +93,6 @@
     <button class="start" id="again" type="button">ЕЩЁ ОДНА ОПЕРАЦИЯ</button><button class="secondary" id="toGames" type="button">В ИГРОВОЙ ЦЕНТР</button>
   </section>
 </div>
-<script src="/games/night-hunter/game-v105.js?v=105"></script>
+<script src="/games/night-hunter/game-v106.js?v=106"></script>
 </body>
 </html>
