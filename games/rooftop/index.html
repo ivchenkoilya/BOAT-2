@@ -8,6 +8,17 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="/games/game-attempts-v89.js?v=89"></script>
   <link rel="stylesheet" href="/boss-app/assets/rooftop_v76/game.css?v=81">
+  <style>
+    .dev-status{display:flex;gap:10px;align-items:center;margin:0 0 14px;padding:13px 14px;border:1px solid rgba(255,210,101,.28);border-radius:15px;background:linear-gradient(145deg,rgba(39,25,55,.96),rgba(14,10,24,.96));text-align:left}
+    .dev-status i{width:11px;height:11px;border-radius:50%;background:#ffd365;box-shadow:0 0 18px #ffd365;animation:devPulse 1.4s ease-in-out infinite}
+    .dev-status b,.dev-status small{display:block}.dev-status b{font-size:12px;color:#ffe59b}.dev-status small{margin-top:4px;color:#b9aacd;font-size:11px}
+    .dev-gate{margin-top:14px;padding:14px;border:1px solid rgba(174,111,255,.25);border-radius:16px;background:rgba(12,8,20,.9);text-align:left}
+    .dev-gate>div:first-child b,.dev-gate>div:first-child span{display:block}.dev-gate>div:first-child b{color:#d7b7ff;font-size:12px}.dev-gate>div:first-child span{margin-top:4px;color:#9589aa;font-size:11px}
+    .dev-pin-row{display:flex;gap:8px;margin-top:12px}.dev-pin-row input{min-width:0;flex:1;height:46px;border:1px solid rgba(190,143,255,.28);border-radius:13px;background:#0a0711;color:#fff;text-align:center;font-size:18px;font-weight:900;letter-spacing:.28em;outline:none}.dev-pin-row button{width:132px;border:0;border-radius:13px;background:linear-gradient(135deg,#d9b3ff,#8f55ee);color:#170b25;font-size:11px;font-weight:900}
+    .dev-hint{margin-top:9px;color:#8e839f;font-size:11px}.dev-hint.ok{color:#76efc9}.dev-hint.bad{color:#ff7d9b}.dev-hint.loading{color:#ffd365}
+    .dev-gate.hiddenAccess{display:none}.dev-gate.unlocked{border-color:rgba(118,239,201,.35)}
+    @keyframes devPulse{50%{opacity:.45;transform:scale(.8)}}
+  </style>
 </head>
 <body>
 <div class="app">
@@ -30,14 +41,20 @@
   <section class="card">
     <div class="intro-art" id="introArt"><img class="intro-boss" id="introBoss" alt=""><img class="intro-hero" id="introHero" alt=""></div>
     <h1>Бег по крышам</h1>
-    <div class="notice"><b>✨ Reality 83 — HD-объекты.</b><br>Кристаллы, дроны и барьеры заменены новыми детализированными изображениями. Добавлены мягкое свечение, движение, вращение винтов, сканирующие блики и чистые энергетические эффекты.</div>
+    <div class="dev-status"><i></i><div><b>РАЗДЕЛ В ТОТАЛЬНОЙ РАЗРАБОТКЕ</b><small>Ранний доступ для игроков откроется 25 июля</small></div></div>
+    <div class="notice"><b>✨ Большая переработка.</b><br>Мы обновляем окружение, препятствия, анимации, баланс и визуальные эффекты забега.</div>
     <p>Свайпами меняй полосу, прыгай через низкие препятствия и уходи под дроны. Перед ударом босса опасные полосы подсветятся розовым, безопасная — голубым.</p>
     <div class="guide">
       <div><b>↔ Свайп</b>смена полосы</div><div><b>↑ Свайп вверх</b>прыжок</div>
       <div><b>↓ Свайп вниз</b>подкат</div><div><b>✨ Кнопка</b>усиление</div>
     </div>
-    <button id="start" class="loading" type="button">ПОДГОТОВКА ЗАБЕГА…</button>
+    <button id="start" type="button" disabled>РАННИЙ ДОСТУП · 25 ИЮЛЯ</button>
     <div class="error" id="startError"></div>
+    <div class="dev-gate" id="devGate">
+      <div><b>ВНУТРЕННЕЕ ТЕСТИРОВАНИЕ</b><span>Доступ владельца проекта</span></div>
+      <div class="dev-pin-row"><input id="devPin" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="••••"><button id="devEnter" type="button">ТЕСТОВЫЙ ВХОД</button></div>
+      <div class="dev-hint" id="devHint">Введите PIN-код из 4 цифр.</div>
+    </div>
   </section>
 </div>
 <div class="overlay hidden" id="finish">
@@ -55,10 +72,27 @@
     <button class="secondary" id="toGames" type="button">В ИГРОВОЙ ЦЕНТР</button>
   </section>
 </div>
-<script src="/boss-app/assets/rooftop_v76/prelude.js?v=81"></script>
-<script src="/boss-app/assets/rooftop_v76/game-core.js?v=81"></script>
-<script src="/boss-app/assets/rooftop_v76/game-render.js?v=81"></script>
-<script src="/boss-app/assets/rooftop_v76/object-sprites.js?v=83"></script>
-<script src="/boss-app/assets/rooftop_v76/track-hd.js?v=81"></script>
+<script>
+(()=>{
+  'use strict';
+  const TEST_PIN='6767';
+  const UNLOCK_KEY='allGamesDevUnlocked';
+  const scripts=[
+    '/boss-app/assets/rooftop_v76/prelude.js?v=81',
+    '/boss-app/assets/rooftop_v76/game-core.js?v=81',
+    '/boss-app/assets/rooftop_v76/game-render.js?v=81',
+    '/boss-app/assets/rooftop_v76/object-sprites.js?v=83',
+    '/boss-app/assets/rooftop_v76/track-hd.js?v=81'
+  ];
+  const start=document.getElementById('start'),gate=document.getElementById('devGate'),input=document.getElementById('devPin'),button=document.getElementById('devEnter'),hint=document.getElementById('devHint');
+  let loading=false;
+  const setHint=(text,state='')=>{hint.textContent=text;hint.classList.remove('ok','bad','loading');if(state)hint.classList.add(state)};
+  const loadScript=src=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=()=>reject(new Error('Не удалось загрузить тестовую сборку.'));document.body.appendChild(s)});
+  const launch=async()=>{if(loading)return;loading=true;input.disabled=true;button.disabled=true;start.disabled=true;start.classList.add('loading');start.textContent='ПОДГОТОВКА ТЕСТОВОГО ЗАБЕГА…';setHint('PIN принят. Загружаем тестовую сборку…','loading');try{for(const src of scripts)await loadScript(src);gate.classList.add('unlocked');setHint('Тестовый доступ открыт.','ok');setTimeout(()=>gate.classList.add('hiddenAccess'),700)}catch(error){loading=false;input.disabled=false;button.disabled=false;start.classList.remove('loading');start.textContent='РАННИЙ ДОСТУП · 25 ИЮЛЯ';setHint(error.message,'bad')}};
+  const unlock=()=>{const value=input.value.replace(/\D/g,'').slice(0,4);if(value!==TEST_PIN){input.value='';input.focus();setHint('Неверный PIN-код.','bad');return}localStorage.setItem(UNLOCK_KEY,'1');launch()};
+  input.addEventListener('input',()=>{input.value=input.value.replace(/\D/g,'').slice(0,4)});input.addEventListener('keydown',event=>{if(event.key==='Enter')unlock()});button.addEventListener('click',unlock);
+  if(localStorage.getItem(UNLOCK_KEY)==='1')launch();
+})();
+</script>
 </body>
 </html>
