@@ -51,8 +51,8 @@ def _share(delta: int) -> int:
     return max(1, int(round(value * GAME_SHARE)))
 
 
-async def _repair_wager_contributions(core: Any, event: Any) -> int:
-    """Counts positive coin/dice wins that older event logic marked but ignored."""
+async def _repair_game_contributions(core: Any, event: Any) -> int:
+    """Adds ignored wagers and rounding corrections for Mini App rewards."""
     if str(event["event_key"]) != "collective":
         return 0
 
@@ -71,12 +71,19 @@ async def _repair_wager_contributions(core: Any, event: Any) -> int:
     added_total = 0
     for row in await cursor.fetchall():
         reason = str(row["reason"] or "")
-        if not _is_wager_win(reason):
+        is_wager = _is_wager_win(reason)
+        is_mini_app = _is_mini_app_reward(reason)
+        if not is_wager and not is_mini_app:
             continue
+
+        delta = int(row["delta"])
+        desired = _share(delta)
+        # Старый слой уже начислял Mini App через int(delta * 0.20), но ставки
+        # полностью исключал. Добавляем только недостающую разницу.
+        already_counted = max(0, int(delta * GAME_SHARE)) if is_mini_app else 0
+        contribution = max(0, desired - already_counted)
         source_id = str(row["id"])
-        contribution = _share(int(row["delta"]))
-        if contribution <= 0:
-            continue
+
         async with core.db.lock:
             inserted = await conn.execute(
                 """
@@ -84,11 +91,15 @@ async def _repair_wager_contributions(core: Any, event: Any) -> int:
                     event_id,source_type,source_id,created_at
                 ) VALUES(?,?,?,?)
                 """,
-                (event_id, "collective_wager_v111", source_id, _now()),
+                (event_id, "collective_game_v111", source_id, _now()),
             )
             if inserted.rowcount <= 0:
                 await conn.commit()
                 continue
+            if contribution <= 0:
+                await conn.commit()
+                continue
+
             user_id = int(row["user_id"])
             await conn.execute(
                 """
@@ -169,11 +180,11 @@ def install_reality_event_games_v111(core: Any) -> None:
 
     original_score_sources = events._process_score_sources
 
-    async def process_score_sources_with_wagers(core_arg: Any, event: Any) -> None:
+    async def process_score_sources_with_games(core_arg: Any, event: Any) -> None:
         await original_score_sources(core_arg, event)
-        await _repair_wager_contributions(core_arg, event)
+        await _repair_game_contributions(core_arg, event)
 
-    events._process_score_sources = process_score_sources_with_wagers
+    events._process_score_sources = process_score_sources_with_games
 
     original_event_text = events._event_text
 
