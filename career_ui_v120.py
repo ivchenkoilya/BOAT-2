@@ -105,9 +105,9 @@ def install_career_ui_v120(core: Any) -> None:
         sabotage = await core.db.get_active_sabotage_for_usurper(chat_id, fresh.user_id)
         if career >= CAREER_CENTER:
             title, emoji = "Центр Вселенной", "🌌"
-        elif is_hero_day and role.key == "hero":
+        elif is_hero_day:
             title, emoji = "Временный Главный герой", "🌟👑"
-        elif sabotage is not None and role.key == "hero":
+        elif sabotage is not None:
             title, emoji = "Саботажный Главный герой", "💣👑"
         else:
             title, emoji = role.title, role.emoji
@@ -159,9 +159,9 @@ def install_career_ui_v120(core: Any) -> None:
             career = career_value(player.points)
             role = core.role_by_points(player.points, index == 1)
             title, marker = role.title, "🌌" if career >= CAREER_CENTER else ("👑" if role.key == "hero" else f"{index}.")
-            if career < CAREER_CENTER and role.key == "hero" and player.user_id == temporary_id:
+            if career < CAREER_CENTER and player.user_id == temporary_id:
                 title, marker = "Временный Главный герой", "🌟"
-            elif career < CAREER_CENTER and role.key == "hero" and player.user_id in sabotage_ids:
+            elif career < CAREER_CENTER and player.user_id in sabotage_ids:
                 title, marker = "Саботажный Главный герой", "💣"
             lines.append(
                 f"{marker} {core.player_link(player)} — <b>{fmt(career)}</b> карьерного "
@@ -183,9 +183,9 @@ def install_career_ui_v120(core: Any) -> None:
         sabotage = await core.db.get_active_sabotage_for_usurper(chat_id, fresh.user_id)
         if career >= CAREER_CENTER:
             role_title, role_emoji = "Центр Вселенной", "🌌"
-        elif is_hero_day and role.key == "hero":
+        elif is_hero_day:
             role_title, role_emoji = "Временный Главный герой", "🌟👑"
-        elif sabotage is not None and role.key == "hero":
+        elif sabotage is not None:
             role_title, role_emoji = "Саботажный Главный герой", "💣👑"
         else:
             role_title, role_emoji = role.title, role.emoji
