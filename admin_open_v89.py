@@ -9,7 +9,7 @@ import reality_event_vote_v97 as event_vote
 import reality_events_v96 as events
 
 
-VERSION = "Reality 97 · Голосование событий"
+VERSION = "Reality 112 · Финансовый центр"
 
 
 def install_admin_open_v89(core: Any) -> None:
@@ -17,8 +17,6 @@ def install_admin_open_v89(core: Any) -> None:
         return
     core._admin_open_v89_installed = True
 
-    # Даже если изменение уже попало в базу до обновления карточки, принудительно
-    # перерисовываем сообщение события. Это устраняет зависшие значения 0/2500.
     original_sync_event = event_vote._sync_event_now
 
     async def sync_event_and_refresh(core_arg: Any, bot: Any, chat_id: int) -> None:
@@ -64,12 +62,12 @@ def install_admin_open_v89(core: Any) -> None:
 
         url = (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/admin-v76/"
-            f"?chat_id={chat_id}&user_id={int(target.user_id)}&build=97-{int(time.time())}"
+            f"?chat_id={chat_id}&user_id={int(target.user_id)}&build=112-{int(time.time())}"
         )
         markup = InlineKeyboardMarkup(
             inline_keyboard=[[
                 InlineKeyboardButton(
-                    text="🛠 Открыть админ-центр Reality 97",
+                    text="🛠 Открыть админ-центр Reality 112",
                     web_app=WebAppInfo(url=url),
                 )
             ]]
@@ -77,12 +75,11 @@ def install_admin_open_v89(core: Any) -> None:
         try:
             await bot.send_message(
                 message.from_user.id,
-                "🛠 <b>АДМИН-ЦЕНТР REALITY 97</b>\n\n"
+                "🛠 <b>АДМИН-ЦЕНТР REALITY 112</b>\n\n"
                 f"Беседа: <code>{chat_id}</code>\n"
                 f"Участник: <b>{target.full_name}</b>\n\n"
-                "События теперь запускаются голосованием участников. После нужного "
-                "количества голосов бот случайно выбирает участника дня и событие. "
-                "Прогресс начислений обновляется почти сразу.",
+                "Добавлен финансовый центр: переводы, займы, просрочки, "
+                "остатки долгов и история операций.",
                 reply_markup=markup,
             )
         except Exception:
@@ -91,14 +88,12 @@ def install_admin_open_v89(core: Any) -> None:
         if core.is_group(message):
             await core.ephemeral_reply(
                 message,
-                "🔒 Админ-центр Reality 97 отправлен в личные сообщения.",
+                "🔒 Админ-центр Reality 112 отправлен в личные сообщения.",
                 delay_seconds=3,
             )
 
     core.open_admin_panel = open_admin
 
-    # Старый обработчик /event был зарегистрирован раньше нового голосования.
-    # Переносим Reality 97 в начало, чтобы Telegram не останавливался на старом ответе.
     handlers = core.router.message.handlers
     vote_handlers = [
         handler
