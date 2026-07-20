@@ -7,11 +7,12 @@ from aiogram.filters import Command
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from career_system_v120 import install_career_system_v120
+from command_hub_v121 import install_command_hub_v121
 from finance_route_fix_v116 import install_finance_route_fix_v116
 from finance_loan_requests_v118 import install_finance_loan_requests_v118
 
 
-VERSION = "Reality 120 · Карьерное влияние"
+VERSION = "Reality 121 · Центры команд"
 FINANCE_PREFIX = "finance_"
 
 
@@ -24,7 +25,7 @@ def _finance_link(core: Any, chat_id: int) -> str:
     if core.WEBAPP_PUBLIC_URL:
         return (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/finance-v118/"
-            f"?chat_id={int(chat_id)}&build=120-{int(time.time())}"
+            f"?chat_id={int(chat_id)}&build=121-{int(time.time())}"
         )
     return ""
 
@@ -65,7 +66,7 @@ def install_finance_entry_fix_v115(core: Any) -> None:
             )
             return
         await message.answer(
-            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 120</b>\n\n"
+            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 121</b>\n\n"
             "Переводи обычное влияние, выдавай займы или публикуй заявку. "
             "Карьерное влияние не тратится и определяет постоянную роль.",
             reply_markup=InlineKeyboardMarkup(
@@ -87,6 +88,7 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     ]
     handlers[:] = preferred + [handler for handler in handlers if handler not in preferred]
 
-    # Reality 120 устанавливается последним: после игр, событий, босса и финансов.
-    # Поэтому он видит окончательные начисления и безопасно разделяет баланс и роль.
+    # Сначала устанавливается карьерная система, затем Reality 121 заменяет
+    # длинный список команд крупными разделами с рабочими кнопками.
     install_career_system_v120(core)
+    install_command_hub_v121(core)
