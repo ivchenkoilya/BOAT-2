@@ -8,11 +8,13 @@ from aiohttp import web
 import game_center_v75 as base
 
 
-VERSION = "Reality 100 · Стрельба по лучу"
+VERSION = "Reality 101 · Tactical Visual"
 GAME_KEY = "night-hunter"
 GAME_PATH = Path(__file__).resolve().parent / "games" / GAME_KEY
+STYLE_FILENAMES = ("style.css", "style-v101.css")
 SCRIPT_FILENAMES = (
-    "game-v100.js",
+    "game-v101.js",
+    "game-v101-art.js",
     "game-v100-a.js",
     "game-v100-b.js",
     "game-v100-c.js",
@@ -25,7 +27,7 @@ SCRIPT_FILENAMES = (
 
 
 def install_night_hunter_v93(core: Any) -> None:
-    """Подключает Reality 100: зачистку со стрельбой по направлению луча."""
+    """Подключает Reality 101: детализированный визуал поверх стабильного режима зачистки."""
     if getattr(core, "_night_hunter_v93_installed", False):
         return
     core._night_hunter_v93_installed = True
@@ -73,14 +75,11 @@ def install_night_hunter_v93(core: Any) -> None:
     async def night_index(_: web.Request) -> web.StreamResponse:
         return file_response(GAME_PATH / "index.html")
 
-    async def night_style(_: web.Request) -> web.StreamResponse:
-        return file_response(GAME_PATH / "style.css")
-
-    def make_script_handler(filename: str):
-        async def night_script(_: web.Request) -> web.StreamResponse:
+    def make_static_handler(filename: str):
+        async def static_file(_: web.Request) -> web.StreamResponse:
             return file_response(GAME_PATH / filename)
 
-        return night_script
+        return static_file
 
     original_start_server = core.start_webapp_server
 
@@ -95,11 +94,10 @@ def install_night_hunter_v93(core: Any) -> None:
                 "/games/night-hunter/index.html",
             ):
                 app.router.add_get(path, night_index)
-            app.router.add_get("/games/night-hunter/style.css", night_style)
-            for filename in SCRIPT_FILENAMES:
+            for filename in STYLE_FILENAMES + SCRIPT_FILENAMES:
                 app.router.add_get(
                     f"/games/night-hunter/{filename}",
-                    make_script_handler(filename),
+                    make_static_handler(filename),
                 )
             return app
 
