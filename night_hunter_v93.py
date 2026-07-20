@@ -8,45 +8,15 @@ from aiohttp import web
 import game_center_v75 as base
 
 
-VERSION = "Reality 107 · Last Shift"
+VERSION = "Reality 108 · Factory Loop"
 GAME_KEY = "night-hunter"
 GAME_PATH = Path(__file__).resolve().parent / "games" / GAME_KEY
-STYLE_FILENAMES = (
-    "style.css",
-    "style-v101.css",
-    "style-v102.css",
-    "style-v104.css",
-    "style-v105.css",
-    "style-v106.css",
-    "style-v107.css",
-)
-SCRIPT_FILENAMES = (
-    "game-v107.js",
-    "game-v107-prologue.js",
-    "game-v106.js",
-    "game-v106-interactions.js",
-    "game-v106-fixes.js",
-    "game-v105.js",
-    "game-v105-ui.js",
-    "game-v104.js",
-    "game-v104-story.js",
-    "game-v104-fixes.js",
-    "game-v102.js",
-    "game-v102-art.js",
-    "game-v101-art.js",
-    "game-v100-a.js",
-    "game-v100-b.js",
-    "game-v100-c.js",
-    "game-v100-d.js",
-    "game-v100-e.js",
-    "game-v100-f.js",
-    "game-v100-g.js",
-    "game-v100-h.js",
-)
+STYLE_FILENAMES = ("style-v108.css",)
+SCRIPT_FILENAMES = ("game-v108.js",)
 
 
 def install_night_hunter_v93(core: Any) -> None:
-    """Подключает Reality 107: солнечный пролог и сюжет «Последняя смена»."""
+    """Подключает Reality 108: мистическую заводскую смену без оружия."""
     if getattr(core, "_night_hunter_v93_installed", False):
         return
     core._night_hunter_v93_installed = True
@@ -54,7 +24,7 @@ def install_night_hunter_v93(core: Any) -> None:
     base.GAME_INFO[GAME_KEY] = {
         "title": "Ночной охотник: Последняя смена",
         "emoji": "🔦",
-        "duration": 360,
+        "duration": 1200,
         "max_reward": 180,
     }
 
@@ -66,15 +36,15 @@ def install_night_hunter_v93(core: Any) -> None:
         value = max(0, int(score))
         if value <= 0:
             return 0
-        if value < 250:
+        if value < 450:
             return 15
-        if value < 600:
+        if value < 900:
             return 45
-        if value < 1000:
+        if value < 1400:
             return 80
-        if value < 1500:
+        if value < 2000:
             return 120
-        if value < 2100:
+        if value < 2700:
             return 150
         return 180
 
