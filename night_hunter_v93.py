@@ -8,10 +8,10 @@ from aiohttp import web
 import game_center_v75 as base
 
 
-VERSION = "Reality 96 · Просторные комнаты"
+VERSION = "Reality 97 · Иммерсивный визуал"
 GAME_KEY = "night-hunter"
 GAME_PATH = Path(__file__).resolve().parent / "games" / GAME_KEY
-SCRIPT_FILENAMES = ("game.js", "game-v96.js")
+SCRIPT_FILENAMES = ("game.js", "game-v96.js", "visual-v97.js")
 
 
 def install_night_hunter_v93(core: Any) -> None:
