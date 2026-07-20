@@ -11,8 +11,8 @@ LOGGER = logging.getLogger(__name__)
 def install_inline_webapp_fix(core: Any) -> None:
     """Встраивает актуальный боевой интерфейс прямо в HTML Mini App.
 
-    Дополнительные CSS/JS объединяются с HTML на сервере и не зависят от
-    ограничений старых маршрутов или кэша Telegram WebView.
+    Каждый JS-файл помещается в отдельный script-блок. Ошибка в новом слое
+    больше не может остановить магазин, инвентарь и карточки героев целиком.
     """
     if getattr(core, "_inline_webapp_fix_v65_installed", False):
         return
@@ -34,19 +34,11 @@ def install_inline_webapp_fix(core: Any) -> None:
         core.WEBAPP_DIR / "raid-final-v25.css",
         core.WEBAPP_DIR / "raid-victory-v59.css",
         core.WEBAPP_DIR / "raid-v61.css",
-        # Reality 65 загружен последним, чтобы заголовок отряда оставался
-        # геометрически по центру независимо от кнопки выбора героя.
         core.WEBAPP_DIR / "raid-v65-balance-layout.css",
-        # Reality 100 финально заменяет пустые слоты настоящими изображениями
-        # и показывает выбранные образы на карточках всех участников.
         core.WEBAPP_DIR / "hero-skins-sync-v100.css",
-        # Reality 102 вырезает чёрный прямоугольник вокруг карты защиты.
         core.WEBAPP_DIR / "action-card-defense-cutout-v102.css",
-        # Reality 103 добавляет карточки героев, магазин, инвентарь и экипировку.
         core.WEBAPP_DIR / "hero-loadouts-v103.css",
-        # Reality 104 добавляет подробное окно лора, предметов и баффов.
         core.WEBAPP_DIR / "hero-preview-v104.css",
-        # Reality 105 задаёт каждому герою свой цвет и расширяет карточки отряда.
         core.WEBAPP_DIR / "hero-content-v105.css",
     ]
     js_paths = [
@@ -57,21 +49,12 @@ def install_inline_webapp_fix(core: Any) -> None:
         core.WEBAPP_DIR / "raid-stability-v24.js",
         core.WEBAPP_DIR / "raid-final-v25.js",
         core.WEBAPP_DIR / "raid-victory-v59.js",
-        # raid-v60.js содержал пересекающиеся MutationObserver и мог зависать
-        # при открытии справки. Reality 61 реализует эти функции без него.
         core.WEBAPP_DIR / "raid-v61.js",
-        # Reality 64 заменяет осколки прямой выдачей очков древа и исправляет
-        # справку и победное окно поверх стабильного интерфейса Reality 61.
         core.WEBAPP_DIR / "raid-v64-direct-tree.js",
-        # Reality 65 актуализирует в справке 100 000 HP и новый баланс давления.
         core.WEBAPP_DIR / "raid-v65-balance-layout.js",
-        # Reality 100 перехватывает серверные состояния и синхронизирует портреты.
         core.WEBAPP_DIR / "hero-skins-sync-v100.js",
-        # Reality 103 превращает заглушки магазина и инвентаря в рабочие разделы.
         core.WEBAPP_DIR / "hero-loadouts-v103.js",
-        # Reality 104 перехватывает выбор героя и сначала показывает подробности.
         core.WEBAPP_DIR / "hero-preview-v104.js",
-        # Reality 105 показывает краткие баффы экипировки прямо в карточках отряда.
         core.WEBAPP_DIR / "hero-content-v105.js",
     ]
 
@@ -79,7 +62,6 @@ def install_inline_webapp_fix(core: Any) -> None:
         try:
             page = index_path.read_text(encoding="utf-8")
             css = "\n\n".join(path.read_text(encoding="utf-8") for path in css_paths)
-            script = "\n\n".join(path.read_text(encoding="utf-8") for path in js_paths)
 
             page = re.sub(
                 r"\s*<link[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|action-card-ego-v21|action-card-defense-v21|action-card-heal-v21|action-cards-layout-v21|raid-hotfix-v22|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v65-balance-layout|hero-skins-sync-v100|action-card-defense-cutout-v102|hero-loadouts-v103|hero-preview-v104|hero-content-v105)\.css[^>]*>",
@@ -94,8 +76,6 @@ def install_inline_webapp_fix(core: Any) -> None:
                 flags=re.IGNORECASE,
             )
 
-            # app.js обновлял таймеры пять раз в секунду. Оставляем один тик в
-            # секунду: цифры точные, но интерфейс не получает лишних обновлений.
             prelude = """
 <script id="raid-ui-v65-prelude">
 (function(){
@@ -113,13 +93,17 @@ def install_inline_webapp_fix(core: Any) -> None:
                 + css
                 + "\n</style>\n"
             )
-            inline_script = (
-                "\n<script id=\"raid-ui-v105-inline-script\">\n"
-                + script
-                + "\n</script>\n"
-            )
+            script_blocks = []
+            for index, path in enumerate(js_paths, start=1):
+                source = path.read_text(encoding="utf-8")
+                safe_name = re.sub(r"[^a-zA-Z0-9_-]+", "-", path.stem)
+                script_blocks.append(
+                    f'\n<script id="raid-ui-v105-{index}-{safe_name}">\n{source}\n</script>\n'
+                )
+            inline_scripts = "".join(script_blocks)
+
             page = page.replace("</head>", prelude + inline_style + "</head>", 1)
-            page = page.replace("</body>", inline_script + "</body>", 1)
+            page = page.replace("</body>", inline_scripts + "</body>", 1)
 
             return core.web.Response(
                 text=page,
@@ -129,7 +113,7 @@ def install_inline_webapp_fix(core: Any) -> None:
                     "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
                     "Pragma": "no-cache",
                     "Expires": "0",
-                    "X-Mini-App-UI": "raid-ui-v105-inline",
+                    "X-Mini-App-UI": "raid-ui-v105-isolated",
                 },
             )
         except Exception:
