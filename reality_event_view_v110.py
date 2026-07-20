@@ -7,6 +7,7 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import Command
 from aiogram.types import Message
 
+import reality_event_vote_v97 as vote
 import reality_events_v96 as events
 
 
@@ -141,7 +142,7 @@ def install_reality_event_view_v110(core: Any) -> None:
         event = await events._active_event(core, chat_id)
 
         if event is None:
-            # Старый обработчик Reality 97, стоящий следом, опубликует голосование.
+            await vote._ensure_launch(core, bot, chat_id, send_new=True)
             return
 
         await events._ensure_participant(
