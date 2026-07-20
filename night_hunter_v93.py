@@ -8,11 +8,19 @@ from aiohttp import web
 import game_center_v75 as base
 
 
-VERSION = "Reality 104 · Open Story"
+VERSION = "Reality 105 · Night Combat"
 GAME_KEY = "night-hunter"
 GAME_PATH = Path(__file__).resolve().parent / "games" / GAME_KEY
-STYLE_FILENAMES = ("style.css", "style-v101.css", "style-v102.css", "style-v104.css")
+STYLE_FILENAMES = (
+    "style.css",
+    "style-v101.css",
+    "style-v102.css",
+    "style-v104.css",
+    "style-v105.css",
+)
 SCRIPT_FILENAMES = (
+    "game-v105.js",
+    "game-v105-ui.js",
     "game-v104.js",
     "game-v104-story.js",
     "game-v104-fixes.js",
@@ -31,7 +39,7 @@ SCRIPT_FILENAMES = (
 
 
 def install_night_hunter_v93(core: Any) -> None:
-    """Подключает Reality 104: свободную карту, сюжет, эвакуацию и исправленный хитрег."""
+    """Подключает Reality 105: тёмный режим, multitouch и новый боевой HUD."""
     if getattr(core, "_night_hunter_v93_installed", False):
         return
     core._night_hunter_v93_installed = True
