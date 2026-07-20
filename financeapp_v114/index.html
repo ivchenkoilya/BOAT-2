@@ -3,54 +3,324 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#090713">
+  <meta name="theme-color" content="#08060f">
   <title>Финансовый центр</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    :root{color-scheme:dark;--bg:#090713;--panel:#151020;--panel2:#1d152b;--line:#3d2c50;--text:#f7f1ff;--muted:#a99db7;--accent:#b66eff;--gold:#f1cc74;--good:#65d6a1;--danger:#ff7f9f}
-    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% -15%,#44246f 0,#171022 34%,#090713 72%);color:var(--text);font-family:Inter,system-ui,sans-serif}body{padding:calc(14px + env(safe-area-inset-top)) 14px calc(86px + env(safe-area-inset-bottom));overflow-x:hidden}.app{max-width:680px;margin:auto}.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}.brand small,.brand b{display:block}.brand small{font-size:10px;letter-spacing:.16em;color:#d6a9ff;font-weight:900}.brand b{font-size:22px;margin-top:3px}.refresh{width:42px;height:42px;border:1px solid var(--line);border-radius:13px;background:#161021;color:var(--text);font-size:20px}.hero{border:1px solid #5b4077;border-radius:23px;padding:17px;background:radial-gradient(circle at 100% 0,#a85fff38,transparent 42%),linear-gradient(145deg,#28183b,#100b18);margin-bottom:12px}.hero-row{display:flex;align-items:center;gap:12px}.avatar{width:50px;height:50px;border-radius:16px;display:grid;place-items:center;background:#38204f;border:1px solid #7854a0;font-size:24px}.identity{min-width:0;flex:1}.identity small,.identity b{display:block}.identity small{font-size:9px;color:var(--muted)}.identity b{font-size:15px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.balance{text-align:right}.balance small,.balance b{display:block}.balance small{font-size:8px;color:var(--muted);letter-spacing:.1em}.balance b{font-size:24px;color:var(--gold)}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.metric{padding:10px;border:1px solid #3c2b4b;border-radius:13px;background:#0d0913}.metric small,.metric b{display:block}.metric small{font-size:8px;color:var(--muted)}.metric b{font-size:14px;margin-top:3px}.screen{display:none}.screen.active{display:block}.section-title{display:flex;align-items:end;justify-content:space-between;margin:16px 2px 9px}.section-title small,.section-title b{display:block}.section-title small{font-size:9px;color:#c395ef;letter-spacing:.12em}.section-title b{font-size:18px;margin-top:2px}.card{border:1px solid var(--line);border-radius:19px;background:linear-gradient(160deg,#1b1427,#0f0b16);padding:14px;margin-bottom:10px}.card-title{display:flex;gap:10px;align-items:center;margin-bottom:12px}.card-title span{width:38px;height:38px;display:grid;place-items:center;border:1px solid #5d4274;border-radius:12px;background:#29183a;font-size:19px}.card-title b,.card-title small{display:block}.card-title b{font-size:14px}.card-title small{font-size:9px;color:var(--muted);margin-top:2px}.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.quick{min-height:76px;border:1px solid #49345c;border-radius:15px;background:#120d1a;color:var(--text);text-align:left;padding:12px}.quick span,.quick b,.quick small{display:block}.quick span{font-size:22px}.quick b{font-size:12px;margin-top:5px}.quick small{font-size:8px;color:var(--muted);margin-top:2px}.field{display:block;margin-bottom:11px}.field>span{display:block;font-size:9px;color:#c7b8d0;margin:0 2px 6px;font-weight:800}.field select,.field input{width:100%;min-height:50px;border:1px solid #4b3860;border-radius:14px;background:#0c0911;color:var(--text);padding:0 13px;font-size:15px;outline:none}.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:-3px 0 12px}.chip{min-height:40px;border:1px solid #4b365e;border-radius:11px;background:#171020;color:#d9cee1;font-weight:900}.chip.active{border-color:#b66eff;background:#3b2057;color:#fff}.preview{padding:12px;border:1px solid #4c3860;border-radius:14px;background:#0d0913;margin-bottom:11px}.preview-row{display:flex;justify-content:space-between;gap:10px;padding:4px 0;font-size:11px;color:var(--muted)}.preview-row b{color:var(--text)}.primary{width:100%;min-height:52px;border:0;border-radius:15px;background:linear-gradient(135deg,#c58cff,#7837c4);color:#fff;font-weight:900;letter-spacing:.04em;box-shadow:0 10px 30px #7837c438}.primary.gold{background:linear-gradient(135deg,#ffe39a,#d1a33a);color:#241700}.primary:disabled{opacity:.5;box-shadow:none}.empty{padding:24px 12px;text-align:center;border:1px dashed #493653;border-radius:16px;color:var(--muted);font-size:12px}.list{display:grid;gap:8px}.deal{border:1px solid #3d2c49;border-radius:16px;background:#0f0b16;padding:12px}.deal-head{display:flex;justify-content:space-between;gap:10px}.deal-head b{font-size:12px}.status{font-size:8px;font-weight:900;padding:5px 7px;border-radius:999px;border:1px solid #446b5a;color:#93f0bd;background:#122c22}.status.overdue{border-color:#794052;color:#ffc0d0;background:#351722}.deal-meta{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}.deal-meta div{padding:8px;border-radius:10px;background:#171020}.deal-meta small,.deal-meta b{display:block}.deal-meta small{font-size:7px;color:var(--muted)}.deal-meta b{font-size:11px;margin-top:2px}.repay-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.repay-grid button{min-height:40px;border:1px solid #4b365e;border-radius:11px;background:#1b1225;color:var(--text);font-weight:900}.rules{font-size:11px;line-height:1.55;color:var(--muted)}.rules b{color:var(--text)}.bottom{position:fixed;left:0;right:0;bottom:0;padding:7px 9px calc(7px + env(safe-area-inset-bottom));background:#090713ed;border-top:1px solid #30233c;backdrop-filter:blur(15px);display:grid;grid-template-columns:repeat(4,1fr);gap:4px;z-index:20}.nav{border:0;border-radius:12px;background:transparent;color:#887b94;padding:7px 3px}.nav span,.nav small{display:block}.nav span{font-size:19px}.nav small{font-size:8px;margin-top:2px}.nav.active{color:#fff;background:#261735}.toast{position:fixed;left:16px;right:16px;bottom:calc(78px + env(safe-area-inset-bottom));z-index:40;padding:13px;border-radius:14px;background:#251632;border:1px solid #714d91;color:#fff;transform:translateY(130%);opacity:0;transition:.25s;text-align:center;font-size:12px}.toast.show{transform:translateY(0);opacity:1}.toast.error{background:#351521;border-color:#87445a}.modal{position:fixed;inset:0;background:#000a;display:none;align-items:end;z-index:50;padding:14px}.modal.open{display:flex}.modal-card{width:100%;max-width:680px;margin:0 auto;border:1px solid #63487b;border-radius:22px;background:#171020;padding:17px}.modal-card h3{margin:0 0 8px}.modal-card p{margin:0 0 15px;color:var(--muted);font-size:12px;line-height:1.5}.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.modal-actions button{min-height:48px;border-radius:13px;border:1px solid #4b365e;background:#120d19;color:var(--text);font-weight:900}.modal-actions .confirm{background:linear-gradient(135deg,#c58cff,#7837c4);border:0}.loading{position:fixed;inset:0;display:grid;place-items:center;background:#090713;z-index:60;text-align:center}.loading.hidden{display:none}.spinner{width:38px;height:38px;border:3px solid #3a2848;border-top-color:#c58cff;border-radius:50%;animation:spin .8s linear infinite;margin:auto auto 10px}@keyframes spin{to{transform:rotate(360deg)}}
+    :root{
+      color-scheme:dark;
+      --bg:#08060f;--panel:#15101f;--panel2:#1d152b;--panel3:#0d0a13;
+      --line:#3c2b4d;--line-strong:#69458a;--text:#f8f3ff;--muted:#a89caf;
+      --accent:#b66eff;--accent2:#7435bc;--gold:#f1cc74;--good:#65d6a1;
+      --warn:#efc66a;--danger:#ff7f9f;--shadow:0 18px 50px rgba(0,0,0,.28)
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif}
+    body{
+      padding:calc(13px + env(safe-area-inset-top)) 14px calc(94px + env(safe-area-inset-bottom));
+      overflow-x:hidden;
+      background:
+        radial-gradient(circle at 50% -12%,rgba(132,67,194,.48),transparent 35%),
+        radial-gradient(circle at 100% 30%,rgba(109,45,156,.14),transparent 32%),
+        linear-gradient(180deg,#130c20 0,#08060f 55%)
+    }
+    button,input,select{font:inherit}
+    button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+    button:active{transform:scale(.975)}
+    .app{max-width:680px;margin:auto}
+    .top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 2px 14px}
+    .brand small,.brand b{display:block}.brand small{font-size:10px;letter-spacing:.18em;color:#d5a7ff;font-weight:900}.brand b{font-size:24px;margin-top:3px;letter-spacing:-.02em}
+    .refresh{width:46px;height:46px;border:1px solid var(--line);border-radius:15px;background:rgba(19,14,28,.88);color:var(--text);font-size:22px;box-shadow:var(--shadow)}
+    .refresh.loading{animation:spin .8s linear infinite}
+
+    .hero{position:relative;overflow:hidden;border:1px solid #664487;border-radius:25px;padding:17px;background:radial-gradient(circle at 100% 0,rgba(181,104,255,.28),transparent 44%),linear-gradient(145deg,#2b193f,#100b18);box-shadow:var(--shadow);margin-bottom:13px}
+    .hero::after{content:"";position:absolute;width:150px;height:150px;border-radius:50%;right:-70px;bottom:-100px;background:rgba(182,110,255,.12);filter:blur(1px)}
+    .hero-row{position:relative;z-index:1;display:flex;align-items:center;gap:12px}
+    .avatar{width:54px;height:54px;border-radius:17px;display:grid;place-items:center;background:linear-gradient(145deg,#452561,#281637);border:1px solid #7d54a5;font-size:26px;box-shadow:inset 0 0 20px rgba(182,110,255,.12)}
+    .identity{min-width:0;flex:1}.identity small,.identity b{display:block}.identity small{font-size:9px;color:var(--muted);letter-spacing:.06em}.identity b{font-size:16px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .identity-status{display:inline-flex!important;align-items:center;gap:5px;width:max-content;margin-top:7px!important;padding:5px 8px;border-radius:999px;border:1px solid #386753;background:#102a20;color:#8be9b7!important;font-size:8px!important;font-weight:900;letter-spacing:.06em}
+    .identity-status.warn{border-color:#725c2e;background:#2c2411;color:#f4d681!important}.identity-status.danger{border-color:#794052;background:#351722;color:#ffc0d0!important}
+    .balance{text-align:right}.balance small,.balance b,.balance em{display:block}.balance small{font-size:8px;color:var(--muted);letter-spacing:.12em}.balance b{font-size:27px;color:var(--gold);line-height:1.08;transition:.25s}.balance b.pulse{animation:balancePulse .65s ease}.balance em{font-size:8px;color:#c8bbd0;font-style:normal;margin-top:5px}
+    .metrics{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:15px}
+    .metric{padding:10px;border:1px solid #3c2b4b;border-radius:14px;background:rgba(10,7,15,.86)}
+    .metric small,.metric b{display:block}.metric small{font-size:8px;color:var(--muted);letter-spacing:.04em}.metric b{font-size:15px;margin-top:4px}.metric.good b{color:var(--good)}.metric.warn b{color:var(--warn)}.metric.danger b{color:var(--danger)}
+
+    .screen{display:none;animation:screenIn .26s ease}.screen.active{display:block}
+    .section-title{display:flex;align-items:end;justify-content:space-between;gap:10px;margin:18px 3px 10px}.section-title small,.section-title b{display:block}.section-title small{font-size:9px;color:#c395ef;letter-spacing:.14em;font-weight:800}.section-title b{font-size:19px;margin-top:3px;letter-spacing:-.01em}.section-title em{font-style:normal;font-size:9px;color:var(--muted)}
+    .card{border:1px solid var(--line);border-radius:20px;background:linear-gradient(160deg,#1b1427,#0f0b16);padding:14px;margin-bottom:11px;box-shadow:0 12px 32px rgba(0,0,0,.16)}
+    .card-title{display:flex;gap:10px;align-items:center;margin-bottom:13px}.card-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border:1px solid #5d4274;border-radius:13px;background:#29183a;font-size:21px}.card-title b,.card-title small{display:block}.card-title b{font-size:14px}.card-title small{font-size:9px;color:var(--muted);margin-top:3px;line-height:1.35}
+
+    .state-banner{display:flex;align-items:flex-start;gap:11px;border:1px solid #3d644f;border-radius:17px;padding:13px;background:linear-gradient(145deg,#14291f,#0d1511);margin-bottom:11px}.state-banner.warn{border-color:#6d592e;background:linear-gradient(145deg,#2b2412,#171308)}.state-banner.danger{border-color:#754052;background:linear-gradient(145deg,#331722,#1b0d12)}
+    .state-banner span{font-size:25px}.state-banner b,.state-banner small{display:block}.state-banner b{font-size:13px}.state-banner small{font-size:9px;color:var(--muted);margin-top:4px;line-height:1.45}
+
+    .quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.quick{position:relative;overflow:hidden;min-height:102px;border:1px solid #49345c;border-radius:18px;background:linear-gradient(155deg,#171020,#100c17);color:var(--text);text-align:left;padding:14px;transition:.2s transform,.2s border-color,.2s background}.quick:hover{border-color:#76529a}.quick.primary-action{background:radial-gradient(circle at 100% 0,rgba(182,110,255,.24),transparent 55%),linear-gradient(155deg,#251535,#120c1c)}.quick span,.quick b,.quick small{display:block}.quick span{font-size:25px}.quick b{font-size:13px;margin-top:8px}.quick small{font-size:9px;color:var(--muted);margin-top:4px;line-height:1.35}.quick i{position:absolute;right:12px;bottom:11px;font-style:normal;color:#bda8c9;font-size:15px}
+
+    .rule-grid{display:grid;gap:8px}.rule{display:flex;gap:10px;align-items:flex-start;padding:11px;border-radius:14px;background:#0f0b16;border:1px solid #32243f}.rule span{font-size:18px}.rule b,.rule small{display:block}.rule b{font-size:11px}.rule small{font-size:9px;color:var(--muted);margin-top:3px;line-height:1.4}
+
+    .step{display:flex;gap:10px;align-items:flex-start;padding:12px 0;border-bottom:1px solid rgba(77,55,96,.48)}.step:last-of-type{border-bottom:0}.step-number{width:25px;height:25px;flex:0 0 25px;border-radius:9px;display:grid;place-items:center;background:#36204b;border:1px solid #714b94;color:#e3c4ff;font-size:10px;font-weight:900}.step-body{min-width:0;flex:1}.step-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.step-heading b{font-size:12px}.step-heading small{font-size:8px;color:var(--muted)}
+    .field{display:block;margin-bottom:10px}.field:last-child{margin-bottom:0}.field>span{display:block;font-size:8px;color:#c7b8d0;margin:0 2px 6px;font-weight:900;letter-spacing:.06em}.field select,.field input{width:100%;min-height:51px;border:1px solid #4b3860;border-radius:14px;background:#0c0911;color:var(--text);padding:0 13px;font-size:15px;outline:none;transition:.18s border-color,.18s box-shadow}.field select:focus,.field input:focus{border-color:#a565df;box-shadow:0 0 0 3px rgba(182,110,255,.13)}.field select:disabled{opacity:.65}
+    .helper{display:block;font-size:9px;color:var(--muted);line-height:1.4;margin:7px 2px 0}.helper.warn{color:var(--warn)}.helper.danger{color:var(--danger)}
+    .chips{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:8px}.chip{min-height:41px;border:1px solid #4b365e;border-radius:12px;background:#171020;color:#d9cee1;font-size:11px;font-weight:900;transition:.18s}.chip.active{border-color:#bd78ff;background:linear-gradient(145deg,#4d286c,#331b49);color:#fff;box-shadow:0 0 0 2px rgba(182,110,255,.1)}
+
+    .presets{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:9px 0 2px}.preset{min-height:72px;border:1px solid #49365c;border-radius:13px;background:#120d1a;color:var(--text);padding:10px;text-align:left}.preset b,.preset small{display:block}.preset b{font-size:10px}.preset small{font-size:8px;color:var(--muted);margin-top:4px;line-height:1.35}.preset.active{border-color:#bd78ff;background:#321b47}.preset.active b{color:#eddbff}
+
+    .preview{position:relative;overflow:hidden;padding:13px;border:1px solid #64447f;border-radius:16px;background:radial-gradient(circle at 100% 0,rgba(182,110,255,.15),transparent 50%),#0d0913;margin:12px 0}.preview::before{content:"ИТОГ";display:block;font-size:8px;letter-spacing:.14em;color:#c796ef;font-weight:900;margin-bottom:7px}.preview-row{display:flex;justify-content:space-between;gap:10px;padding:4px 0;font-size:11px;color:var(--muted)}.preview-row b{color:var(--text);text-align:right}.preview-row.highlight b{color:var(--gold);font-size:13px}.form-status{min-height:18px;font-size:9px;color:var(--good);margin:0 2px 8px}.form-status.error{color:var(--danger)}
+    .primary{width:100%;min-height:54px;border:0;border-radius:15px;background:linear-gradient(135deg,#c58cff,#7837c4);color:#fff;font-size:11px;font-weight:900;letter-spacing:.05em;box-shadow:0 11px 32px rgba(120,55,196,.28);transition:.18s}.primary.gold{background:linear-gradient(135deg,#ffe39a,#d1a33a);color:#241700;box-shadow:0 11px 32px rgba(209,163,58,.2)}.primary:disabled{opacity:.42;box-shadow:none;cursor:not-allowed}
+
+    .empty{padding:25px 14px;text-align:center;border:1px dashed #493653;border-radius:17px;background:rgba(15,11,22,.5)}.empty span,.empty b,.empty small{display:block}.empty span{font-size:28px}.empty b{font-size:12px;margin-top:8px}.empty small{font-size:9px;color:var(--muted);margin-top:5px;line-height:1.45}
+    .list{display:grid;gap:9px}.deal{border:1px solid #3d2c49;border-radius:18px;background:linear-gradient(160deg,#15101e,#0d0a12);padding:13px}.deal.overdue{border-color:#6f394c;background:linear-gradient(160deg,#251019,#10090d)}.deal-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.deal-head b{font-size:12px;line-height:1.35}.status{font-size:8px;font-weight:900;padding:5px 8px;border-radius:999px;border:1px solid #446b5a;color:#93f0bd;background:#122c22;white-space:nowrap}.status.overdue{border-color:#794052;color:#ffc0d0;background:#351722}.status.repaid{border-color:#4a526e;color:#cbd3ff;background:#171b2b}
+    .progress{height:7px;background:#21182b;border-radius:999px;overflow:hidden;margin:11px 0 4px}.progress i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8a46cd,#d08eff)}.deal.overdue .progress i{background:linear-gradient(90deg,#d84b75,#ff91ac)}
+    .progress-copy{display:flex;justify-content:space-between;font-size:8px;color:var(--muted)}
+    .deal-meta{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}.deal-meta div{padding:8px;border-radius:11px;background:#171020}.deal-meta small,.deal-meta b{display:block}.deal-meta small{font-size:7px;color:var(--muted)}.deal-meta b{font-size:11px;margin-top:3px}.deal-warning{font-size:9px;color:#ffc0d0;line-height:1.4;margin-top:10px}.repay-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:11px}.repay-grid button{min-height:41px;border:1px solid #4b365e;border-radius:12px;background:#1b1225;color:var(--text);font-size:10px;font-weight:900}.repay-grid button:last-child{border-color:#8d5ab5;background:#36204a}
+
+    .history{display:grid;gap:7px}.history-item{display:flex;align-items:center;gap:10px;padding:10px 11px;border:1px solid #33243f;border-radius:14px;background:#0e0a14}.history-icon{width:35px;height:35px;flex:0 0 35px;border-radius:11px;display:grid;place-items:center;background:#261735;font-size:17px}.history-copy{min-width:0;flex:1}.history-copy b,.history-copy small{display:block}.history-copy b{font-size:10px}.history-copy small{font-size:8px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.history-amount{text-align:right}.history-amount b,.history-amount small{display:block}.history-amount b{font-size:11px}.history-amount b.positive{color:var(--good)}.history-amount b.negative{color:#ff9bb4}.history-amount small{font-size:7px;color:var(--muted);margin-top:3px}
+
+    .bottom{position:fixed;left:0;right:0;bottom:0;padding:7px 9px calc(7px + env(safe-area-inset-bottom));background:rgba(8,6,15,.93);border-top:1px solid #30233c;backdrop-filter:blur(18px);display:grid;grid-template-columns:repeat(4,1fr);gap:4px;z-index:20}.nav{position:relative;border:0;border-radius:14px;background:transparent;color:#83778f;padding:8px 3px;transition:.2s}.nav::before{content:"";position:absolute;top:0;left:25%;right:25%;height:2px;border-radius:99px;background:transparent}.nav span,.nav small{display:block}.nav span{font-size:20px}.nav small{font-size:8px;margin-top:3px}.nav.active{color:#fff;background:#291839}.nav.active::before{background:#d39cff;box-shadow:0 0 10px #b66eff}
+
+    .toast{position:fixed;left:16px;right:16px;bottom:calc(82px + env(safe-area-inset-bottom));z-index:40;padding:13px;border-radius:14px;background:#251632;border:1px solid #714d91;color:#fff;transform:translateY(140%);opacity:0;transition:.28s;text-align:center;font-size:11px;box-shadow:var(--shadow)}.toast.show{transform:translateY(0);opacity:1}.toast.error{background:#351521;border-color:#87445a}
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:end;z-index:50;padding:14px;backdrop-filter:blur(4px)}.modal.open{display:flex;animation:fadeIn .18s ease}.modal-card{width:100%;max-width:680px;margin:0 auto;border:1px solid #63487b;border-radius:23px;background:linear-gradient(160deg,#20152d,#100b17);padding:17px;box-shadow:0 25px 70px rgba(0,0,0,.55)}.modal-head{display:flex;gap:10px;align-items:center}.modal-icon{width:42px;height:42px;border-radius:13px;background:#321c47;display:grid;place-items:center;font-size:21px}.modal-card h3{margin:0;font-size:16px}.modal-card>p{margin:10px 0 13px;color:var(--muted);font-size:10px;line-height:1.5}.modal-summary{border:1px solid #49355c;border-radius:14px;background:#0d0913;padding:10px;margin-bottom:13px}.modal-row{display:flex;justify-content:space-between;gap:10px;padding:4px 0;font-size:10px;color:var(--muted)}.modal-row b{color:var(--text);text-align:right}.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.modal-actions button{min-height:49px;border-radius:13px;border:1px solid #4b365e;background:#120d19;color:var(--text);font-size:10px;font-weight:900}.modal-actions .confirm{background:linear-gradient(135deg,#c58cff,#7837c4);border:0}.modal-actions .confirm.gold{background:linear-gradient(135deg,#ffe39a,#d1a33a);color:#241700}
+    .loading{position:fixed;inset:0;display:grid;place-items:center;background:#08060f;z-index:60;text-align:center}.loading.hidden{display:none}.spinner{width:40px;height:40px;border:3px solid #3a2848;border-top-color:#c58cff;border-radius:50%;animation:spin .8s linear infinite;margin:auto auto 10px}
+    @keyframes spin{to{transform:rotate(360deg)}}@keyframes screenIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}@keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes balancePulse{50%{transform:scale(1.08);filter:brightness(1.35)}}
+    @media(max-width:390px){.quick-grid{gap:7px}.quick{padding:12px}.chips{gap:5px}.chip{font-size:10px}.presets{grid-template-columns:1fr}.metrics{gap:6px}.metric{padding:9px 7px}.metric small{font-size:7px}.balance b{font-size:24px}}
   </style>
 </head>
 <body>
 <main class="app">
-  <header class="top"><div class="brand"><small>ГЛАВНЫЙ ГЕРОЙ</small><b>Финансовый центр</b></div><button class="refresh" id="refresh" type="button">↻</button></header>
-  <section class="hero"><div class="hero-row"><div class="avatar">💸</div><div class="identity"><small>ТВОЙ ПРОФИЛЬ</small><b id="playerName">Загрузка…</b></div><div class="balance"><small>ВЛИЯНИЕ</small><b id="balance">—</b></div></div><div class="metrics"><div class="metric"><small>МОЙ ДОЛГ</small><b id="debtTotal">0</b></div><div class="metric"><small>МНЕ ДОЛЖНЫ</small><b id="owedTotal">0</b></div><div class="metric"><small>НАДЁЖНОСТЬ</small><b id="reliability">100%</b></div></div></section>
+  <header class="top">
+    <div class="brand"><small>ГЛАВНЫЙ ГЕРОЙ · REALITY 117</small><b>Финансовый центр</b></div>
+    <button class="refresh" id="refresh" type="button" aria-label="Обновить данные">↻</button>
+  </header>
 
-  <section class="screen active" data-screen="home"><div class="section-title"><div><small>БЫСТРЫЕ ДЕЙСТВИЯ</small><b>Что сделать?</b></div></div><div class="quick-grid"><button class="quick" data-open="transfer" type="button"><span>🎁</span><b>Передать влияние</b><small>Моментальный перевод</small></button><button class="quick" data-open="loan" type="button"><span>🤝</span><b>Дать в долг</b><small>С процентом и сроком</small></button><button class="quick" data-open="debts" type="button"><span>💳</span><b>Мои долги</b><small>Погасить частично или всё</small></button><button class="quick" data-open="debts" type="button"><span>🏦</span><b>Мне должны</b><small>Посмотреть договоры</small></button></div><div class="section-title"><div><small>ПРАВИЛА</small><b>Без накрутки экономики</b></div></div><article class="card rules"><b>Переводы и займы</b> не дают карьерное влияние, очки Древа и вклад в событие. При просрочке добавляется 5%, затем 30% заработка автоматически уходит кредитору.</article></section>
+  <section class="hero" id="heroCard">
+    <div class="hero-row">
+      <div class="avatar">💸</div>
+      <div class="identity"><small>ТВОЙ ПРОФИЛЬ</small><b id="playerName">Загрузка…</b><span class="identity-status" id="accountStatus">● НАДЁЖНЫЙ</span></div>
+      <div class="balance"><small>ВЛИЯНИЕ</small><b id="balance">—</b><em id="availableText">доступно для операций</em></div>
+    </div>
+    <div class="metrics">
+      <div class="metric" id="debtMetric"><small>МОЙ ДОЛГ</small><b id="debtTotal">0</b></div>
+      <div class="metric" id="owedMetric"><small>МНЕ ДОЛЖНЫ</small><b id="owedTotal">0</b></div>
+      <div class="metric good" id="reliabilityMetric"><small>НАДЁЖНОСТЬ</small><b id="reliability">100%</b></div>
+    </div>
+  </section>
 
-  <section class="screen" data-screen="transfer"><div class="section-title"><div><small>ПЕРЕВОД</small><b>Передать влияние</b></div></div><article class="card"><div class="card-title"><span>🎁</span><div><b>Кому отправить?</b><small>Получатель должен быть участником этой беседы</small></div></div><label class="field"><span>УЧАСТНИК</span><select id="transferTarget"></select></label><label class="field"><span>СУММА</span><input id="transferAmount" type="number" min="10" max="5000" step="10" value="500" inputmode="numeric"></label><div class="chips" data-chips="transfer"><button class="chip" data-value="100" type="button">100</button><button class="chip active" data-value="500" type="button">500</button><button class="chip" data-value="1000" type="button">1000</button><button class="chip" data-value="5000" type="button">5000</button></div><div class="preview"><div class="preview-row"><span>Получатель</span><b id="transferPreviewName">—</b></div><div class="preview-row"><span>Будет отправлено</span><b id="transferPreviewAmount">500</b></div><div class="preview-row"><span>Останется у тебя</span><b id="transferPreviewLeft">—</b></div></div><button class="primary" id="transferSubmit" type="button">ПЕРЕДАТЬ ВЛИЯНИЕ</button></article></section>
+  <section class="screen active" data-screen="home">
+    <div id="stateBanner"></div>
+    <div class="section-title"><div><small>БЫСТРЫЕ ДЕЙСТВИЯ</small><b>Что сделать?</b></div></div>
+    <div class="quick-grid">
+      <button class="quick primary-action" data-open="transfer" type="button"><span>🎁</span><b>Передать влияние</b><small>Моментально отправить участнику беседы</small><i>›</i></button>
+      <button class="quick primary-action" data-open="loan" type="button"><span>🤝</span><b>Дать в долг</b><small>Создать договор с процентом и сроком</small><i>›</i></button>
+      <button class="quick" data-open="debts" data-focus="myDebts" type="button"><span>💳</span><b>Мои долги</b><small>Погасить часть или закрыть полностью</small><i>›</i></button>
+      <button class="quick" data-open="debts" data-focus="owedToMe" type="button"><span>🏦</span><b>Мне должны</b><small>Следить за выданными займами</small><i>›</i></button>
+    </div>
 
-  <section class="screen" data-screen="loan"><div class="section-title"><div><small>ДОГОВОР</small><b>Дать влияние в долг</b></div></div><article class="card"><div class="card-title"><span>🤝</span><div><b>Условия займа</b><small>Заёмщик примет или отклонит договор в чате</small></div></div><label class="field"><span>ЗАЁМЩИК</span><select id="loanTarget"></select></label><label class="field"><span>СУММА</span><input id="loanAmount" type="number" min="50" max="10000" step="50" value="1000" inputmode="numeric"></label><div class="chips" data-chips="loanAmount"><button class="chip" data-value="500" type="button">500</button><button class="chip active" data-value="1000" type="button">1000</button><button class="chip" data-value="2000" type="button">2000</button><button class="chip" data-value="5000" type="button">5000</button></div><label class="field"><span>ПРОЦЕНТ</span><input id="loanInterest" type="number" min="0" max="20" step="1" value="10" inputmode="numeric"></label><div class="chips" data-chips="interest"><button class="chip" data-value="0" type="button">0%</button><button class="chip" data-value="5" type="button">5%</button><button class="chip active" data-value="10" type="button">10%</button><button class="chip" data-value="20" type="button">20%</button></div><label class="field"><span>СРОК В ДНЯХ</span><input id="loanDays" type="number" min="1" max="14" step="1" value="3" inputmode="numeric"></label><div class="chips" data-chips="days"><button class="chip" data-value="1" type="button">1 день</button><button class="chip active" data-value="3" type="button">3 дня</button><button class="chip" data-value="7" type="button">7 дней</button><button class="chip" data-value="14" type="button">14 дней</button></div><div class="preview"><div class="preview-row"><span>Заёмщик</span><b id="loanPreviewName">—</b></div><div class="preview-row"><span>Получит</span><b id="loanPreviewAmount">1000</b></div><div class="preview-row"><span>Должен вернуть</span><b id="loanPreviewDue">1100</b></div><div class="preview-row"><span>Срок</span><b id="loanPreviewDays">3 дня</b></div></div><button class="primary gold" id="loanSubmit" type="button">ОПУБЛИКОВАТЬ ДОГОВОР В ЧАТЕ</button></article></section>
+    <div class="section-title"><div><small>ИСТОРИЯ</small><b>Последние операции</b></div><em>до 14 записей</em></div>
+    <div class="history" id="historyList"></div>
 
-  <section class="screen" data-screen="debts"><div class="section-title"><div><small>ОБЯЗАТЕЛЬСТВА</small><b>Мои долги</b></div></div><div class="list" id="debtsList"></div><div class="section-title"><div><small>КРЕДИТОР</small><b>Мне должны</b></div></div><div class="list" id="owedList"></div></section>
+    <div class="section-title"><div><small>ПРАВИЛА</small><b>Как работает экономика</b></div></div>
+    <article class="card"><div class="rule-grid">
+      <div class="rule"><span>🌳</span><div><b>Без прокачки переводами</b><small>Переводы и займы не дают карьерное влияние, очки Древа и вклад в событие.</small></div></div>
+      <div class="rule"><span>⏳</span><div><b>Просрочка стоит дороже</b><small>После срока к долгу один раз добавляется штраф 5%.</small></div></div>
+      <div class="rule"><span>💳</span><div><b>Автоматический возврат</b><small>При просрочке 30% новых заработков направляется кредитору.</small></div></div>
+    </div></article>
+  </section>
+
+  <section class="screen" data-screen="transfer">
+    <div class="section-title"><div><small>ПЕРЕВОД</small><b>Передать влияние</b></div><em>2 шага</em></div>
+    <article class="card">
+      <div class="card-title"><div class="card-icon">🎁</div><div><b>Моментальный перевод</b><small>После подтверждения операция сразу появится в беседе</small></div></div>
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-body"><div class="step-heading"><b>Выбери получателя</b><small>участник этой беседы</small></div><label class="field"><span>ПОЛУЧАТЕЛЬ</span><select id="transferTarget"></select></label><small class="helper" id="transferPeopleHint"></small></div>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-body"><div class="step-heading"><b>Укажи сумму</b><small>10–5 000</small></div><label class="field"><span>СУММА ВЛИЯНИЯ</span><input id="transferAmount" type="number" min="10" max="5000" step="10" value="500" inputmode="numeric"></label><div class="chips" data-chips="transfer"><button class="chip" data-value="100" type="button">100</button><button class="chip active" data-value="500" type="button">500</button><button class="chip" data-value="1000" type="button">1 000</button><button class="chip" data-value="5000" type="button">5 000</button></div></div>
+      </div>
+      <div class="preview"><div class="preview-row"><span>Получатель</span><b id="transferPreviewName">—</b></div><div class="preview-row highlight"><span>Будет отправлено</span><b id="transferPreviewAmount">500</b></div><div class="preview-row"><span>Останется у тебя</span><b id="transferPreviewLeft">—</b></div></div>
+      <div class="form-status" id="transferStatus"></div>
+      <button class="primary" id="transferSubmit" type="button">ПОДТВЕРДИТЬ ПЕРЕВОД</button>
+    </article>
+  </section>
+
+  <section class="screen" data-screen="loan">
+    <div class="section-title"><div><small>ДОГОВОР</small><b>Дать влияние в долг</b></div><em>4 шага</em></div>
+    <article class="card">
+      <div class="card-title"><div class="card-icon">🤝</div><div><b>Создание договора</b><small>Заёмщик примет или отклонит предложение прямо в чате</small></div></div>
+      <div class="step"><div class="step-number">1</div><div class="step-body"><div class="step-heading"><b>Выбери заёмщика</b><small>участник беседы</small></div><label class="field"><span>ЗАЁМЩИК</span><select id="loanTarget"></select></label><small class="helper" id="loanPeopleHint"></small></div></div>
+      <div class="step"><div class="step-number">2</div><div class="step-body"><div class="step-heading"><b>Укажи сумму</b><small>50–10 000</small></div><label class="field"><span>СУММА ЗАЙМА</span><input id="loanAmount" type="number" min="50" max="10000" step="50" value="1000" inputmode="numeric"></label><div class="chips" data-chips="loanAmount"><button class="chip" data-value="500" type="button">500</button><button class="chip active" data-value="1000" type="button">1 000</button><button class="chip" data-value="2000" type="button">2 000</button><button class="chip" data-value="5000" type="button">5 000</button></div></div></div>
+      <div class="step"><div class="step-number">3</div><div class="step-body"><div class="step-heading"><b>Выбери готовый режим</b><small>можно изменить вручную</small></div><div class="presets"><button class="preset" data-preset="soft" data-interest="5" data-days="7" type="button"><b>🌿 МЯГКИЙ</b><small>5% · 7 дней</small></button><button class="preset active" data-preset="standard" data-interest="10" data-days="3" type="button"><b>⚖️ СТАНДАРТ</b><small>10% · 3 дня</small></button><button class="preset" data-preset="risk" data-interest="20" data-days="1" type="button"><b>🔥 СРОЧНЫЙ</b><small>20% · 1 день</small></button></div></div></div>
+      <div class="step"><div class="step-number">4</div><div class="step-body"><div class="step-heading"><b>Проверь условия</b><small>можно настроить точно</small></div><label class="field"><span>ПРОЦЕНТ</span><input id="loanInterest" type="number" min="0" max="20" step="1" value="10" inputmode="numeric"></label><div class="chips" data-chips="interest"><button class="chip" data-value="0" type="button">0%</button><button class="chip" data-value="5" type="button">5%</button><button class="chip active" data-value="10" type="button">10%</button><button class="chip" data-value="20" type="button">20%</button></div><label class="field"><span>СРОК В ДНЯХ</span><input id="loanDays" type="number" min="1" max="14" step="1" value="3" inputmode="numeric"></label><div class="chips" data-chips="days"><button class="chip" data-value="1" type="button">1 день</button><button class="chip active" data-value="3" type="button">3 дня</button><button class="chip" data-value="7" type="button">7 дней</button><button class="chip" data-value="14" type="button">14 дней</button></div></div></div>
+      <div class="preview"><div class="preview-row"><span>Заёмщик</span><b id="loanPreviewName">—</b></div><div class="preview-row"><span>Получит</span><b id="loanPreviewAmount">1 000</b></div><div class="preview-row highlight"><span>Должен вернуть</span><b id="loanPreviewDue">1 100</b></div><div class="preview-row"><span>Срок</span><b id="loanPreviewDays">3 дня</b></div></div>
+      <div class="form-status" id="loanStatus"></div>
+      <button class="primary gold" id="loanSubmit" type="button">ОПУБЛИКОВАТЬ ДОГОВОР В ЧАТЕ</button>
+    </article>
+  </section>
+
+  <section class="screen" data-screen="debts">
+    <div id="myDebts" class="section-title"><div><small>ОБЯЗАТЕЛЬСТВА</small><b>Мои долги</b></div><em id="debtCount">0 договоров</em></div>
+    <div class="list" id="debtsList"></div>
+    <div id="owedToMe" class="section-title"><div><small>КРЕДИТОР</small><b>Мне должны</b></div><em id="owedCount">0 договоров</em></div>
+    <div class="list" id="owedList"></div>
+  </section>
 </main>
 
-<nav class="bottom"><button class="nav active" data-nav="home" type="button"><span>⌂</span><small>Главная</small></button><button class="nav" data-nav="transfer" type="button"><span>🎁</span><small>Перевод</small></button><button class="nav" data-nav="loan" type="button"><span>🤝</span><small>Заём</small></button><button class="nav" data-nav="debts" type="button"><span>📜</span><small>Долги</small></button></nav>
-<div class="toast" id="toast"></div>
-<section class="modal" id="modal"><div class="modal-card"><h3 id="modalTitle">Подтверждение</h3><p id="modalText"></p><div class="modal-actions"><button id="modalCancel" type="button">Отмена</button><button class="confirm" id="modalConfirm" type="button">Подтвердить</button></div></div></section>
+<nav class="bottom">
+  <button class="nav active" data-nav="home" type="button"><span>⌂</span><small>Главная</small></button>
+  <button class="nav" data-nav="transfer" type="button"><span>🎁</span><small>Перевод</small></button>
+  <button class="nav" data-nav="loan" type="button"><span>🤝</span><small>Займы</small></button>
+  <button class="nav" data-nav="debts" type="button"><span>📜</span><small>Долги</small></button>
+</nav>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<section class="modal" id="modal" aria-hidden="true">
+  <div class="modal-card">
+    <div class="modal-head"><div class="modal-icon" id="modalIcon">✓</div><h3 id="modalTitle">Подтверждение</h3></div>
+    <p id="modalText"></p><div class="modal-summary" id="modalSummary"></div>
+    <div class="modal-actions"><button id="modalCancel" type="button">ОТМЕНА</button><button class="confirm" id="modalConfirm" type="button">ПОДТВЕРДИТЬ</button></div>
+  </div>
+</section>
 <div class="loading" id="loading"><div><div class="spinner"></div><b>Загружаем финансы…</b></div></div>
 
 <script>
 (()=>{
-  const tg=window.Telegram?.WebApp;tg?.ready();tg?.expand();tg?.setHeaderColor?.('#090713');tg?.setBackgroundColor?.('#090713');
-  const params=new URLSearchParams(location.search);const chatId=params.get('chat_id')||'';const initData=tg?.initData||'';let state=null,pending=null;
-  const $=id=>document.getElementById(id);const fmt=n=>new Intl.NumberFormat('ru-RU').format(Number(n)||0);const headers={'Content-Type':'application/json','X-Telegram-Init-Data':initData};
-  function toast(text,type='success'){const node=$('toast');node.textContent=text;node.className=`toast show ${type}`;clearTimeout(node._t);node._t=setTimeout(()=>node.className='toast',3400)}
-  async function api(path,body=null){const options={method:body?'POST':'GET',headers};if(body)options.body=JSON.stringify({...body,chat_id:chatId});const suffix=body?'':`?chat_id=${encodeURIComponent(chatId)}`;const response=await fetch(`/finance-v114/api/${path}${suffix}`,options);const data=await response.json().catch(()=>({ok:false,reason:'Некорректный ответ сервера.'}));if(!response.ok||!data.ok)throw new Error(data.reason||'Операция не выполнена.');return data}
+  const tg=window.Telegram?.WebApp;
+  tg?.ready();tg?.expand();tg?.setHeaderColor?.('#08060f');tg?.setBackgroundColor?.('#08060f');
+  const params=new URLSearchParams(location.search);
+  const chatId=params.get('chat_id')||'';
+  const initData=tg?.initData||'';
+  const apiRoot=location.pathname.startsWith('/finance/')?'/finance/api':'/finance-v114/api';
+  const headers={'Content-Type':'application/json','X-Telegram-Init-Data':initData};
+  let state=null,history=[],pending=null,currentScreen='home';
+  const $=id=>document.getElementById(id);
+  const fmt=n=>new Intl.NumberFormat('ru-RU').format(Number(n)||0);
+  const esc=value=>String(value??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+  const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
+
+  function toast(text,type='success'){
+    const node=$('toast');node.textContent=text;node.className=`toast show ${type}`;
+    clearTimeout(node._t);node._t=setTimeout(()=>node.className='toast',3500);
+  }
+  async function api(path,body=null){
+    const options={method:body?'POST':'GET',headers};
+    if(body)options.body=JSON.stringify({...body,chat_id:chatId});
+    const suffix=body?'':`?chat_id=${encodeURIComponent(chatId)}`;
+    const response=await fetch(`${apiRoot}/${path}${suffix}`,options);
+    const data=await response.json().catch(()=>({ok:false,reason:'Некорректный ответ сервера.'}));
+    if(!response.ok||!data.ok)throw new Error(data.reason||'Операция не выполнена.');
+    return data;
+  }
   function participantName(select){return select.options[select.selectedIndex]?.textContent||'—'}
-  function fillSelect(id){const select=$(id);select.innerHTML='';for(const person of state.participants){const option=document.createElement('option');option.value=person.user_id;option.textContent=person.name+(person.username?` · @${person.username}`:'');select.appendChild(option)}if(!state.participants.length){const option=document.createElement('option');option.value='';option.textContent='Нет других участников';select.appendChild(option)}select.disabled=!state.participants.length}
-  function updatePreviews(){const ta=Number($('transferAmount').value)||0;$('transferPreviewName').textContent=participantName($('transferTarget'));$('transferPreviewAmount').textContent=fmt(ta);$('transferPreviewLeft').textContent=fmt(Math.max(0,(state?.player?.points||0)-ta));const amount=Number($('loanAmount').value)||0,interest=Number($('loanInterest').value)||0,days=Number($('loanDays').value)||0;$('loanPreviewName').textContent=participantName($('loanTarget'));$('loanPreviewAmount').textContent=fmt(amount);$('loanPreviewDue').textContent=fmt(Math.ceil(amount*(100+interest)/100));$('loanPreviewDays').textContent=`${days} дн.`}
-  function dealMarkup(item,borrower){const overdue=item.status==='overdue';const buttons=borrower?`<div class="repay-grid"><button data-repay="${item.loan_id}" data-amount="100" type="button">100</button><button data-repay="${item.loan_id}" data-amount="${Math.max(1,Math.ceil(item.remaining/2))}" type="button">Половина</button><button data-repay="${item.loan_id}" data-amount="all" type="button">Всё</button></div>`:'';return `<article class="deal"><div class="deal-head"><b>${borrower?'Кредитор':'Заёмщик'}: ${item.other_name}</b><span class="status ${overdue?'overdue':''}">${overdue?'ПРОСРОЧЕН':'АКТИВЕН'}</span></div><div class="deal-meta"><div><small>ОСТАЛОСЬ</small><b>${fmt(item.remaining)}</b></div><div><small>СРОК</small><b>${item.time_text}</b></div><div><small>СУММА</small><b>${fmt(item.principal)}</b></div><div><small>ПРОЦЕНТ</small><b>${item.interest}%</b></div></div>${buttons}</article>`}
-  function render(){const p=state.player;$('playerName').textContent=p.name;$('balance').textContent=fmt(p.points);$('debtTotal').textContent=fmt(state.totals.debt);$('owedTotal').textContent=fmt(state.totals.owed);$('reliability').textContent=`${state.credit.reliability}%`;fillSelect('transferTarget');fillSelect('loanTarget');$('debtsList').innerHTML=state.debts.length?state.debts.map(x=>dealMarkup(x,true)).join(''):'<div class="empty">Активных долгов нет.</div>';$('owedList').innerHTML=state.owed.length?state.owed.map(x=>dealMarkup(x,false)).join(''):'<div class="empty">Тебе пока никто не должен.</div>';updatePreviews();$('loading').classList.add('hidden')}
-  async function load(){try{state=await api('state');render()}catch(error){$('loading').classList.add('hidden');toast(error.message,'error')}}
-  function openScreen(name){document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.dataset.screen===name));document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('active',x.dataset.nav===name));scrollTo({top:0,behavior:'smooth'})}
-  function confirmAction(title,text,action){pending=action;$('modalTitle').textContent=title;$('modalText').textContent=text;$('modal').classList.add('open')}
-  async function runAction(){if(!pending)return;const action=pending;pending=null;$('modal').classList.remove('open');try{const data=await action();toast(data.message||'Готово!');tg?.HapticFeedback?.notificationOccurred?.('success');await load()}catch(error){toast(error.message,'error');tg?.HapticFeedback?.notificationOccurred?.('error')}}
-  document.addEventListener('click',event=>{const nav=event.target.closest('[data-nav]');if(nav){openScreen(nav.dataset.nav);return}const quick=event.target.closest('[data-open]');if(quick){openScreen(quick.dataset.open);return}const chip=event.target.closest('.chip[data-value]');if(chip){const group=chip.parentElement.dataset.chips;chip.parentElement.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));chip.classList.add('active');const map={transfer:'transferAmount',loanAmount:'loanAmount',interest:'loanInterest',days:'loanDays'};$(map[group]).value=chip.dataset.value;updatePreviews();return}const repay=event.target.closest('[data-repay]');if(repay){const loan=state.debts.find(x=>x.loan_id===repay.dataset.repay);confirmAction('Погасить долг?',`Кредитору будет переведено ${repay.dataset.amount==='all'?fmt(loan.remaining):fmt(repay.dataset.amount)} влияния.`,()=>api('action',{action:'repay',loan_id:repay.dataset.repay,amount:repay.dataset.amount}));return}});
+  function fillSelect(id){
+    const select=$(id),previous=select.value;select.innerHTML='';
+    for(const person of state.participants){const option=document.createElement('option');option.value=person.user_id;option.textContent=person.name+(person.username?` · @${person.username}`:'');select.appendChild(option)}
+    if(!state.participants.length){const option=document.createElement('option');option.value='';option.textContent='Нет других участников';select.appendChild(option)}
+    if(previous&&[...select.options].some(x=>x.value===previous))select.value=previous;
+    select.disabled=!state.participants.length;
+  }
+  function accountState(){
+    const overdue=state.debts.some(item=>item.status==='overdue');
+    if(overdue)return{className:'danger',badge:'● ЕСТЬ ПРОСРОЧКА',icon:'⚠️',title:'Долг просрочен',text:'30% новых положительных заработков будет автоматически направляться кредитору.'};
+    if(state.totals.debt>0)return{className:'warn',badge:'● АКТИВНЫЙ ДОЛГ',icon:'⏳',title:'Есть активный договор',text:`Осталось вернуть ${fmt(state.totals.debt)} влияния. Погасить долг можно частями.`};
+    if(state.totals.owed>0)return{className:'',badge:'● ТЫ КРЕДИТОР',icon:'🏦',title:'Тебе должны влияние',text:`По активным договорам тебе должны ${fmt(state.totals.owed)} влияния.`};
+    return{className:'',badge:'● '+String(state.credit.label||'НАДЁЖНЫЙ').replace(/^[^А-ЯA-Z]+/i,''),icon:'✅',title:'Чистая финансовая история',text:'Активных долгов и просрочек нет. Все финансовые функции доступны.'};
+  }
+  function renderHero(){
+    const p=state.player,info=accountState();
+    $('playerName').textContent=p.name;$('balance').textContent=fmt(p.points);$('availableText').textContent=`доступно: ${fmt(p.points)}`;
+    $('debtTotal').textContent=fmt(state.totals.debt);$('owedTotal').textContent=fmt(state.totals.owed);$('reliability').textContent=`${state.credit.reliability}%`;
+    $('accountStatus').textContent=info.badge;$('accountStatus').className=`identity-status ${info.className}`;
+    $('debtMetric').className=`metric ${state.debts.some(x=>x.status==='overdue')?'danger':state.totals.debt?'warn':''}`;
+    $('owedMetric').className=`metric ${state.totals.owed?'good':''}`;
+    $('reliabilityMetric').className=`metric ${state.credit.reliability<60?'danger':state.credit.reliability<85?'warn':'good'}`;
+    $('stateBanner').innerHTML=`<div class="state-banner ${info.className}"><span>${info.icon}</span><div><b>${esc(info.title)}</b><small>${esc(info.text)}</small></div></div>`;
+  }
+  function renderPeopleHints(){
+    const has=state.participants.length>0;
+    const text=has?`Доступно участников: ${state.participants.length}`:'В беседе пока нет других пользователей бота. Другой участник должен хотя бы один раз использовать любую команду.';
+    for(const id of ['transferPeopleHint','loanPeopleHint']){$(id).textContent=text;$(id).className=`helper ${has?'':'warn'}`}
+  }
+  function syncChips(group,inputId){
+    const value=String(Number($(inputId).value));
+    document.querySelectorAll(`[data-chips="${group}"] .chip`).forEach(chip=>chip.classList.toggle('active',chip.dataset.value===value));
+  }
+  function updatePreviews(){
+    if(!state)return;
+    const ta=Number($('transferAmount').value)||0,recipient=Number($('transferTarget').value)||0;
+    $('transferPreviewName').textContent=participantName($('transferTarget'));
+    $('transferPreviewAmount').textContent=fmt(ta);$('transferPreviewLeft').textContent=fmt(Math.max(0,state.player.points-ta));
+    const tValid=recipient>0&&ta>=state.limits.transfer_min&&ta<=state.limits.transfer_max&&ta<=state.player.points;
+    $('transferSubmit').disabled=!tValid;
+    $('transferStatus').textContent=!state.participants.length?'Нет доступного получателя.':ta>state.player.points?'Недостаточно влияния для перевода.':ta<state.limits.transfer_min||ta>state.limits.transfer_max?`Допустимая сумма: ${fmt(state.limits.transfer_min)}–${fmt(state.limits.transfer_max)}.`:'Перевод будет выполнен сразу после подтверждения.';
+    $('transferStatus').className=`form-status ${tValid?'':'error'}`;
+
+    const amount=Number($('loanAmount').value)||0,interest=Number($('loanInterest').value)||0,days=Number($('loanDays').value)||0,borrower=Number($('loanTarget').value)||0;
+    $('loanPreviewName').textContent=participantName($('loanTarget'));$('loanPreviewAmount').textContent=fmt(amount);$('loanPreviewDue').textContent=fmt(Math.ceil(amount*(100+interest)/100));$('loanPreviewDays').textContent=`${days} дн.`;
+    const lValid=borrower>0&&amount>=state.limits.loan_min&&amount<=state.limits.loan_max&&amount<=state.player.points&&interest>=0&&interest<=state.limits.interest_max&&days>=state.limits.days_min&&days<=state.limits.days_max;
+    $('loanSubmit').disabled=!lValid;
+    $('loanStatus').textContent=!state.participants.length?'Нет доступного заёмщика.':amount>state.player.points?'Недостаточно влияния для выдачи займа.':!lValid?'Проверь сумму, процент и срок.':'Договор появится в чате и вступит в силу только после принятия.';
+    $('loanStatus').className=`form-status ${lValid?'':'error'}`;
+    syncChips('transfer','transferAmount');syncChips('loanAmount','loanAmount');syncChips('interest','loanInterest');syncChips('days','loanDays');
+    const exactPreset=[...document.querySelectorAll('.preset')].find(x=>Number(x.dataset.interest)===interest&&Number(x.dataset.days)===days);
+    document.querySelectorAll('.preset').forEach(x=>x.classList.toggle('active',x===exactPreset));
+  }
+  function plural(count,one,few,many){const n=Math.abs(count)%100,n1=n%10;if(n>10&&n<20)return many;if(n1>1&&n1<5)return few;if(n1===1)return one;return many}
+  function dealMarkup(item,borrower){
+    const overdue=item.status==='overdue',paid=Math.max(0,item.total_due-item.remaining),percent=clamp(Math.round(paid/Math.max(1,item.total_due)*100),0,100);
+    const buttons=borrower?`<div class="repay-grid"><button data-repay="${esc(item.loan_id)}" data-amount="100" type="button">ВЕРНУТЬ 100</button><button data-repay="${esc(item.loan_id)}" data-amount="${Math.max(1,Math.ceil(item.remaining/2))}" type="button">ПОЛОВИНУ</button><button data-repay="${esc(item.loan_id)}" data-amount="all" type="button">ЗАКРЫТЬ</button></div>`:'';
+    return `<article class="deal ${overdue?'overdue':''}"><div class="deal-head"><b>${borrower?'Кредитор':'Заёмщик'}: ${esc(item.other_name)}</b><span class="status ${overdue?'overdue':''}">${overdue?'ПРОСРОЧЕН':'АКТИВЕН'}</span></div><div class="progress"><i style="width:${percent}%"></i></div><div class="progress-copy"><span>Погашено ${fmt(paid)}</span><span>${percent}%</span></div><div class="deal-meta"><div><small>ОСТАЛОСЬ</small><b>${fmt(item.remaining)}</b></div><div><small>СРОК</small><b>${esc(item.time_text)}</b></div><div><small>ПОЛУЧЕНО</small><b>${fmt(item.principal)}</b></div><div><small>ПРОЦЕНТ</small><b>${item.interest}%</b></div></div>${overdue?'<div class="deal-warning">⚠️ До погашения просрочки часть новых заработков удерживается автоматически.</div>':''}${buttons}</article>`;
+  }
+  function emptyMarkup(icon,title,text){return `<div class="empty"><span>${icon}</span><b>${esc(title)}</b><small>${esc(text)}</small></div>`}
+  function historyIcon(kind){return({transfer_out:'🎁',transfer_in:'📥',repay_out:'💳',repay_in:'✅',loan_out:'🤝',loan_in:'🏦'})[kind]||'🧾'}
+  function timeAgo(timestamp){const seconds=Math.max(0,Math.floor(Date.now()/1000-Number(timestamp)));if(seconds<60)return'только что';if(seconds<3600)return`${Math.floor(seconds/60)} мин. назад`;if(seconds<86400)return`${Math.floor(seconds/3600)} ч. назад`;return`${Math.floor(seconds/86400)} дн. назад`}
+  function renderHistory(){
+    $('historyList').innerHTML=history.length?history.map(item=>{const amount=Number(item.amount)||0,amountText=amount>0?`+${fmt(amount)}`:fmt(amount);const detail=item.detail?` · ${esc(item.detail)}`:'';return `<article class="history-item"><div class="history-icon">${historyIcon(item.kind)}</div><div class="history-copy"><b>${esc(item.title)}</b><small>${esc(item.other_name)}${detail}</small></div><div class="history-amount"><b class="${amount>0?'positive':amount<0?'negative':''}">${amountText}</b><small>${timeAgo(item.created_at)}</small></div></article>`}).join(''):emptyMarkup('🧾','История пока пустая','Здесь появятся переводы, выданные займы и погашения долгов.');
+  }
+  function renderDebts(){
+    $('debtsList').innerHTML=state.debts.length?state.debts.map(x=>dealMarkup(x,true)).join(''):emptyMarkup('✅','У тебя нет активных долгов','Когда ты примешь заём, договор и кнопки погашения появятся здесь.');
+    $('owedList').innerHTML=state.owed.length?state.owed.map(x=>dealMarkup(x,false)).join(''):emptyMarkup('🏦','Тебе пока никто не должен','Создай договор во вкладке «Займы», и после принятия он появится здесь.');
+    $('debtCount').textContent=`${state.debts.length} ${plural(state.debts.length,'договор','договора','договоров')}`;$('owedCount').textContent=`${state.owed.length} ${plural(state.owed.length,'договор','договора','договоров')}`;
+  }
+  function render(){
+    renderHero();fillSelect('transferTarget');fillSelect('loanTarget');renderPeopleHints();renderDebts();renderHistory();updatePreviews();$('loading').classList.add('hidden');
+  }
+  async function load(){
+    $('refresh').classList.add('loading');
+    try{
+      const [stateData,historyData]=await Promise.all([api('state'),api('history').catch(()=>({items:[]}))]);
+      const oldBalance=state?.player?.points;state=stateData;history=historyData.items||[];render();
+      if(oldBalance!==undefined&&oldBalance!==state.player.points){$('balance').classList.remove('pulse');void $('balance').offsetWidth;$('balance').classList.add('pulse')}
+    }catch(error){$('loading').classList.add('hidden');toast(error.message,'error')}
+    finally{$('refresh').classList.remove('loading')}
+  }
+  function openScreen(name,focusId=''){
+    currentScreen=name;document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.dataset.screen===name));document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('active',x.dataset.nav===name));
+    window.scrollTo({top:0,behavior:'smooth'});if(focusId)setTimeout(()=>$(`${focusId}`)?.scrollIntoView({behavior:'smooth',block:'start'}),220);
+  }
+  function confirmAction({title,icon='✓',text='',rows=[],action,tone=''}){
+    pending=action;$('modalIcon').textContent=icon;$('modalTitle').textContent=title;$('modalText').textContent=text;
+    $('modalSummary').innerHTML=rows.map(row=>`<div class="modal-row"><span>${esc(row[0])}</span><b>${esc(row[1])}</b></div>`).join('');
+    $('modalConfirm').className=`confirm ${tone}`;$('modal').classList.add('open');$('modal').setAttribute('aria-hidden','false');
+  }
+  function closeModal(){pending=null;$('modal').classList.remove('open');$('modal').setAttribute('aria-hidden','true')}
+  async function runAction(){
+    if(!pending)return;const action=pending;pending=null;$('modalConfirm').disabled=true;
+    try{const data=await action();closeModal();toast(data.message||'Готово!');tg?.HapticFeedback?.notificationOccurred?.('success');await load()}
+    catch(error){toast(error.message,'error');tg?.HapticFeedback?.notificationOccurred?.('error')}
+    finally{$('modalConfirm').disabled=false}
+  }
+
+  document.addEventListener('click',event=>{
+    const nav=event.target.closest('[data-nav]');if(nav){openScreen(nav.dataset.nav);return}
+    const quick=event.target.closest('[data-open]');if(quick){openScreen(quick.dataset.open,quick.dataset.focus||'');return}
+    const chip=event.target.closest('.chip[data-value]');if(chip){const group=chip.parentElement.dataset.chips,map={transfer:'transferAmount',loanAmount:'loanAmount',interest:'loanInterest',days:'loanDays'};$(map[group]).value=chip.dataset.value;updatePreviews();return}
+    const preset=event.target.closest('.preset');if(preset){$('loanInterest').value=preset.dataset.interest;$('loanDays').value=preset.dataset.days;updatePreviews();tg?.HapticFeedback?.selectionChanged?.();return}
+    const repay=event.target.closest('[data-repay]');if(repay){const loan=state.debts.find(x=>x.loan_id===repay.dataset.repay);if(!loan)return;const pay=repay.dataset.amount==='all'?loan.remaining:Number(repay.dataset.amount);confirmAction({title:'Погасить долг?',icon:'💳',text:'Платёж сразу уйдёт кредитору и будет опубликован в беседе.',rows:[['Кредитор',loan.other_name],['Сумма платежа',fmt(Math.min(pay,loan.remaining))],['Останется долга',fmt(Math.max(0,loan.remaining-pay))]],action:()=>api('action',{action:'repay',loan_id:repay.dataset.repay,amount:repay.dataset.amount})});return}
+  });
   ['transferAmount','transferTarget','loanAmount','loanInterest','loanDays','loanTarget'].forEach(id=>$(id).addEventListener('input',updatePreviews));
-  $('transferSubmit').addEventListener('click',()=>{const amount=Number($('transferAmount').value),recipient_id=Number($('transferTarget').value);confirmAction('Подтвердить перевод?',`${participantName($('transferTarget'))} получит ${fmt(amount)} влияния.`,()=>api('action',{action:'transfer',recipient_id,amount}))});
-  $('loanSubmit').addEventListener('click',()=>{const amount=Number($('loanAmount').value),interest=Number($('loanInterest').value),days=Number($('loanDays').value),borrower_id=Number($('loanTarget').value);confirmAction('Опубликовать договор?',`${participantName($('loanTarget'))} получит предложение: ${fmt(amount)} под ${interest}% на ${days} дн.`,()=>api('action',{action:'loan',borrower_id,amount,interest,days}))});
-  $('modalCancel').addEventListener('click',()=>{$('modal').classList.remove('open');pending=null});$('modalConfirm').addEventListener('click',runAction);$('refresh').addEventListener('click',load);load();
+  $('transferSubmit').addEventListener('click',()=>{const amount=Number($('transferAmount').value),recipient_id=Number($('transferTarget').value);confirmAction({title:'Подтвердить перевод?',icon:'🎁',text:'Операция необратима и сразу появится в беседе.',rows:[['Получатель',participantName($('transferTarget'))],['Будет отправлено',fmt(amount)],['Останется у тебя',fmt(Math.max(0,state.player.points-amount))]],action:()=>api('action',{action:'transfer',recipient_id,amount})})});
+  $('loanSubmit').addEventListener('click',()=>{const amount=Number($('loanAmount').value),interest=Number($('loanInterest').value),days=Number($('loanDays').value),borrower_id=Number($('loanTarget').value),due=Math.ceil(amount*(100+interest)/100);confirmAction({title:'Опубликовать договор?',icon:'🤝',text:'Заёмщик увидит предложение в чате и сам решит, принимать его или нет.',rows:[['Заёмщик',participantName($('loanTarget'))],['Получит',fmt(amount)],['Вернуть',fmt(due)],['Условия',`${interest}% · ${days} дн.`]],tone:'gold',action:()=>api('action',{action:'loan',borrower_id,amount,interest,days})})});
+  $('modalCancel').addEventListener('click',closeModal);$('modalConfirm').addEventListener('click',runAction);$('modal').addEventListener('click',event=>{if(event.target===$('modal'))closeModal()});$('refresh').addEventListener('click',load);
+  load();
 })();
 </script>
 </body>
