@@ -6,11 +6,12 @@ from typing import Any
 from aiogram.filters import Command
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
+from career_system_v120 import install_career_system_v120
 from finance_route_fix_v116 import install_finance_route_fix_v116
 from finance_loan_requests_v118 import install_finance_loan_requests_v118
 
 
-VERSION = "Reality 118 · Заявки на заём"
+VERSION = "Reality 120 · Карьерное влияние"
 FINANCE_PREFIX = "finance_"
 
 
@@ -23,7 +24,7 @@ def _finance_link(core: Any, chat_id: int) -> str:
     if core.WEBAPP_PUBLIC_URL:
         return (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/finance-v118/"
-            f"?chat_id={int(chat_id)}&build=118-{int(time.time())}"
+            f"?chat_id={int(chat_id)}&build=120-{int(time.time())}"
         )
     return ""
 
@@ -36,8 +37,7 @@ def install_finance_entry_fix_v115(core: Any) -> None:
 
     # Reality 117 подключает стабильные маршруты состояния, действий и истории.
     install_finance_route_fix_v116(core)
-    # Reality 118 ставится после него и добавляет новый экран, API заявок,
-    # адресные кнопки одобрения/отклонения и таблицу запросов на заём.
+    # Reality 118 добавляет заявки на заём и адресные кнопки решения.
     install_finance_loan_requests_v118(core)
 
     # Старые /finance-обработчики удаляются полностью, чтобы текстовое меню
@@ -65,9 +65,9 @@ def install_finance_entry_fix_v115(core: Any) -> None:
             )
             return
         await message.answer(
-            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 118</b>\n\n"
-            "Переводи влияние, выдавай займы или публикуй заявку, если влияние нужно тебе. "
-            "Выбранный кредитор сможет одобрить или отклонить заявку прямо в беседе.",
+            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 120</b>\n\n"
+            "Переводи обычное влияние, выдавай займы или публикуй заявку. "
+            "Карьерное влияние не тратится и определяет постоянную роль.",
             reply_markup=InlineKeyboardMarkup(
                 inline_keyboard=[[
                     InlineKeyboardButton(
@@ -86,3 +86,7 @@ def install_finance_entry_fix_v115(core: Any) -> None:
         if getattr(handler.callback, "__name__", "") == "cmd_finance_app_v115"
     ]
     handlers[:] = preferred + [handler for handler in handlers if handler not in preferred]
+
+    # Reality 120 устанавливается последним: после игр, событий, босса и финансов.
+    # Поэтому он видит окончательные начисления и безопасно разделяет баланс и роль.
+    install_career_system_v120(core)
