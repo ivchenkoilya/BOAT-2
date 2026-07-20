@@ -3,7 +3,7 @@ from __future__ import annotations
 from contextvars import ContextVar
 from typing import Any
 
-from career_model_v120 import career_value
+from career_model_v120 import CareerAwareInt
 
 _ROLE_OVERRIDE: ContextVar[int | None] = ContextVar("career_role_override_v120", default=None)
 
@@ -19,9 +19,10 @@ def install_career_boss_v120(core: Any) -> None:
         override = _ROLE_OVERRIDE.get()
         if override is None:
             return career_role_by_points(points, is_leader)
-        wrapped = type("CareerContextValue", (int,), {}) (int(points))
-        wrapped.career_points = int(override)
-        return career_role_by_points(wrapped, is_leader)
+        return career_role_by_points(
+            CareerAwareInt(int(points), int(override)),
+            is_leader,
+        )
 
     core.role_by_points = role_by_points_with_context
 
@@ -41,8 +42,7 @@ def install_career_boss_v120(core: Any) -> None:
         row = await cursor.fetchone()
         if row is None:
             return await original_boss_ability(self, boss_id, chat_id, user_id)
-        career = int(row["career_points"] or 0)
-        token = _ROLE_OVERRIDE.set(career)
+        token = _ROLE_OVERRIDE.set(int(row["career_points"] or 0))
         try:
             return await original_boss_ability(self, boss_id, chat_id, user_id)
         finally:
