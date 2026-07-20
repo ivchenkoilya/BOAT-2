@@ -22,6 +22,7 @@ STYLE_FILENAMES = (
 SCRIPT_FILENAMES = (
     "game-v106.js",
     "game-v106-interactions.js",
+    "game-v106-fixes.js",
     "game-v105.js",
     "game-v105-ui.js",
     "game-v104.js",
