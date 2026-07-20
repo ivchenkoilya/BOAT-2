@@ -24,6 +24,7 @@ from heist_asset_routes_v78 import install_heist_asset_routes_v78
 from heist_reward_v91 import install_heist_reward_v91
 from hero_day_v77 import install_hero_day_v77
 from hero_loadouts_v103 import install_hero_loadouts_v103
+from hero_loadouts_v103_fix import install_hero_loadouts_v103_fix
 from hero_skins_sync_v100 import install_hero_skins_sync_v100
 from influence_balance_v87 import install_influence_balance_v87
 from influence_reward_v88 import install_influence_reward_v88
@@ -185,6 +186,9 @@ install_hero_skins_sync_v100(core)
 # Reality 103 превращает образы в героев, добавляет уникальные способности,
 # постоянный магазин, инвентарь, экипировку и реальные боевые баффы предметов.
 install_hero_loadouts_v103(core)
+# Финальный фикс Reality 103 заставляет следующую одиночную атаку босса
+# действительно переходить на Самозвания после его провокации.
+install_hero_loadouts_v103_fix(core)
 
 # В main.py есть общий обработчик F.text, зарегистрированный раньше расширений.
 # Переносим команды древа, мастерства, игр и события в начало списка.
