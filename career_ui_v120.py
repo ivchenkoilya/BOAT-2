@@ -37,6 +37,15 @@ async def career_rank(core: Any, chat_id: int, user_id: int) -> tuple[int, int]:
     return int(above["amount"] or 0) + 1 if above else 1, int(total_row["amount"] or 0) if total_row else 0
 
 
+async def career_board(core: Any, chat_id: int, limit: int = 10) -> list[Any]:
+    conn = core.db._require_connection()
+    cursor = await conn.execute(
+        "SELECT * FROM players WHERE chat_id=? ORDER BY career_points DESC,user_id ASC LIMIT ?",
+        (chat_id, limit),
+    )
+    return [core.Database._row_to_player(row) for row in await cursor.fetchall()]
+
+
 async def target_player(core: Any, message: Message) -> Any | None:
     replied = message.reply_to_message.from_user if message.reply_to_message else None
     if replied is not None and not replied.is_bot:
@@ -56,11 +65,7 @@ async def career_text(core: Any, chat_id: int, player: Any) -> str:
     rank, total = await career_rank(core, chat_id, fresh.user_id)
     start, target, target_name = progress(career)
     remaining = max(0, target - career)
-    progress_line = (
-        "Высшая карьерная роль достигнута."
-        if target <= start
-        else f"До {target_name}: <b>{fmt(remaining)}</b>"
-    )
+    progress_line = "Высшая карьерная роль достигнута." if target <= start else f"До {target_name}: <b>{fmt(remaining)}</b>"
     conn = core.db._require_connection()
     cursor = await conn.execute(
         "SELECT delta,reason FROM career_log_v120 WHERE chat_id=? AND user_id=? ORDER BY id DESC LIMIT 3",
@@ -90,6 +95,83 @@ def install_career_ui_v120(core: Any) -> None:
         return
     core._career_ui_v120_installed = True
 
+    async def build_profile_v120(chat_id: int, player: Any, *, addressed: bool = False) -> str:
+        fresh = await core.db.get_player(chat_id, player.user_id) or player
+        career = career_value(fresh.points)
+        role = core.role_by_points(fresh.points, False)
+        career_place, career_total = await career_rank(core, chat_id, fresh.user_id)
+        hero_day_state = await core.db.get_hero_day_state(chat_id)
+        is_hero_day = bool(hero_day_state is not None and int(hero_day_state["user_id"]) == fresh.user_id)
+        sabotage = await core.db.get_active_sabotage_for_usurper(chat_id, fresh.user_id)
+        if career >= CAREER_CENTER:
+            title, emoji = "Центр Вселенной", "🌌"
+        elif is_hero_day and role.key == "hero":
+            title, emoji = "Временный Главный герой", "🌟👑"
+        elif sabotage is not None and role.key == "hero":
+            title, emoji = "Саботажный Главный герой", "💣👑"
+        else:
+            title, emoji = role.title, role.emoji
+        today_type_state = await core.active_today_type(chat_id, fresh.user_id)
+        if today_type_state is None:
+            today_type_line = "🎭 <b>Типаж дня:</b> ещё не определён"
+        else:
+            type_info, remaining = today_type_state
+            today_type_line = (
+                f"🎭 <b>Типаж дня:</b> {type_info['emoji']} {html.escape(type_info['title'])} "
+                f"(ещё {core.human_duration(remaining)})"
+            )
+        intro = (
+            f"Я знаю, кто такой {core.player_link(fresh)}.\n{emoji} <b>Роль — {html.escape(title)}</b>"
+            if addressed
+            else f"{emoji} <b>Твоя роль — {html.escape(title)}</b>"
+        )
+        lore_index = await core.db.next_rotation_index(
+            fresh.user_id, f"profile:{chat_id}:{role.key}:lore", len(core.ROLE_LORE[role.key])
+        )
+        trait_index = await core.db.next_rotation_index(
+            fresh.user_id, f"profile:{chat_id}:{role.key}:trait", len(core.ROLE_TRAITS[role.key])
+        )
+        return "\n".join([
+            intro,
+            *(["🌟 <b>Звание:</b> Главный герой дня"] if is_hero_day and career < CAREER_CENTER else []),
+            "",
+            core.ROLE_LORE[role.key][lore_index],
+            "",
+            f"🧠 <b>Подтип:</b> {html.escape(core.ROLE_TRAITS[role.key][trait_index])}",
+            today_type_line,
+            f"💰 <b>Обычное влияние:</b> {fmt(int(fresh.points))}",
+            f"⭐ <b>Карьерное влияние:</b> {fmt(career)}",
+            f"🌌 <b>Карьерное место:</b> {career_place} из {career_total}",
+            f"💬 <b>Сообщений учтено:</b> {fresh.message_count}",
+            f"➡️ {core.next_role_text(fresh.points, False)}",
+        ])
+
+    core.build_profile = build_profile_v120
+
+    async def build_top_text_v120(chat_id: int, heading: str = "Карьерная иерархия") -> str:
+        board = await career_board(core, chat_id, 10)
+        if not board:
+            return "Здесь пока нет людей. Только декорации."
+        temporary_id = await core.temporary_hero_day_user_id(chat_id)
+        sabotage_ids = set(await core.db.active_sabotage_usurper_ids(chat_id))
+        lines = [f"🌌 <b>{html.escape(heading)}</b>", ""]
+        for index, player in enumerate(board, start=1):
+            career = career_value(player.points)
+            role = core.role_by_points(player.points, index == 1)
+            title, marker = role.title, "🌌" if career >= CAREER_CENTER else ("👑" if role.key == "hero" else f"{index}.")
+            if career < CAREER_CENTER and role.key == "hero" and player.user_id == temporary_id:
+                title, marker = "Временный Главный герой", "🌟"
+            elif career < CAREER_CENTER and role.key == "hero" and player.user_id in sabotage_ids:
+                title, marker = "Саботажный Главный герой", "💣"
+            lines.append(
+                f"{marker} {core.player_link(player)} — <b>{fmt(career)}</b> карьерного "
+                f"· <b>{fmt(int(player.points))}</b> на балансе ({html.escape(title)})"
+            )
+        lines.extend(["", "Рейтинг ролей строится по карьерному влиянию. Ставки на него не влияют."])
+        return "\n".join(lines)
+
+    core.build_top_text = build_top_text_v120
+
     async def build_stats_text_v120(chat_id: int, player: Any) -> str:
         fresh = await core.db.get_player(chat_id, player.user_id) or player
         career = career_value(fresh.points)
@@ -117,8 +199,7 @@ def install_career_ui_v120(core: Any) -> None:
             f"🏦 Место по балансу: <b>{wallet_place} из {wallet_total}</b>\n"
             f"{core.next_role_text(fresh.points, False)}\n\n"
             f"💬 Сообщений: <b>{int(stats.get('messages', 0))}</b>\n"
-            f"🎙 Голосовых: <b>{int(stats.get('voice_messages', 0))}</b> "
-            f"({int(stats.get('voice_seconds', 0))} сек.)\n"
+            f"🎙 Голосовых: <b>{int(stats.get('voice_messages', 0))}</b> ({int(stats.get('voice_seconds', 0))} сек.)\n"
             f"↩️ Ответов другим: <b>{int(stats.get('replies_sent', 0))}</b>\n"
             f"📨 Ответов тебе: <b>{int(stats.get('replies_received', 0))}</b>\n"
             f"❤️ Реакций получено: <b>{int(stats.get('reactions_received', 0))}</b>"
@@ -140,7 +221,7 @@ def install_career_ui_v120(core: Any) -> None:
     core.build_hero_chance_text = build_hero_chance_text_v120
 
     async def build_hero_of_day_text_v120(chat_id: int) -> str:
-        board = await core.db.leaderboard(chat_id, limit=10_000)
+        board = await career_board(core, chat_id, 10_000)
         eligible = [player for player in board if career_value(player.points) >= CAREER_HERO]
         if not eligible:
             return (
