@@ -9,6 +9,7 @@
   const chainedFetch=window.fetch.bind(window);
   let state=null;
   let renderPending=false;
+  let loadingState=false;
 
   function isStateUrl(input){
     const url=typeof input==='string'?input:String(input?.url||'');
@@ -30,6 +31,12 @@
   const escapeHtml=value=>String(value??'').replace(/[&<>'"]/g,char=>({
     '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'
   })[char]);
+
+  function setText(element,value){
+    if(!element)return;
+    const text=String(value??'');
+    if(element.textContent!==text)element.textContent=text;
+  }
 
   function showToast(text,kind='success'){
     const toast=document.getElementById('toast');
@@ -113,11 +120,12 @@
       card.querySelector('.hero-card-copy')?.remove();
       const copy=document.createElement('span');
       copy.className='hero-card-copy';
-      copy.innerHTML=`<strong>${escapeHtml(hero.name)}</strong><small>${escapeHtml(hero.title)}</small><em>${escapeHtml(hero.ability)}</em><p>${escapeHtml(hero.ability_hint)}</p>`;
+      copy.innerHTML=`<strong>${escapeHtml(hero.name)}</strong><small>${escapeHtml(hero.title)}</small><em>${escapeHtml(hero.ability)}</em><p>${escapeHtml(hero.ability_hint||hero.hint||'')}</p>`;
       card.append(copy);
     });
     const intro=page.querySelector('.page-intro');
-    if(intro)intro.textContent='Каждый образ теперь является отдельным героем со своим именем, характером и боевой способностью.';
+    const text='Каждый образ теперь является отдельным героем со своим именем, характером и боевой способностью.';
+    if(intro&&intro.textContent!==text)intro.textContent=text;
   }
 
   function decorateFighters(){
@@ -133,11 +141,12 @@
         label.className='fighter-hero-name';
         card.append(label);
       }
-      label.innerHTML=fighter.hero_name?`<b>${escapeHtml(fighter.hero_name)}</b><small>${escapeHtml(fighter.hero_title||'')}</small>`:'<b>БЕЗ ОБРАЗА</b><small>Выбери героя</small>';
+      const labelMarkup=fighter.hero_name?`<b>${escapeHtml(fighter.hero_name)}</b><small>${escapeHtml(fighter.hero_title||'')}</small>`:'<b>БЕЗ ОБРАЗА</b><small>Выбери героя</small>';
+      if(label.innerHTML!==labelMarkup)label.innerHTML=labelMarkup;
       let item=card.querySelector('.fighter-equipped-item');
       if(fighter.equipped_item_name){
         if(!item){item=document.createElement('div');item.className='fighter-equipped-item';card.append(item);}
-        item.textContent=`◆ ${fighter.equipped_item_name}`;
+        setText(item,`◆ ${fighter.equipped_item_name}`);
       }else item?.remove();
     });
   }
@@ -148,19 +157,19 @@
     const label=document.querySelector('.ability-card .ability-copy>small');
     const name=document.getElementById('abilityName');
     const hint=document.getElementById('abilityHint');
-    if(label)label.textContent=self.hero_name?'СПОСОБНОСТЬ ГЕРОЯ':'СПОСОБНОСТЬ РОЛИ';
-    if(name&&self.ability_name)name.textContent=self.ability_name;
-    if(hint&&self.ability_hint)hint.textContent=self.ability_hint;
+    setText(label,self.hero_name?'СПОСОБНОСТЬ ГЕРОЯ':'СПОСОБНОСТЬ РОЛИ');
+    if(self.ability_name)setText(name,self.ability_name);
+    if(self.ability_hint)setText(hint,self.ability_hint);
     const card=document.querySelector('.ability-card');
     if(card){
-      card.dataset.heroId=String(self.hero_id||0);
+      const heroId=String(self.hero_id||0);
+      if(card.dataset.heroId!==heroId)card.dataset.heroId=heroId;
       card.classList.toggle('once-used',Boolean(self.ability_once_used));
       const battle=state?.battle||{};
       const active=battle.status==='active'&&Number(battle.hp)>0;
       if(Number(self.hero_id)===7&&!self.ability_once_used&&active){
         card.disabled=false;
-        const cd=document.getElementById('abilityCooldown');
-        if(cd)cd.textContent=Number(self.hp)<=0?'ВОЗРОДИТЬСЯ':'ГОТОВО';
+        setText(document.getElementById('abilityCooldown'),Number(self.hp)<=0?'ВОЗРОДИТЬСЯ':'ГОТОВО');
       }
     }
   }
@@ -194,6 +203,18 @@
     requestAnimationFrame(renderAll);
   }
 
+  async function loadState(){
+    if(loadingState||!bossId||!tg?.initData)return;
+    loadingState=true;
+    try{
+      const response=await chainedFetch(`${API_ROOT}state?boss_id=${encodeURIComponent(bossId)}`,{headers});
+      const data=await response.json().catch(()=>null);
+      accept(data);
+    }catch(_error){}finally{
+      loadingState=false;
+    }
+  }
+
   async function action(actionName,itemKey=''){
     if(!bossId||!tg?.initData){showToast('Открой рейд через Telegram.','error');return;}
     try{
@@ -222,6 +243,8 @@
   },true);
 
   new MutationObserver(queueRender).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-page']});
+  setTimeout(loadState,450);
+  setTimeout(loadState,1500);
   setInterval(()=>{renderAbility();renderPage();},700);
   queueRender();
 })();
