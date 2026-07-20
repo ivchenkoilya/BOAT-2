@@ -8,6 +8,7 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="/games/game-attempts-v89.js?v=89"></script>
   <link rel="stylesheet" href="/games/night-hunter/style.css?v=100">
+  <link rel="stylesheet" href="/games/night-hunter/style-v101.css?v=101">
 </head>
 <body>
 <main class="app">
@@ -25,12 +26,12 @@
       <span class="pill hp"><em>HP</em><i><b id="hpBar"></b></i><strong id="hpText">100/100</strong></span>
     </div>
     <div class="weaponHud">
-      <div class="weaponName"><span id="weaponIcon">🔫</span><div><small id="weaponName">ПИСТОЛЕТ</small><b id="ammoText">12 / 72</b></div></div>
+      <div class="weaponName"><span id="weaponIcon">🔫</span><div><small id="weaponName">ПИСТОЛЕТ</small><b id="ammoText">12 / 84</b></div></div>
       <div class="ammoBar"><i id="ammoBar"></i></div><span class="streak" id="streak">СЕРИЯ ×0</span>
     </div>
     <div class="bossHud hidden" id="bossHud"><small id="bossPhase">ТЯЖЁЛЫЙ ОХОТНИК · ФАЗА 1</small><i><b id="bossBar"></b></i></div>
     <div class="waveBanner" id="waveBanner"><small>СЕКТОР 1</small><b>ЗАЧИСТКА НАЧАТА</b></div>
-    <div class="caption" id="caption">Оружие стреляет строго по направлению луча.</div>
+    <div class="caption" id="caption">Держи заражённых внутри луча и контролируй проходы.</div>
     <div class="direction hidden" id="direction"><span>➜</span><b>СЕКТОР 2</b><small id="directionDistance">120 м</small></div>
     <div class="joystick" id="joystick"><div class="joystickRing"></div><div class="joystickKnob" id="joystickKnob"></div></div>
     <div class="actions">
@@ -45,15 +46,15 @@
 <div class="overlay" id="intro">
   <section class="card">
     <div class="poster"><div class="hero"></div><div class="beam"></div><div class="muzzle"></div><div class="horde"></div></div>
-    <div class="eyebrow">TOP-DOWN SURVIVAL SHOOTER · REALITY 100</div>
+    <div class="eyebrow">TACTICAL VISUAL UPDATE · REALITY 101</div>
     <h1>Зачистка комплекса</h1>
-    <p>Стреляй строго по лучу фонаря, пробивайся через шесть разных операций, меняй оружие и уничтожь многофазного Тяжёлого охотника.</p>
+    <p>Пост охраны получил детализированное окружение, объёмный свет, новые силуэты героя и заражённых, улучшенные эффекты стрельбы и компактный боевой HUD.</p>
     <div class="mission">
       <div><b>1</b><span>Левый джойстик — движение</span></div>
-      <div><b>2</b><span>Удерживай и веди кнопку «Огонь» — направляй луч</span></div>
+      <div><b>2</b><span>Удерживай и веди «Огонь» — направляй луч</span></div>
       <div><b>3</b><span>Рывок даёт короткую неуязвимость</span></div>
     </div>
-    <button class="start loading" id="start" type="button">ПОДГОТОВКА ОРУЖИЯ…</button>
+    <button class="start loading" id="start" type="button">ЗАГРУЗКА СЕКТОРА…</button>
     <button class="demo hidden" id="demo" type="button">ЗАПУСТИТЬ ДЕМО</button>
     <div class="error" id="startError"></div>
   </section>
@@ -76,6 +77,6 @@
     <button class="start" id="again" type="button">ЕЩЁ ОДНА ЗАЧИСТКА</button><button class="secondary" id="toGames" type="button">В ИГРОВОЙ ЦЕНТР</button>
   </section>
 </div>
-<script src="/games/night-hunter/game-v100.js?v=100"></script>
+<script src="/games/night-hunter/game-v101.js?v=101"></script>
 </body>
 </html>
