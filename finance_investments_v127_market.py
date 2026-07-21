@@ -172,6 +172,14 @@ async def _investment_payload(core: Any, chat_id: int, user_id: int) -> dict[str
         payout, interest, matured, can_withdraw = _deposit_values(row, now)
         deposit_total += payout
         plan = DEPOSIT_PLANS[str(row["plan_key"])]
+        withdraw_payout = payout
+        if not matured:
+            if str(plan["early"]) == "interest_lost":
+                withdraw_payout = int(row["principal"])
+            elif str(plan["early"]) == "penalty_3":
+                withdraw_payout = max(0, int(int(row["principal"]) * 0.97))
+            elif str(plan["early"]) == "locked":
+                withdraw_payout = 0
         deposits.append(
             {
                 "deposit_id": str(row["deposit_id"]),
@@ -179,6 +187,7 @@ async def _investment_payload(core: Any, chat_id: int, user_id: int) -> dict[str
                 "title": str(plan["title"]),
                 "principal": int(row["principal"]),
                 "payout": payout,
+                "withdraw_payout": withdraw_payout,
                 "interest": interest,
                 "started_at": int(row["started_at"]),
                 "matures_at": int(row["matures_at"]),
