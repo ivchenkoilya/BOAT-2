@@ -1,0 +1,136 @@
+/* Final Center of the Universe combat balance and notification placement. */
+
+/* The warning stays inside the game square and sits directly above the squad. */
+#bossStage .raid-v61-warning{
+  top:auto!important;
+  bottom:14px!important;
+  width:min(calc(100% - 24px),430px)!important;
+  transform:translate(-50%,18px) scale(.96)!important;
+  z-index:96!important;
+}
+#bossStage .raid-v61-warning.show{
+  transform:translate(-50%,0) scale(1)!important;
+}
+#bossStage .raid-v61-warning.urgent{
+  animation:bossV149WarningShake .22s linear infinite alternate!important;
+}
+#bossStage .raid-v61-warning.ultimate-v149{
+  opacity:1!important;
+  visibility:visible!important;
+  transform:translate(-50%,0) scale(1)!important;
+  border-color:#ff4b42!important;
+  background:linear-gradient(90deg,#42070def,#12040af2,#42070def)!important;
+  box-shadow:0 0 30px #ff312e88,inset 0 0 24px #000!important;
+}
+
+/* All short battle notices are rendered in the lower part of the battlefield. */
+.raid-v149-notices{
+  position:absolute;
+  z-index:94;
+  left:50%;
+  bottom:92px;
+  width:min(calc(100% - 28px),420px);
+  transform:translateX(-50%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  pointer-events:none;
+}
+.raid-v149-notice{
+  max-width:100%;
+  padding:7px 11px;
+  border:1px solid #795a87;
+  border-radius:8px;
+  background:#100a18ef;
+  box-shadow:0 8px 20px #0009,0 0 15px #873eb34d;
+  color:#eadff0;
+  font:800 9px/1.35 Arial,sans-serif;
+  letter-spacing:.02em;
+  text-align:center;
+  opacity:0;
+  transform:translateY(10px) scale(.96);
+  animation:bossV149Notice 3s ease both;
+}
+.raid-v149-notice.debuff{border-color:#b365d2;color:#f1c9ff;background:#25102def}
+.raid-v149-notice.heal{border-color:#4ca86f;color:#bfffd2;background:#092317ef}
+.raid-v149-notice.ultimate{border-color:#ff5349;color:#ffe1bd;background:#3b090def;font-size:10px}
+
+/* The legacy fixed toast is duplicated into the battlefield lane, so it no longer covers faces. */
+body.raid-v149-ready .toast{display:none!important}
+
+.raid-v149-debuffs{
+  position:absolute;
+  z-index:8;
+  left:4px;
+  right:4px;
+  bottom:30px;
+  display:flex;
+  justify-content:center;
+  gap:3px;
+  pointer-events:none;
+}
+.raid-v149-debuffs span{
+  min-width:21px;
+  padding:2px 4px;
+  border:1px solid #a852c0;
+  border-radius:7px;
+  background:#260d2ee8;
+  color:#f2c8ff;
+  font:900 7px/1 Arial,sans-serif;
+  box-shadow:0 0 8px #a743bc66;
+}
+
+.raid-v149-music{
+  position:absolute;
+  z-index:92;
+  right:9px;
+  bottom:166px;
+  min-width:44px;
+  height:30px;
+  padding:0 8px;
+  border:1px solid #79548f;
+  border-radius:15px;
+  background:#110a19df;
+  color:#dcc4e8;
+  font:800 8px Arial,sans-serif;
+  box-shadow:0 0 14px #7c3c9f44;
+}
+.raid-v149-music.playing{border-color:#c89d4d;color:#ffe09a;box-shadow:0 0 16px #d39b4666}
+.raid-v149-music strong{font-size:11px;margin-right:4px}
+
+.raid-v149-help-card{
+  display:grid;
+  gap:7px;
+  margin:10px 0 14px;
+  padding:12px;
+  border:1px solid #9c4e5f;
+  background:linear-gradient(180deg,#26101a,#0b070d);
+  box-shadow:inset 0 0 18px #000;
+}
+.raid-v149-help-card b{color:#ffd28c;font:800 12px Georgia,serif}
+.raid-v149-help-card span{color:#cdbbc8;font-size:9px;line-height:1.5}
+
+@keyframes bossV149Notice{
+  0%{opacity:0;transform:translateY(10px) scale(.96)}
+  10%,78%{opacity:1;transform:translateY(0) scale(1)}
+  100%{opacity:0;transform:translateY(-7px) scale(.98)}
+}
+@keyframes bossV149WarningShake{
+  from{transform:translate(-50%,0) translateX(-2px) scale(1)}
+  to{transform:translate(-50%,0) translateX(2px) scale(1)}
+}
+
+@media(max-height:720px){
+  .raid-v149-notices{bottom:84px}
+  .raid-v149-music{bottom:154px}
+}
+@media(max-width:370px){
+  #bossStage .raid-v61-warning{bottom:10px!important;width:calc(100% - 18px)!important}
+  .raid-v149-notices{bottom:84px;width:calc(100% - 20px)}
+  .raid-v149-music{right:6px;bottom:152px}
+}
+@media(prefers-reduced-motion:reduce){
+  .raid-v149-notice{animation-duration:1.8s}
+  #bossStage .raid-v61-warning.urgent{animation:none!important}
+}
