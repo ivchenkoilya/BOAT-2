@@ -103,18 +103,19 @@ def _source_title(row: Any) -> str:
 
 async def sync_power_news(core: Any, chat_id: int) -> None:
     conn = core.db._require_connection()
+    cutoff = _now() - 3 * 86_400
     try:
         cursor = await conn.execute(
             """
             SELECT * FROM government_power_log_v128
-            WHERE chat_id=? AND action_key IN (
+            WHERE chat_id=? AND created_at>=? AND action_key IN (
                 'economic_policy','economic_mode','emergency','security_meeting',
                 'security_report','decree','statement','public_appeal',
                 'treasury_audit','tax_audit','budget_audit'
             )
             ORDER BY created_at DESC LIMIT 160
             """,
-            (int(chat_id),),
+            (int(chat_id), cutoff),
         )
         rows = list(await cursor.fetchall())
     except Exception:
