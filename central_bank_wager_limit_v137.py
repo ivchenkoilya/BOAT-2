@@ -1,41 +1,22 @@
 from __future__ import annotations
 
-import json
 import time
 from typing import Any
 
 import government_institutions_v128 as institutions
 
 
-VERSION = "Reality 137 · Лимит ставок ЦБ до миллиона"
+VERSION = "Reality 138 · Безопасный лимит ставок ЦБ"
 MAX_WAGER = 1_000_000
 
 
-async def _force_million_policy(core: Any, chat_id: int) -> None:
-    conn = core.db._require_connection()
-    now = int(time.time())
-    async with core.db.lock:
-        await conn.execute(
-            """
-            INSERT OR IGNORE INTO government_policy_v128(
-                chat_id, transfer_fee_bps, max_wager, loan_limit,
-                economic_mode, mode_ends_at, emergency_until, updated_at
-            ) VALUES(?, 0, ?, 1000000, 'stability', 0, 0, ?)
-            """,
-            (int(chat_id), MAX_WAGER, now),
-        )
-        await conn.execute(
-            """
-            UPDATE government_policy_v128
-            SET max_wager = ?, updated_at = ?
-            WHERE chat_id = ? AND max_wager <> ?
-            """,
-            (MAX_WAGER, now, int(chat_id), MAX_WAGER),
-        )
-        await conn.commit()
-
-
 def install_central_bank_wager_limit_v137(core: Any) -> None:
+    """Поднимает обычный лимит ставок ЦБ без вмешательства в запуск БД.
+
+    Предыдущая версия оборачивала Database.connect и могла задерживать открытие
+    веб-порта на Amvera. Теперь миграция выполняется лениво при чтении политики,
+    когда приложение уже полностью запущено.
+    """
     if getattr(core, "_central_bank_wager_limit_v137_installed", False):
         return
     core._central_bank_wager_limit_v137_installed = True
@@ -47,66 +28,35 @@ def install_central_bank_wager_limit_v137(core: Any) -> None:
         if action.get("key") == "economic_policy":
             action["hint"] = "Комиссия, ставки до 1 000 000 и лимиты займов"
 
-    original_connect = core.Database.connect
-
-    async def connect_with_million_wager(self: Any) -> None:
-        await original_connect(self)
-        conn = self._require_connection()
-        async with self.lock:
-            await conn.execute(
-                """
-                UPDATE government_policy_v128
-                SET max_wager = ?, updated_at = ?
-                WHERE max_wager <> ?
-                """,
-                (MAX_WAGER, int(time.time()), MAX_WAGER),
-            )
-            await conn.commit()
-
-    core.Database.connect = connect_with_million_wager
-
     original_policy = institutions._policy
 
     async def policy_with_million_wager(
         core_value: Any,
         chat_id: int,
     ) -> dict[str, Any]:
-        await _force_million_policy(core_value, int(chat_id))
         policy = dict(await original_policy(core_value, int(chat_id)))
-        if (
-            not bool(policy.get("emergency"))
-            and str(policy.get("economic_mode") or "stability")
-            in {"stability", "growth", "inflation"}
-        ):
+        mode = str(policy.get("economic_mode") or "stability")
+        emergency = bool(policy.get("emergency"))
+
+        # Базовое значение в базе всегда миллион. Спецрежимы по-прежнему могут
+        # временно уменьшать фактически возвращаемый лимит.
+        try:
+            conn = core_value.db._require_connection()
+            await conn.execute(
+                """
+                UPDATE government_policy_v128
+                SET max_wager = ?, updated_at = ?
+                WHERE chat_id = ? AND max_wager <> ?
+                """,
+                (MAX_WAGER, int(time.time()), int(chat_id), MAX_WAGER),
+            )
+            await conn.commit()
+        except Exception:
+            # Ошибка миграции не должна останавливать бота или веб-сервер.
+            pass
+
+        if not emergency and mode in {"stability", "growth", "inflation"}:
             policy["max_wager"] = MAX_WAGER
         return policy
 
     institutions._policy = policy_with_million_wager
-
-    @core.web.middleware
-    async def force_million_in_policy_action(request: Any, handler: Any):
-        if (
-            request.method.upper() == "POST"
-            and str(request.path or "").rstrip("/")
-            == "/government-v128/api/action"
-        ):
-            try:
-                data = await request.json()
-            except Exception:
-                data = None
-            if isinstance(data, dict) and str(data.get("action") or "") == "economic_policy":
-                data["max_wager"] = MAX_WAGER
-                request._read_bytes = json.dumps(
-                    data,
-                    ensure_ascii=False,
-                ).encode("utf-8")
-        return await handler(request)
-
-    previous_application = core.web.Application
-
-    def application_with_million_wager(*args: Any, **kwargs: Any):
-        application = previous_application(*args, **kwargs)
-        application.middlewares.insert(0, force_million_in_policy_action)
-        return application
-
-    core.web.Application = application_with_million_wager
