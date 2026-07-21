@@ -31,6 +31,7 @@ from finance_transfer_limit_v133 import install_finance_transfer_limit_v133
 from government_command_v129 import install_government_command_v129
 from government_crisis_hotfix_v131 import install_government_crisis_hotfix_v131
 from government_crisis_permissions_v148 import install_government_crisis_permissions_v148
+from government_crisis_ui_hotfix_v149 import install_government_crisis_ui_hotfix_v149
 from government_crisis_v131 import install_government_crisis_v131
 from government_economy_hotfix_v128 import install_government_economy_hotfix_v128
 from government_entry_v143 import install_government_entry_v143
@@ -52,7 +53,7 @@ from talent_career_v135 import install_talent_career_v135
 from telegram_network_resilience_v139 import install_telegram_network_resilience_v139
 
 
-VERSION = "Reality 148 · Строгие полномочия должностей"
+VERSION = "Reality 149 · Теневая казна"
 FINANCE_PREFIX = "finance_"
 
 
@@ -65,7 +66,7 @@ def _finance_link(core: Any, chat_id: int) -> str:
     if core.WEBAPP_PUBLIC_URL:
         return (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/finance-v127/"
-            f"?chat_id={int(chat_id)}&build=148-{int(time.time())}"
+            f"?chat_id={int(chat_id)}&build=149-{int(time.time())}"
         )
     return ""
 
@@ -104,7 +105,7 @@ def install_finance_entry_fix_v115(core: Any) -> None:
             )
             return
         await message.answer(
-            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 148</b>\n\n"
+            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 149</b>\n\n"
             "Переводы и ставки до 1 000 000 обычного влияния, займы, вклады, "
             "биржа и инвестиционный портфель. Центральный банк может удерживать "
             "комиссию, а администратор управляет курсами и остановкой торгов.",
@@ -166,3 +167,4 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_government_mandate_luxury_v147(core)
     install_government_role_permissions_v148(core)
     install_government_crisis_permissions_v148(core)
+    install_government_crisis_ui_hotfix_v149(core)
