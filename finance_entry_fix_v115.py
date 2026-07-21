@@ -30,6 +30,7 @@ from finance_route_fix_v116 import install_finance_route_fix_v116
 from finance_transfer_limit_v133 import install_finance_transfer_limit_v133
 from government_command_v129 import install_government_command_v129
 from government_crisis_hotfix_v131 import install_government_crisis_hotfix_v131
+from government_crisis_permissions_v148 import install_government_crisis_permissions_v148
 from government_crisis_v131 import install_government_crisis_v131
 from government_economy_hotfix_v128 import install_government_economy_hotfix_v128
 from government_entry_v143 import install_government_entry_v143
@@ -164,3 +165,4 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_bunker_game_v144(core)
     install_government_mandate_luxury_v147(core)
     install_government_role_permissions_v148(core)
+    install_government_crisis_permissions_v148(core)
