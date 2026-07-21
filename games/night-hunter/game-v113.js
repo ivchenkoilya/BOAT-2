@@ -61,6 +61,27 @@ try{
   source=source.replace('let source=engine;',enginePatch);
   source=source.replace("document.body.classList.add('reality110');","document.body.classList.add('reality110','reality113','reality114');");
   (0,eval)(source);
+
+  const readyStarted=Date.now();
+  const readyTimer=setInterval(()=>{
+    const demo=document.getElementById('demo');
+    const hasStartHandler=typeof startButton?.onclick==='function';
+    const demoReady=demo&&!demo.classList.contains('hidden');
+    const failed=error&&error.style.display==='block'&&Boolean(error.textContent);
+    if(hasStartHandler){
+      clearInterval(readyTimer);
+      startButton.disabled=false;
+      startButton.classList.remove('loading');
+      window.__NIGHT_HUNTER_READY__=true;
+      window.dispatchEvent(new Event('night-hunter-ready'));
+      return;
+    }
+    if(demoReady||failed||Date.now()-readyStarted>15000){
+      clearInterval(readyTimer);
+      if(demoReady)demo.disabled=false;
+      window.dispatchEvent(new Event('night-hunter-ready'));
+    }
+  },100);
 }catch(e){
   if(error){error.textContent='Reality 114 не загрузилась: '+e.message;error.style.display='block'}
   if(startButton){startButton.disabled=true;startButton.textContent='ОШИБКА ЗАГРУЗКИ'}
