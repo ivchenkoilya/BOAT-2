@@ -41,14 +41,15 @@ def _full_html() -> str:
         '  <script src="/admin-v76/admin.js?v=89"></script>'
     )
     new_scripts = (
-        '<script src="/admin-v89/admin-v89.js?v=132"></script>\n'
-        '  <script src="/admin-v95/night-hunter-admin.js?v=132"></script>\n'
-        '  <script src="/admin-v96/events-admin.js?v=132"></script>\n'
-        '  <script src="/admin-v96/reward-editor.js?v=132"></script>\n'
-        '  <script src="/admin-v112/finance-admin.js?v=132"></script>\n'
-        '  <script src="/admin-v126/sanctions-admin.js?v=132"></script>\n'
-        '  <script src="/admin-v124/full-career.js?v=132"></script>\n'
-        '  <script src="/admin-v76/admin.js?v=132"></script>\n'
+        '<script src="/admin-v89/admin-v89.js?v=132b"></script>\n'
+        '  <script src="/admin-v95/night-hunter-admin.js?v=132b"></script>\n'
+        '  <script src="/admin-v96/events-admin.js?v=132b"></script>\n'
+        '  <script src="/admin-v96/reward-editor.js?v=132b"></script>\n'
+        '  <script src="/admin-v112/finance-admin.js?v=132b"></script>\n'
+        '  <script src="/admin-v126/sanctions-admin.js?v=132b"></script>\n'
+        '  <script src="/admin-v124/full-career.js?v=132b"></script>\n'
+        '  <script src="/admin-v76/admin.js?v=132b"></script>\n'
+        '  <script src="/admin-v132/government-market.js?v=132b"></script>\n'
         '  <script>setInterval(()=>{const v=document.getElementById("versionText");if(v)v.textContent="Reality 132 · Власть и биржа"},800);</script>'
     )
     source = source.replace(old_scripts, new_scripts)
@@ -71,7 +72,7 @@ def install_admin_full_v124(core: Any) -> None:
                 "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
                 "Pragma": "no-cache",
                 "Expires": "0",
-                "X-Admin-Center": "reality-132",
+                "X-Admin-Center": "reality-132b",
             },
         )
 
@@ -80,7 +81,7 @@ def install_admin_full_v124(core: Any) -> None:
             FULL_SCRIPT,
             headers={
                 "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
-                "X-Admin-Center": "reality-132",
+                "X-Admin-Center": "reality-132b",
             },
         )
 
@@ -101,6 +102,8 @@ def install_admin_full_v124(core: Any) -> None:
             add_get("/admin-v124/", index)
             add_get("/admin-v126", index)
             add_get("/admin-v126/", index)
+            add_get("/admin-v132", index)
+            add_get("/admin-v132/", index)
             add_get("/admin-v124/full-career.js", full_script)
             return original_runner(app, *args, **kwargs)
 
@@ -148,12 +151,12 @@ def install_admin_full_v124(core: Any) -> None:
             return
 
         url = (
-            f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/admin-v126/"
-            f"?chat_id={chat_id}&user_id={int(target.user_id)}&build=132-{int(time.time())}"
+            f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/admin-v132/"
+            f"?chat_id={chat_id}&user_id={int(target.user_id)}&build=132b-{int(time.time())}"
         )
         markup = InlineKeyboardMarkup(
             inline_keyboard=[[InlineKeyboardButton(
-                text="🛠 Открыть полный админ-центр Reality 132",
+                text="🛠 Открыть новый админ-центр Reality 132",
                 web_app=WebAppInfo(url=url),
             )]]
         )
@@ -163,8 +166,8 @@ def install_admin_full_v124(core: Any) -> None:
                 "🛠 <b>ПОЛНЫЙ АДМИН-ЦЕНТР REALITY 132</b>\n\n"
                 f"Беседа: <code>{chat_id}</code>\n"
                 f"Участник: <b>{target.full_name}</b>\n\n"
-                "Участники, карьера, санкции, государственные должности, казна, "
-                "игры, финансы и управление акциями находятся в одной панели.",
+                "Вкладки «Власть» и «Акции» теперь подключены напрямую и находятся "
+                "сразу после раздела участника.",
                 reply_markup=markup,
             )
         except Exception:
@@ -174,7 +177,7 @@ def install_admin_full_v124(core: Any) -> None:
         if core.is_group(message):
             await core.ephemeral_reply(
                 message,
-                "🔒 Полный админ-центр Reality 132 отправлен в личные сообщения.",
+                "🔒 Новый админ-центр Reality 132 отправлен в личные сообщения.",
                 delay_seconds=3,
             )
 
