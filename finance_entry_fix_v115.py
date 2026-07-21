@@ -17,12 +17,13 @@ from finance_investments_v127 import install_finance_investments_v127
 from finance_loan_requests_v118 import install_finance_loan_requests_v118
 from finance_products_v129 import install_finance_products_v129
 from finance_route_fix_v116 import install_finance_route_fix_v116
-from government_command_v128 import install_government_command_v128
+from government_command_v129 import install_government_command_v129
 from government_economy_hotfix_v128 import install_government_economy_hotfix_v128
 from government_institutions_v128 import install_government_institutions_v128
 from government_reform_assets_v129 import install_government_reform_assets_v129
 from government_reform_v129 import install_government_reform_v129
 from government_v127 import install_government_v127
+from government_win_tax_hotfix_v129 import install_government_win_tax_hotfix_v129
 from sanctions_hotfix_v126 import install_sanctions_hotfix_v126
 from sanctions_v126 import install_sanctions_v126
 
@@ -114,5 +115,6 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_government_institutions_v128(core)
     install_government_economy_hotfix_v128(core)
     install_government_reform_v129(core)
+    install_government_win_tax_hotfix_v129(core)
     install_government_reform_assets_v129(core)
-    install_government_command_v128(core)
+    install_government_command_v129(core)
