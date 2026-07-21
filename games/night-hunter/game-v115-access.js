@@ -2,7 +2,7 @@
 'use strict';
 
 const TEST_PIN='6767';
-const STABLE_GAME='/games/night-hunter/game-v113.js?v=118';
+const STABLE_GAME='/games/night-hunter/game-v116.js?v=116';
 let loading=false;
 
 function loadScript(src){
@@ -25,7 +25,7 @@ function waitReady(){
     const timer=setTimeout(()=>{
       window.removeEventListener('night-hunter-ready',ready);
       reject(new Error('Тестовая версия загружалась слишком долго.'));
-    },20000);
+    },25000);
     window.addEventListener('night-hunter-ready',ready,{once:true});
   });
 }
@@ -66,17 +66,17 @@ function initEarlyAccess(){
   const launchTest=async()=>{
     if(loading)return;
     loading=true;
-    if(start){start.disabled=true;start.textContent='ЗАГРУЗКА ТЕСТОВОЙ ВЕРСИИ…'}
+    if(start){start.disabled=true;start.textContent='ЗАГРУЗКА REALITY 116…'}
     if(input)input.disabled=true;
     if(button)button.disabled=true;
-    setHint('PIN принят. Подготавливаем стабильную тестовую сборку…','loading');
+    setHint('PIN принят. Загружаем расширенный завод и живую улицу…','loading');
 
     try{
       await loadScript(STABLE_GAME);
       await waitReady();
       if(start&&!start.classList.contains('hidden'))start.disabled=false;
       box?.classList.add('unlocked');
-      setHint('Тестовая сборка готова. Можно начинать смену.','ok');
+      setHint('Reality 116 готова. Можно начинать смену.','ok');
       setTimeout(()=>box?.classList.add('hiddenAccess'),900);
     }catch(err){
       loading=false;
