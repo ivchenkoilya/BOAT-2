@@ -13,6 +13,7 @@ from admin_finance_compat_v123 import install_admin_finance_compat_v123
 from admin_full_v124 import install_admin_full_v124
 from admin_government_market_v132 import install_admin_government_market_v132
 from admin_market_lock_hotfix_v132 import install_admin_market_lock_hotfix_v132
+from bot_game_stake_limit_v136 import install_bot_game_stake_limit_v136
 from career_interactions_v122 import install_career_interactions_v122
 from career_system_v120 import install_career_system_v120
 from command_hub_v121 import install_command_hub_v121
@@ -39,7 +40,7 @@ from sanctions_v126 import install_sanctions_v126
 from talent_career_v135 import install_talent_career_v135
 
 
-VERSION = "Reality 134 · Кнопка выборов"
+VERSION = "Reality 136 · Ставки до миллиона"
 FINANCE_PREFIX = "finance_"
 
 
@@ -52,7 +53,7 @@ def _finance_link(core: Any, chat_id: int) -> str:
     if core.WEBAPP_PUBLIC_URL:
         return (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/finance-v127/"
-            f"?chat_id={int(chat_id)}&build=134-{int(time.time())}"
+            f"?chat_id={int(chat_id)}&build=136-{int(time.time())}"
         )
     return ""
 
@@ -91,7 +92,7 @@ def install_finance_entry_fix_v115(core: Any) -> None:
             )
             return
         await message.answer(
-            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 134</b>\n\n"
+            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 136</b>\n\n"
             "Переводы до 1 000 000 влияния, займы, вклады, биржа и "
             "инвестиционный портфель. Центральный банк может удерживать комиссию, "
             "а администратор управляет курсами и остановкой торгов.",
@@ -140,3 +141,4 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_admin_election_now_v133(core)
     install_admin_election_button_hotfix_v134(core)
     install_talent_career_v135(core)
+    install_bot_game_stake_limit_v136(core)
