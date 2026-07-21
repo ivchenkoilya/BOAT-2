@@ -18,28 +18,82 @@ async def _ensure_lock_column(core: Any) -> None:
     conn = core.db._require_connection()
     cursor = await conn.execute("PRAGMA table_info(finance_stock_admin_v132)")
     columns = {str(row["name"]) for row in await cursor.fetchall()}
-    if "price_locked" not in columns:
-        async with core.db.lock:
+    async with core.db.lock:
+        changed = False
+        if "price_locked" not in columns:
             await conn.execute(
                 "ALTER TABLE finance_stock_admin_v132 "
                 "ADD COLUMN price_locked INTEGER NOT NULL DEFAULT 0"
             )
+            changed = True
+        if "locked_price" not in columns:
+            await conn.execute(
+                "ALTER TABLE finance_stock_admin_v132 "
+                "ADD COLUMN locked_price INTEGER NOT NULL DEFAULT 0"
+            )
+            changed = True
+        if changed:
             await conn.commit()
 
 
 async def _set_lock(core: Any, chat_id: int, symbol: str, locked: bool) -> None:
     await _ensure_lock_column(core)
     conn = core.db._require_connection()
+    symbol = str(symbol).upper()
+    locked_price = 0
+    if locked:
+        cursor = await conn.execute(
+            "SELECT price FROM finance_market_v127 WHERE chat_id=? AND symbol=?",
+            (int(chat_id), symbol),
+        )
+        row = await cursor.fetchone()
+        locked_price = int(row["price"] or 0) if row else 0
     await conn.execute(
         """
         INSERT INTO finance_stock_admin_v132(
-            chat_id,symbol,trading_paused,price_locked,updated_at
-        ) VALUES(?,?,0,?,?) ON CONFLICT(chat_id,symbol) DO UPDATE SET
-            price_locked=excluded.price_locked,updated_at=excluded.updated_at
+            chat_id,symbol,trading_paused,price_locked,locked_price,updated_at
+        ) VALUES(?,?,0,?,?,?) ON CONFLICT(chat_id,symbol) DO UPDATE SET
+            price_locked=excluded.price_locked,locked_price=excluded.locked_price,
+            updated_at=excluded.updated_at
         """,
-        (int(chat_id), str(symbol).upper(), 1 if locked else 0, int(time.time())),
+        (
+            int(chat_id), symbol, 1 if locked else 0,
+            locked_price, int(time.time()),
+        ),
     )
     await conn.commit()
+
+
+async def _restore_locked_price(
+    core: Any,
+    chat_id: int,
+    symbol: str,
+    locked_price: int,
+) -> None:
+    if int(locked_price) <= 0:
+        return
+    conn = core.db._require_connection()
+    now = int(time.time())
+    bucket = now // invest_core.MARKET_TICK_SECONDS
+    async with core.db.lock:
+        await conn.execute(
+            """
+            UPDATE finance_market_v127
+            SET price=?,previous_price=?,updated_at=?
+            WHERE chat_id=? AND symbol=?
+            """,
+            (int(locked_price), int(locked_price), now, int(chat_id), str(symbol)),
+        )
+        await conn.execute(
+            """
+            INSERT INTO finance_stock_history_v127(
+                chat_id,symbol,bucket,price,volume
+            ) VALUES(?,?,?,?,0)
+            ON CONFLICT(chat_id,symbol,bucket) DO UPDATE SET price=excluded.price
+            """,
+            (int(chat_id), str(symbol), bucket, int(locked_price)),
+        )
+        await conn.commit()
 
 
 def install_admin_market_lock_hotfix_v132(core: Any) -> None:
@@ -64,7 +118,8 @@ def install_admin_market_lock_hotfix_v132(core: Any) -> None:
         conn = core_value.db._require_connection()
         cursor = await conn.execute(
             """
-            SELECT a.symbol,m.price
+            SELECT a.symbol,
+                   CASE WHEN a.locked_price>0 THEN a.locked_price ELSE m.price END price
             FROM finance_stock_admin_v132 a
             JOIN finance_market_v127 m
               ON m.chat_id=a.chat_id AND m.symbol=a.symbol
@@ -79,33 +134,46 @@ def install_admin_market_lock_hotfix_v132(core: Any) -> None:
         await original_advance(core_value, int(chat_id))
         if not locked:
             return
-        now = int(time.time())
-        bucket = now // invest_core.MARKET_TICK_SECONDS
-        async with core_value.db.lock:
-            for symbol, price in locked.items():
-                await conn.execute(
-                    """
-                    UPDATE finance_market_v127
-                    SET price=?,previous_price=?,updated_at=?
-                    WHERE chat_id=? AND symbol=?
-                    """,
-                    (price, price, now, int(chat_id), symbol),
-                )
-                await conn.execute(
-                    """
-                    INSERT INTO finance_stock_history_v127(
-                        chat_id,symbol,bucket,price,volume
-                    ) VALUES(?,?,?,?,0)
-                    ON CONFLICT(chat_id,symbol,bucket) DO UPDATE SET
-                        price=excluded.price
-                    """,
-                    (int(chat_id), symbol, bucket, price),
-                )
-            await conn.commit()
+        for symbol, price in locked.items():
+            await _restore_locked_price(core_value, int(chat_id), symbol, price)
 
     invest_market._advance_market = advance_with_locked_prices
     investments_app._advance_market = advance_with_locked_prices
     invest_ops._advance_market = advance_with_locked_prices
+
+    original_trade = investments_app._trade
+
+    async def trade_with_locked_price_restore(
+        core_value: Any,
+        chat_id: int,
+        user_id: int,
+        data: dict[str, Any],
+        side: str,
+    ) -> str:
+        await _ensure_lock_column(core_value)
+        symbol = str(data.get("symbol") or "").upper()
+        conn = core_value.db._require_connection()
+        cursor = await conn.execute(
+            """
+            SELECT price_locked,locked_price
+            FROM finance_stock_admin_v132
+            WHERE chat_id=? AND symbol=?
+            """,
+            (int(chat_id), symbol),
+        )
+        control = await cursor.fetchone()
+        result = await original_trade(core_value, chat_id, user_id, data, side)
+        if control is not None and bool(int(control["price_locked"] or 0)):
+            await _restore_locked_price(
+                core_value,
+                int(chat_id),
+                symbol,
+                int(control["locked_price"] or 0),
+            )
+        return result
+
+    investments_app._trade = trade_with_locked_price_restore
+    invest_ops._trade = trade_with_locked_price_restore
 
     original_market_state = admin_market._market_state
 
@@ -143,6 +211,16 @@ def install_admin_market_lock_hotfix_v132(core: Any) -> None:
         action = str(data.get("action") or "")
         symbol = str(data.get("symbol") or "").upper()
         chat_id = admin_market._as_int(data.get("chat_id"))
+        was_locked = False
+        if action == "stock_move" and chat_id < 0 and symbol in invest_core.STOCKS:
+            await _ensure_lock_column(core)
+            conn = core.db._require_connection()
+            cursor = await conn.execute(
+                "SELECT price_locked FROM finance_stock_admin_v132 WHERE chat_id=? AND symbol=?",
+                (chat_id, symbol),
+            )
+            row = await cursor.fetchone()
+            was_locked = bool(row is not None and int(row["price_locked"] or 0))
         if action == "stock_lock":
             try:
                 admin_market._auth(core, request)
@@ -164,7 +242,10 @@ def install_admin_market_lock_hotfix_v132(core: Any) -> None:
             await _set_lock(core, chat_id, symbol, False)
         response = await handler(request)
         if (
-            action in {"stock_set_price", "stock_reset"}
+            (
+                action in {"stock_set_price", "stock_reset"}
+                or (action == "stock_move" and was_locked)
+            )
             and chat_id < 0
             and symbol in invest_core.STOCKS
             and int(getattr(response, "status", 500)) < 400
