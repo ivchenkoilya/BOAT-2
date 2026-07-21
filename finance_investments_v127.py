@@ -6,8 +6,10 @@ from typing import Any
 from finance_investments_v127_core import (
     APP_DIR, MARKET_TICK_SECONDS, STOCKS, VERSION, _ensure_schema, _now, _route_keys, _safe_int,
 )
-from finance_investments_v127_market import _advance_market, _auth, _investment_payload
+from finance_investments_v127_market import _advance_market, _auth, _investment_payload, _news_dict
 from finance_investments_v127_ops import _create_deposit, _trade, _withdraw_deposit
+from finance_market_news_v128 import news_for_range
+
 
 def install_finance_investments_v127(core: Any) -> None:
     if getattr(core, "_finance_investments_v127_installed", False):
@@ -52,29 +54,39 @@ def install_finance_investments_v127(core: Any) -> None:
             period = _safe_int(request.query.get("period"), 86400)
             if period not in allowed_periods:
                 period = 86400
-            cutoff_bucket = (_now() - period) // MARKET_TICK_SECONDS
+            now = _now()
+            cutoff_bucket = (now - period) // MARKET_TICK_SECONDS
             conn = core.db._require_connection()
             cursor = await conn.execute(
                 """
-                SELECT bucket,price FROM finance_stock_history_v127
+                SELECT bucket,price,volume FROM finance_stock_history_v127
                 WHERE chat_id=? AND symbol=? AND bucket>=?
                 ORDER BY bucket ASC
                 """,
                 (chat_id, symbol, cutoff_bucket),
             )
-            rows = await cursor.fetchall()
-            if len(rows) > 360:
-                step = math.ceil(len(rows) / 360)
-                rows = rows[::step]
+            rows = list(await cursor.fetchall())
+            if len(rows) > 480:
+                step = math.ceil(len(rows) / 480)
+                sampled = rows[::step]
+                if sampled[-1]["bucket"] != rows[-1]["bucket"]:
+                    sampled.append(rows[-1])
+                rows = sampled
+            news = await news_for_range(conn, chat_id, symbol, now - period, now + MARKET_TICK_SECONDS)
             return core.web.json_response(
                 {
                     "ok": True,
                     "symbol": symbol,
                     "period": period,
                     "history": [
-                        {"time": int(row["bucket"]) * MARKET_TICK_SECONDS, "price": int(row["price"])}
+                        {
+                            "time": int(row["bucket"]) * MARKET_TICK_SECONDS,
+                            "price": int(row["price"]),
+                            "volume": int(row["volume"] or 0),
+                        }
                         for row in rows
                     ],
+                    "events": [_news_dict(item) for item in news],
                 }
             )
         except PermissionError as error:
