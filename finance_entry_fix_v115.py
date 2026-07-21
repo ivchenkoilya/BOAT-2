@@ -7,6 +7,7 @@ from aiogram.filters import Command
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from admin_career_v123 import install_admin_career_v123
+from admin_election_button_hotfix_v134 import install_admin_election_button_hotfix_v134
 from admin_election_now_v133 import install_admin_election_now_v133
 from admin_finance_compat_v123 import install_admin_finance_compat_v123
 from admin_full_v124 import install_admin_full_v124
@@ -37,7 +38,7 @@ from sanctions_hotfix_v126 import install_sanctions_hotfix_v126
 from sanctions_v126 import install_sanctions_v126
 
 
-VERSION = "Reality 133 · Переводы до миллиона"
+VERSION = "Reality 134 · Кнопка выборов"
 FINANCE_PREFIX = "finance_"
 
 
@@ -50,7 +51,7 @@ def _finance_link(core: Any, chat_id: int) -> str:
     if core.WEBAPP_PUBLIC_URL:
         return (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/finance-v127/"
-            f"?chat_id={int(chat_id)}&build=133-{int(time.time())}"
+            f"?chat_id={int(chat_id)}&build=134-{int(time.time())}"
         )
     return ""
 
@@ -89,7 +90,7 @@ def install_finance_entry_fix_v115(core: Any) -> None:
             )
             return
         await message.answer(
-            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 133</b>\n\n"
+            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 134</b>\n\n"
             "Переводы до 1 000 000 влияния, займы, вклады, биржа и "
             "инвестиционный портфель. Центральный банк может удерживать комиссию, "
             "а администратор управляет курсами и остановкой торгов.",
@@ -136,3 +137,4 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_admin_market_lock_hotfix_v132(core)
     install_finance_transfer_limit_v133(core)
     install_admin_election_now_v133(core)
+    install_admin_election_button_hotfix_v134(core)
