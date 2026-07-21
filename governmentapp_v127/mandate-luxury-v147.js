@@ -148,7 +148,18 @@
     document.querySelectorAll('.mandate-document-v143').forEach(decorateDocument);
   }
 
+  document.addEventListener('pointerdown',event=>{
+    const canvas=event.target.closest?.('#signatureCanvasV143');
+    if(canvas)delete canvas.dataset.v147Centered;
+  },true);
+
   document.addEventListener('click',event=>{
+    if(event.target.closest('[data-clear-signature]')){
+      setTimeout(()=>{
+        const canvas=document.getElementById('signatureCanvasV143');
+        if(canvas)delete canvas.dataset.v147Centered;
+      },0);
+    }
     if(event.target.closest('[data-submit-signature]')){
       centerSignatureCanvas(document.getElementById('signatureCanvasV143'));
     }
