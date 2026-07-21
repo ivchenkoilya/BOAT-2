@@ -68,19 +68,33 @@ def install_night_hunter_v93(core: Any) -> None:
 
     base._base_reward = reward_with_night_hunter
 
+    def response_headers() -> dict[str, str]:
+        return {
+            "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+            "Pragma": "no-cache",
+            "Expires": "0",
+            "X-Night-Hunter": VERSION,
+        }
+
     def file_response(path: Path) -> web.FileResponse:
-        return core.web.FileResponse(
-            path,
-            headers={
-                "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
-                "Pragma": "no-cache",
-                "Expires": "0",
-                "X-Night-Hunter": VERSION,
-            },
-        )
+        return core.web.FileResponse(path, headers=response_headers())
 
     async def night_index(_: web.Request) -> web.StreamResponse:
-        return file_response(GAME_PATH / "index.html")
+        html = (GAME_PATH / "index.html").read_text(encoding="utf-8")
+        html = html.replace(
+            "REALITY 115 · В РАЗРАБОТКЕ",
+            "REALITY 116 · В РАЗРАБОТКЕ",
+        )
+        html = html.replace(
+            "/games/night-hunter/game-v115-access.js?v=117",
+            "/games/night-hunter/game-v115-access.js?v=1162",
+        )
+        return core.web.Response(
+            text=html,
+            content_type="text/html",
+            charset="utf-8",
+            headers=response_headers(),
+        )
 
     def make_static_handler(filename: str):
         async def static_file(_: web.Request) -> web.StreamResponse:
