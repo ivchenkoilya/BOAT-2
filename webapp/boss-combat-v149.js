@@ -2,17 +2,12 @@
   'use strict';
 
   const tg=window.Telegram?.WebApp;
-  const TRACK_CHUNKS=Array.from(
-    {length:9},
-    (_,index)=>`/boss-app/assets/main-hero-theme-${String(index).padStart(2,'0')}.b64`
-  );
+  const TRACK_URL='/boss-app/assets/main-hero-theme.ogg?v=151';
 
   let latest=null;
   let lastLog='';
   let receivedAt=performance.now();
   let track=null;
-  let trackUrl='';
-  let trackLoading=null;
   let musicRequested=false;
 
   function ensureUi(){
@@ -122,43 +117,19 @@
     return battle.status==='active'&&Number(battle.hp)>0;
   }
 
-  function bytesFromBase64(value){
-    const binary=atob(value);
-    const bytes=new Uint8Array(binary.length);
-    for(let index=0;index<binary.length;index++)bytes[index]=binary.charCodeAt(index);
-    return bytes;
-  }
-
   function ensureTrack(){
-    if(track)return Promise.resolve(track);
-    if(trackLoading)return trackLoading;
-    trackLoading=Promise.all(
-      TRACK_CHUNKS.map(url=>fetch(url,{cache:'force-cache'}).then(response=>{
-        if(!response.ok)throw new Error(`Не загружена музыка: ${response.status}`);
-        return response.text();
-      }))
-    ).then(parts=>{
-      const bytes=bytesFromBase64(parts.join('').replace(/\s+/g,''));
-      const blob=new Blob([bytes],{type:'audio/mpeg'});
-      trackUrl=URL.createObjectURL(blob);
-      track=new Audio(trackUrl);
-      track.loop=true;
-      track.preload='auto';
-      track.volume=.32;
-      track.setAttribute('playsinline','');
-      return track;
-    }).catch(error=>{
-      console.warn('Не удалось загрузить пользовательский трек босса',error);
-      trackLoading=null;
-      return null;
-    });
-    return trackLoading;
+    if(track)return track;
+    track=new Audio(TRACK_URL);
+    track.loop=true;
+    track.preload='auto';
+    track.volume=.32;
+    track.setAttribute('playsinline','');
+    return track;
   }
 
   async function playTrack(){
     if(!musicRequested||!isBattleActive()||document.hidden)return;
-    const player=await ensureTrack();
-    if(!player)return;
+    const player=ensureTrack();
     try{await player.play();}catch(_error){}
   }
 
@@ -199,8 +170,8 @@
     new MutationObserver(mirror).observe(toast,{attributes:true,childList:true,subtree:true});
   }
 
-  // Telegram и мобильные браузеры разрешают звук только после действия игрока.
-  // Кнопки музыки нет: любой первый тап запускает присланный пользователем трек.
+  // Telegram разрешает звук после действия игрока. Отдельной музыкальной
+  // кнопки нет: присланный трек запускается после первого касания экрана.
   const requestMusic=()=>{
     musicRequested=true;
     playTrack();
@@ -211,10 +182,7 @@
     if(document.hidden)stopTrack();
     else playTrack();
   });
-  window.addEventListener('beforeunload',()=>{
-    stopTrack();
-    if(trackUrl)URL.revokeObjectURL(trackUrl);
-  });
+  window.addEventListener('beforeunload',stopTrack);
 
   window.addEventListener('raid-state-updated',event=>applyState(event.detail));
   document.addEventListener('click',()=>setTimeout(patchHelp,0),true);
