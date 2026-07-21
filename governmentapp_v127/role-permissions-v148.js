@@ -65,7 +65,8 @@
       host.insertAdjacentElement('beforebegin',banner);
     }
     const roles=offices.length?offices.map(key=>`<span>${escapeHtml(officeTitle(key))}</span>`).join(''):'<span class="none">Государственной должности нет</span>';
-    banner.innerHTML=`<div class="role-access-icon-v148">🔐</div><div><small>ПЕРСОНАЛЬНЫЙ ДОСТУП</small><b>Активны только полномочия вашей должности</b><div class="role-access-list-v148">${roles}</div><p>Статус владельца бота не даёт президентские или иные государственные права. Для управления системой используется отдельный админ-центр.</p></div>`;
+    const markup=`<div class="role-access-icon-v148">🔐</div><div><small>ПЕРСОНАЛЬНЫЙ ДОСТУП</small><b>Активны только полномочия вашей должности</b><div class="role-access-list-v148">${roles}</div><p>Статус владельца бота не даёт президентские или иные государственные права. Для управления системой используется отдельный админ-центр.</p></div>`;
+    if(banner.innerHTML!==markup)banner.innerHTML=markup;
   }
 
   function applyAccess(){
