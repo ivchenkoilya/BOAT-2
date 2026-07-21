@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#08070c">
+  <title>Государство реальности</title>
+  <link rel="stylesheet" href="/government-v127/app.css?v=127">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="seal">🏛</div>
+      <div class="brand"><small>REALITY 127</small><h1>Государство реальности</h1><p id="chatTitle">Подключение к беседе…</p></div>
+      <button class="icon-button" id="refreshButton" aria-label="Обновить">↻</button>
+    </header>
+
+    <section class="identity" id="identity"></section>
+
+    <div class="screen-stack">
+      <section class="screen active" data-screen="home">
+        <div id="homeHero"></div>
+        <div class="section-head"><div><small>СОСТАВ ВЛАСТИ</small><h2>Государственные должности</h2></div></div>
+        <div class="office-grid" id="officeGrid"></div>
+        <div class="section-head"><div><small>СЕЙЧАС В РАБОТЕ</small><h2>Активные процессы</h2></div></div>
+        <div id="activeProcesses"></div>
+      </section>
+
+      <section class="screen" data-screen="elections">
+        <div class="section-head"><div><small>ВЫБОРЫ</small><h2>Кандидаты и голосование</h2></div></div>
+        <div id="electionControls"></div>
+        <div id="electionList"></div>
+      </section>
+
+      <section class="screen" data-screen="duma">
+        <div class="section-head"><div><small>ГОСДУМА</small><h2>Законопроекты</h2></div></div>
+        <div id="billComposer"></div>
+        <div id="billList"></div>
+      </section>
+
+      <section class="screen" data-screen="laws">
+        <div class="section-head"><div><small>КОДЕКС РЕАЛЬНОСТИ</small><h2>Действующие законы</h2></div></div>
+        <div id="lawList"></div>
+      </section>
+
+      <section class="screen" data-screen="treasury">
+        <div class="section-head"><div><small>КАЗНА И НАЛОГИ</small><h2>Государственные финансы</h2></div></div>
+        <div id="treasuryHero"></div>
+        <div id="taxPolicy"></div>
+        <div id="treasuryLog"></div>
+      </section>
+
+      <section class="screen" data-screen="oversight">
+        <div class="section-head"><div><small>НАДЗОР</small><h2>Санкционные предложения</h2></div></div>
+        <div id="sanctionComposer"></div>
+        <div id="sanctionBills"></div>
+      </section>
+    </div>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="active" data-tab="home"><span>🏠</span><small>Государство</small></button>
+    <button data-tab="elections"><span>🗳</span><small>Выборы</small></button>
+    <button data-tab="duma"><span>🏛</span><small>Госдума</small></button>
+    <button data-tab="laws"><span>📜</span><small>Законы</small></button>
+    <button data-tab="treasury"><span>💰</span><small>Казна</small></button>
+    <button data-tab="oversight"><span>🚨</span><small>Надзор</small></button>
+  </nav>
+
+  <div class="loading" id="loading"><div class="spinner"></div><b>Формируем государство</b><span>Загружаем власть, выборы, казну и законы</span></div>
+  <div class="toast" id="toast"></div>
+  <script src="/government-v127/app.js?v=127"></script>
+</body>
+</html>
