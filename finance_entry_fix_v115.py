@@ -9,6 +9,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from admin_career_v123 import install_admin_career_v123
 from admin_election_action_fix_v140 import install_admin_election_action_fix_v140
 from admin_election_button_hotfix_v134 import install_admin_election_button_hotfix_v134
+from admin_election_force_voting_v141 import install_admin_election_force_voting_v141
 from admin_election_now_v133 import install_admin_election_now_v133
 from admin_finance_compat_v123 import install_admin_finance_compat_v123
 from admin_full_v124 import install_admin_full_v124
@@ -43,7 +44,7 @@ from talent_career_v135 import install_talent_career_v135
 from telegram_network_resilience_v139 import install_telegram_network_resilience_v139
 
 
-VERSION = "Reality 140 · Рабочий запуск выборов"
+VERSION = "Reality 141 · Мгновенное голосование"
 FINANCE_PREFIX = "finance_"
 
 
@@ -56,7 +57,7 @@ def _finance_link(core: Any, chat_id: int) -> str:
     if core.WEBAPP_PUBLIC_URL:
         return (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/finance-v127/"
-            f"?chat_id={int(chat_id)}&build=140-{int(time.time())}"
+            f"?chat_id={int(chat_id)}&build=141-{int(time.time())}"
         )
     return ""
 
@@ -95,7 +96,7 @@ def install_finance_entry_fix_v115(core: Any) -> None:
             )
             return
         await message.answer(
-            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 140</b>\n\n"
+            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 141</b>\n\n"
             "Переводы и ставки до 1 000 000 обычного влияния, займы, вклады, "
             "биржа и инвестиционный портфель. Центральный банк может удерживать "
             "комиссию, а администратор управляет курсами и остановкой торгов.",
@@ -148,3 +149,4 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_central_bank_wager_limit_v137(core)
     install_telegram_network_resilience_v139(core)
     install_admin_election_action_fix_v140(core)
+    install_admin_election_force_voting_v141(core)
