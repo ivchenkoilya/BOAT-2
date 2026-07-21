@@ -22,13 +22,15 @@ from government_economy_hotfix_v128 import install_government_economy_hotfix_v12
 from government_institutions_v128 import install_government_institutions_v128
 from government_reform_assets_v129 import install_government_reform_assets_v129
 from government_reform_v129 import install_government_reform_v129
+from government_small_group_v130 import install_government_small_group_v130
 from government_v127 import install_government_v127
 from government_win_tax_hotfix_v129 import install_government_win_tax_hotfix_v129
+from hierarchy_v130 import install_hierarchy_v130
 from sanctions_hotfix_v126 import install_sanctions_hotfix_v126
 from sanctions_v126 import install_sanctions_v126
 
 
-VERSION = "Reality 129 · Портфель, государство и налоги"
+VERSION = "Reality 130 · Иерархия и компактное государство"
 FINANCE_PREFIX = "finance_"
 
 
@@ -41,7 +43,7 @@ def _finance_link(core: Any, chat_id: int) -> str:
     if core.WEBAPP_PUBLIC_URL:
         return (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/finance-v127/"
-            f"?chat_id={int(chat_id)}&build=129-{int(time.time())}"
+            f"?chat_id={int(chat_id)}&build=130-{int(time.time())}"
         )
     return ""
 
@@ -80,7 +82,7 @@ def install_finance_entry_fix_v115(core: Any) -> None:
             )
             return
         await message.answer(
-            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 129</b>\n\n"
+            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 130</b>\n\n"
             "Переводы, крупные займы до 100 000, быстрые вклады сроком до 10 дней, "
             "живая биржа и отдельный инвестиционный портфель. Центральный банк "
             "может устанавливать дополнительные ограничения. Карьерное влияние не тратится.",
@@ -116,5 +118,7 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_government_economy_hotfix_v128(core)
     install_government_reform_v129(core)
     install_government_win_tax_hotfix_v129(core)
+    install_government_small_group_v130(core)
     install_government_reform_assets_v129(core)
     install_government_command_v129(core)
+    install_hierarchy_v130(core)
