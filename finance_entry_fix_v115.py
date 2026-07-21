@@ -16,6 +16,7 @@ from admin_market_lock_hotfix_v132 import install_admin_market_lock_hotfix_v132
 from bot_game_stake_limit_v136 import install_bot_game_stake_limit_v136
 from career_interactions_v122 import install_career_interactions_v122
 from career_system_v120 import install_career_system_v120
+from central_bank_wager_limit_v137 import install_central_bank_wager_limit_v137
 from command_hub_v121 import install_command_hub_v121
 from command_hub_compat_v121 import install_command_hub_compat_v121
 from finance_investments_v127 import install_finance_investments_v127
@@ -40,7 +41,7 @@ from sanctions_v126 import install_sanctions_v126
 from talent_career_v135 import install_talent_career_v135
 
 
-VERSION = "Reality 136 · Ставки до миллиона"
+VERSION = "Reality 137 · Лимит ставок ЦБ до миллиона"
 FINANCE_PREFIX = "finance_"
 
 
@@ -53,7 +54,7 @@ def _finance_link(core: Any, chat_id: int) -> str:
     if core.WEBAPP_PUBLIC_URL:
         return (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/finance-v127/"
-            f"?chat_id={int(chat_id)}&build=136-{int(time.time())}"
+            f"?chat_id={int(chat_id)}&build=137-{int(time.time())}"
         )
     return ""
 
@@ -92,10 +93,10 @@ def install_finance_entry_fix_v115(core: Any) -> None:
             )
             return
         await message.answer(
-            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 136</b>\n\n"
-            "Переводы до 1 000 000 влияния, займы, вклады, биржа и "
-            "инвестиционный портфель. Центральный банк может удерживать комиссию, "
-            "а администратор управляет курсами и остановкой торгов.",
+            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 137</b>\n\n"
+            "Переводы и ставки до 1 000 000 обычного влияния, займы, вклады, "
+            "биржа и инвестиционный портфель. Центральный банк может удерживать "
+            "комиссию, а администратор управляет курсами и остановкой торгов.",
             reply_markup=InlineKeyboardMarkup(
                 inline_keyboard=[[
                     InlineKeyboardButton(
@@ -142,3 +143,4 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_admin_election_button_hotfix_v134(core)
     install_talent_career_v135(core)
     install_bot_game_stake_limit_v136(core)
+    install_central_bank_wager_limit_v137(core)
