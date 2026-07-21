@@ -15,6 +15,7 @@ from command_hub_v121 import install_command_hub_v121
 from command_hub_compat_v121 import install_command_hub_compat_v121
 from finance_route_fix_v116 import install_finance_route_fix_v116
 from finance_loan_requests_v118 import install_finance_loan_requests_v118
+from sanctions_hotfix_v126 import install_sanctions_hotfix_v126
 from sanctions_v126 import install_sanctions_v126
 
 
@@ -94,9 +95,9 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     ]
     handlers[:] = preferred + [handler for handler in handlers if handler not in preferred]
 
-    # Санкции ставятся последним слоем после всех игр, финансов, карьеры и
-    # админ-панели. Так ограничения проверяются раньше старых обработчиков,
-    # а раздел санкций появляется внутри полного Reality 126.
+    # Сначала подключается полная панель и базовая таблица санкций. Последний
+    # hotfix закрывает inline-обходы и разрешает должнику погашать старый долг,
+    # не позволяя создавать новые переводы, займы или заявки.
     install_career_system_v120(core)
     install_command_hub_v121(core)
     install_command_hub_compat_v121(core)
@@ -105,3 +106,4 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_admin_career_v123(core)
     install_admin_full_v124(core)
     install_sanctions_v126(core)
+    install_sanctions_hotfix_v126(core)
