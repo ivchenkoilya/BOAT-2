@@ -150,9 +150,15 @@ def install_finance_investments_v127(core: Any) -> None:
                 )
 
             async def script(_: Any):
-                return core.web.FileResponse(
-                    APP_DIR / "app.js",
-                    headers={"Cache-Control": "no-store", "Content-Type": "application/javascript; charset=utf-8"},
+                source = "\n".join(
+                    (APP_DIR / f"app.part{index}.js").read_text(encoding="utf-8")
+                    for index in range(1, 4)
+                )
+                return core.web.Response(
+                    text=source,
+                    content_type="application/javascript",
+                    charset="utf-8",
+                    headers={"Cache-Control": "no-store"},
                 )
 
             for path in ("/finance-v127", "/finance-v127/", "/finance-v127/index.html"):
