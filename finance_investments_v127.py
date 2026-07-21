@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 from typing import Any
 
+from finance_government_v128_news import sync_power_news
 from finance_investments_v127_core import (
     APP_DIR, MARKET_TICK_SECONDS, STOCKS, VERSION, _ensure_schema, _now, _route_keys, _safe_int,
 )
@@ -29,6 +30,7 @@ def install_finance_investments_v127(core: Any) -> None:
     async def state_api(request: Any):
         try:
             user, chat_id, _, _ = await _auth(core, request)
+            await sync_power_news(core, chat_id)
             return core.web.json_response(
                 await _investment_payload(core, chat_id, int(user.id))
             )
@@ -46,6 +48,7 @@ def install_finance_investments_v127(core: Any) -> None:
         try:
             user, chat_id, _, _ = await _auth(core, request)
             await _ensure_schema(core)
+            await sync_power_news(core, chat_id)
             await _advance_market(core, chat_id)
             symbol = str(request.query.get("symbol") or "EGO").upper()
             if symbol not in STOCKS:
@@ -110,8 +113,10 @@ def install_finance_investments_v127(core: Any) -> None:
             elif action == "deposit_withdraw":
                 message = await _withdraw_deposit(core, chat_id, user_id, data)
             elif action == "stock_buy":
+                await sync_power_news(core, chat_id)
                 message = await _trade(core, chat_id, user_id, data, "buy")
             elif action == "stock_sell":
+                await sync_power_news(core, chat_id)
                 message = await _trade(core, chat_id, user_id, data, "sell")
             else:
                 raise ValueError("Неизвестная инвестиционная операция.")
