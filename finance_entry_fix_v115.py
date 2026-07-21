@@ -7,6 +7,7 @@ from aiogram.filters import Command
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from admin_career_v123 import install_admin_career_v123
+from admin_election_now_v133 import install_admin_election_now_v133
 from admin_finance_compat_v123 import install_admin_finance_compat_v123
 from admin_full_v124 import install_admin_full_v124
 from admin_government_market_v132 import install_admin_government_market_v132
@@ -134,3 +135,4 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_admin_government_market_v132(core)
     install_admin_market_lock_hotfix_v132(core)
     install_finance_transfer_limit_v133(core)
+    install_admin_election_now_v133(core)
