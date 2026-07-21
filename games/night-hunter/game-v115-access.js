@@ -2,7 +2,7 @@
 'use strict';
 
 const TEST_PIN='6767';
-const STABLE_GAME='/games/night-hunter/game-v113.js?v=117';
+const STABLE_GAME='/games/night-hunter/game-v113.js?v=118';
 let loading=false;
 
 function loadScript(src){
@@ -15,6 +15,18 @@ function loadScript(src){
     script.onload=resolve;
     script.onerror=()=>reject(new Error('Не удалось загрузить тестовую версию.'));
     document.body.appendChild(script);
+  });
+}
+
+function waitReady(){
+  return new Promise((resolve,reject)=>{
+    if(window.__NIGHT_HUNTER_READY__){resolve();return}
+    const ready=()=>{clearTimeout(timer);resolve()};
+    const timer=setTimeout(()=>{
+      window.removeEventListener('night-hunter-ready',ready);
+      reject(new Error('Тестовая версия загружалась слишком долго.'));
+    },20000);
+    window.addEventListener('night-hunter-ready',ready,{once:true});
   });
 }
 
@@ -57,13 +69,15 @@ function initEarlyAccess(){
     if(start){start.disabled=true;start.textContent='ЗАГРУЗКА ТЕСТОВОЙ ВЕРСИИ…'}
     if(input)input.disabled=true;
     if(button)button.disabled=true;
-    setHint('PIN принят. Загружаем стабильную тестовую сборку…','loading');
+    setHint('PIN принят. Подготавливаем стабильную тестовую сборку…','loading');
 
     try{
       await loadScript(STABLE_GAME);
+      await waitReady();
+      if(start&&!start.classList.contains('hidden'))start.disabled=false;
       box?.classList.add('unlocked');
-      setHint('Тестовый доступ открыт.','ok');
-      setTimeout(()=>box?.classList.add('hiddenAccess'),700);
+      setHint('Тестовая сборка готова. Можно начинать смену.','ok');
+      setTimeout(()=>box?.classList.add('hiddenAccess'),900);
     }catch(err){
       loading=false;
       if(start){start.disabled=true;start.textContent='РАННИЙ ДОСТУП · 25 ИЮЛЯ'}
