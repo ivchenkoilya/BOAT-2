@@ -4,6 +4,7 @@ import time
 from typing import Any, Awaitable, Callable
 
 import hero_loadouts_v103 as loadouts
+from boss_combat_v149 import install_boss_combat_v149
 
 
 HERO_UPDATES: dict[int, dict[str, Any]] = {
@@ -137,3 +138,6 @@ def install_hero_content_v105(core: Any) -> None:
 
     core.Database.boss_apply_hit = hit_with_current_names
     core.Database.boss_perform_action = action_with_current_names
+
+    # Финальный слой ставится после экипировки и актуальных имён героев.
+    install_boss_combat_v149(core)
