@@ -37,14 +37,17 @@
 
   const escapeHtml=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
 
-  function versionNumber(text){
-    const match=String(text||'').match(/\d+/);
-    return match?Number(match[0]):0;
-  }
-
   function setBrandVersion(){
-    const brand=document.querySelector('.brand small');
-    if(brand&&versionNumber(brand.textContent)<148)brand.textContent='REALITY 148';
+    const brand=document.querySelector('.brand');
+    if(!brand)return;
+    let marker=brand.querySelector('.role-version-v148');
+    if(!marker){
+      marker=document.createElement('div');
+      marker.className='role-version-v148';
+      marker.textContent='REALITY 148';
+      const legacy=brand.querySelector(':scope > small');
+      if(legacy)legacy.replaceWith(marker);else brand.prepend(marker);
+    }else if(marker.textContent!=='REALITY 148')marker.textContent='REALITY 148';
   }
 
   function toast(text){
