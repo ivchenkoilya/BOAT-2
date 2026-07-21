@@ -11,6 +11,7 @@ import government_v127 as gov
 VERSION = "Reality 148 · Строгие полномочия должностей"
 ASSET_JS = Path(__file__).resolve().parent / "governmentapp_v127" / "role-permissions-v148.js"
 ASSET_CSS = Path(__file__).resolve().parent / "governmentapp_v127" / "role-permissions-v148.css"
+_ORIGINAL_LUXURY_INJECT = luxury._inject_assets
 
 POWER_ACTION_ROLES: dict[str, tuple[str, ...]] = {
     "decree": ("president",),
@@ -95,7 +96,7 @@ async def _strict_require_office(
 
 
 def _inject_assets(source: str) -> str:
-    source = luxury._inject_assets(source)
+    source = _ORIGINAL_LUXURY_INJECT(source)
     if "role-permissions-v148.css" not in source:
         source = source.replace(
             "</head>",
