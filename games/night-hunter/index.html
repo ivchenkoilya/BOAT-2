@@ -7,9 +7,9 @@
   <title>Ночной охотник: Последняя смена</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="/games/game-attempts-v89.js?v=89"></script>
-  <link rel="stylesheet" href="/games/night-hunter/style-v108.css?v=1152">
-  <link rel="stylesheet" href="/games/night-hunter/style-v110.css?v=1152">
-  <link rel="stylesheet" href="/games/night-hunter/style-v115.css?v=1152">
+  <link rel="stylesheet" href="/games/night-hunter/style-v108.css?v=117">
+  <link rel="stylesheet" href="/games/night-hunter/style-v110.css?v=117">
+  <link rel="stylesheet" href="/games/night-hunter/style-v115.css?v=117">
 </head>
 <body>
 <main class="app">
@@ -60,6 +60,18 @@
       <span class="developmentPulse"></span>
       <div><b>РАЗДЕЛ В ТОТАЛЬНОЙ РАЗРАБОТКЕ</b><small>Ранний доступ для игроков откроется 25 июля</small></div>
     </div>
+    <div class="earlyAccessBox" id="earlyAccessBox">
+      <div class="earlyAccessTop">
+        <b>ВНУТРЕННЕЕ ТЕСТИРОВАНИЕ</b>
+        <span>Введите PIN владельца проекта</span>
+      </div>
+      <p>Введите четырёхзначный PIN-код, чтобы запустить стабильную тестовую сборку.</p>
+      <div class="earlyAccessPin">
+        <input id="devPinInput" type="password" inputmode="numeric" autocomplete="off" maxlength="4" aria-label="PIN-код тестировщика" placeholder="••••">
+        <button id="devPinButton" type="button">ТЕСТОВЫЙ ВХОД</button>
+      </div>
+      <div class="earlyAccessHint" id="devPinHint">PIN-код состоит из 4 цифр.</div>
+    </div>
     <div class="features">
       <div><b>ЖИВАЯ УЛИЦА</b><span>Больше работников, машин, движения, деревьев и деталей у проходной</span></div>
       <div><b>РАСШИРЕННЫЙ ЦЕХ</b><span>Новые зоны, архивный склад, сервисный коридор и детализированное оборудование</span></div>
@@ -68,19 +80,6 @@
     <button class="primary" id="start" type="button" disabled>РАННИЙ ДОСТУП · 25 ИЮЛЯ</button>
     <button class="secondary hidden" id="demo" type="button">ЗАПУСТИТЬ ДЕМО</button>
     <div class="error" id="startError"></div>
-
-    <div class="earlyAccessBox" id="earlyAccessBox">
-      <div class="earlyAccessTop">
-        <b>ВНУТРЕННЕЕ ТЕСТИРОВАНИЕ</b>
-        <span>Доступ владельца проекта</span>
-      </div>
-      <p>Введите четырёхзначный PIN-код, чтобы запустить стабильную тестовую сборку.</p>
-      <div class="earlyAccessPin">
-        <input id="devPinInput" type="password" inputmode="numeric" autocomplete="off" maxlength="4" aria-label="PIN-код тестировщика" placeholder="••••">
-        <button id="devPinButton" type="button">ТЕСТОВЫЙ ВХОД</button>
-      </div>
-      <div class="earlyAccessHint" id="devPinHint">Введите PIN-код из 4 цифр.</div>
-    </div>
   </section>
 </div>
 
@@ -165,6 +164,6 @@
   </section>
 </div>
 
-<script src="/games/night-hunter/game-v115-access.js?v=1152"></script>
+<script src="/games/night-hunter/game-v115-access.js?v=117"></script>
 </body>
 </html>
