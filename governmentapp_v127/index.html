@@ -112,5 +112,34 @@
   <div class="toast" id="toast"></div>
   <script src="/government-v127/app.js?v=128"></script>
   <script src="/government-v127/powers-v128.js?v=128"></script>
+  <script>
+    (()=>{
+      const tg=window.Telegram?.WebApp;
+      const params=new URLSearchParams(location.search);
+      const start=String(tg?.initDataUnsafe?.start_param||params.get('tgWebAppStartParam')||'');
+      const chatId=Number(params.get('chat_id')||(start.startsWith('government_')?start.slice(11):0));
+      const headers={'X-Telegram-Init-Data':tg?.initData||''};
+      const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+      async function fillComplaintTargets(){
+        const select=document.getElementById('complaintTarget');if(!select||!chatId)return;
+        try{
+          const response=await fetch(`/government-v127/api/state?chat_id=${encodeURIComponent(chatId)}`,{cache:'no-store',headers});
+          const data=await response.json();if(!response.ok||!data.ok)return;
+          const current=select.value;
+          select.innerHTML='<option value="0">Без конкретного участника</option>'+String((data.eligible_users||[]).map(user=>`<option value="${user.user_id}">${escapeHtml(user.name)} · ⭐ ${Number(user.career_points||0).toLocaleString('ru-RU')}</option>`).join(''));
+          if([...select.options].some(option=>option.value===current))select.value=current;
+        }catch(_error){}
+      }
+      document.addEventListener('click',event=>{
+        const button=event.target.closest('[data-power-action="complaints"]');
+        if(button){
+          event.preventDefault();event.stopImmediatePropagation();
+          document.getElementById('powerCases')?.scrollIntoView({behavior:'smooth',block:'start'});
+        }
+        if(event.target.closest('#refreshButton'))setTimeout(fillComplaintTargets,250);
+      },true);
+      fillComplaintTargets();
+    })();
+  </script>
 </body>
 </html>
