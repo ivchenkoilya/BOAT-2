@@ -193,17 +193,21 @@ def install_government_role_permissions_v148(core: Any) -> None:
             "offices": roles,
             "owner_admin": int(user_id) == int(core_arg.DEVELOPER_ID),
         }
-        payload["permissions"] = {
-            "can_start_president": not any(item.get("office_key") == "president" for item in offices),
-            "can_start_deputy": not any(item.get("office_key") == "deputy" for item in offices),
-            "can_start_chair": bool(held & {"deputy", "chair"}),
-            "can_create_bill": bool(held & {"president", "chair", "deputy", "finance", "oversight"}),
-            "can_vote_bill": "deputy" in held,
-            "can_president": "president" in held,
-            "can_chair": "chair" in held,
-            "can_manage_tax": bool(held & {"president", "finance"}),
-            "can_propose_sanction": bool(held & {"president", "oversight", "deputy"}),
-        }
+        permissions = dict(payload.get("permissions") or {})
+        permissions.update(
+            {
+                "can_start_president": not any(item.get("office_key") == "president" for item in offices),
+                "can_start_deputy": not any(item.get("office_key") == "deputy" for item in offices),
+                "can_start_chair": bool(held & {"deputy", "chair"}),
+                "can_create_bill": bool(held & {"president", "chair", "deputy", "finance", "oversight"}),
+                "can_vote_bill": "deputy" in held,
+                "can_president": "president" in held,
+                "can_chair": "chair" in held,
+                "can_manage_tax": bool(held & {"president", "finance"}),
+                "can_propose_sanction": bool(held & {"president", "oversight", "deputy"}),
+            }
+        )
+        payload["permissions"] = permissions
 
         institution_state = payload.get("institutions")
         if isinstance(institution_state, dict):
