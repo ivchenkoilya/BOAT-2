@@ -44,7 +44,8 @@
       const text=String(node.textContent||'');
       if(!text.startsWith('Telegram ID '))return;
       const separator=text.indexOf(' · ');
-      node.textContent=separator>=0?`${ownerLabel}${text.slice(separator)}`:ownerLabel;
+      const next=separator>=0?`${ownerLabel}${text.slice(separator)}`:ownerLabel;
+      if(node.textContent!==next)node.textContent=next;
     });
   }
 
@@ -53,7 +54,7 @@
     documentNode.querySelectorAll('.mandate-fields-v143>div').forEach(field=>{
       const label=field.querySelector('small');
       const value=field.querySelector('b');
-      if(label&&value&&String(label.textContent||'').trim()==='ВЛАДЕЛЕЦ'){
+      if(label&&value&&String(label.textContent||'').trim()==='ВЛАДЕЛЕЦ'&&value.textContent!==ownerLabel){
         value.textContent=ownerLabel;
       }
     });
@@ -142,7 +143,7 @@
 
   function applyLuxury(){
     const brand=document.querySelector('.brand small');
-    if(brand)brand.textContent='REALITY 147';
+    if(brand&&brand.textContent!=='REALITY 147')brand.textContent='REALITY 147';
     replaceOwnerInCards();
     document.querySelectorAll('.mandate-document-v143').forEach(decorateDocument);
   }
