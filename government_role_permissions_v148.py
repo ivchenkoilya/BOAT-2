@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+import government_crisis_v131 as crisis
 import government_institutions_v128 as institutions
 import government_mandate_luxury_v147 as luxury
 import government_v127 as gov
@@ -61,6 +62,8 @@ BILL_TYPE_ROLES: dict[str, tuple[str, ...]] = {
     "win_tax": ("president", "finance", "deputy"),
 }
 
+CRISIS_COUNTERINTEL_ROLES = ("president", "security", "prosecutor", "oversight")
+
 
 def _role_titles(roles: tuple[str, ...]) -> str:
     return ", ".join(str(gov.OFFICES.get(role, {"title": role})["title"]) for role in roles)
@@ -93,6 +96,16 @@ async def _strict_require_office(
     *offices: str,
 ) -> str:
     return await _require_roles(core, chat_id, user_id, tuple(offices))
+
+
+async def _strict_council_member(core: Any, chat_id: int, user_id: int) -> Any:
+    council = await crisis._council(core, chat_id)
+    if council is None:
+        raise PermissionError("Революционный совет сейчас не действует.")
+    members = [int(value) for value in crisis._json(council["members_json"], [])]
+    if int(user_id) not in members:
+        raise PermissionError("Это действие доступно только участникам Революционного совета.")
+    return council
 
 
 def _inject_assets(source: str) -> str:
@@ -162,6 +175,67 @@ async def _check_power_action(
         await _require_roles(core, chat_id, user_id, roles)
 
 
+async def _check_crisis_action(
+    core: Any,
+    chat_id: int,
+    user_id: int,
+    data: dict[str, Any],
+) -> None:
+    action = str(data.get("action") or "")
+    if action == "investigate_theft":
+        await _require_roles(core, chat_id, user_id, tuple(crisis.INVESTIGATOR_OFFICES))
+    elif action == "counterintel":
+        await _require_roles(core, chat_id, user_id, CRISIS_COUNTERINTEL_ROLES)
+    elif action.startswith("council_"):
+        await _strict_council_member(core, chat_id, user_id)
+
+
+def _sanitize_crisis_state(payload: dict[str, Any], held: set[str], user_id: int) -> None:
+    state = payload.get("crisis_v131")
+    if not isinstance(state, dict):
+        return
+
+    state["offices"] = list(held)
+    can_investigate = bool(held & set(crisis.INVESTIGATOR_OFFICES))
+    state["can_investigate"] = can_investigate
+
+    theft = state.get("theft")
+    if isinstance(theft, dict):
+        for item in theft.get("items", []):
+            if not isinstance(item, dict):
+                continue
+            item["can_investigate"] = bool(
+                can_investigate
+                and str(item.get("status") or "") == "pending"
+                and not bool(item.get("investigated"))
+            )
+            if not bool(item.get("own")) and str(item.get("status") or "") != "caught":
+                item["thief_id"] = 0
+                item["thief_name"] = "Неизвестен"
+
+    conflict = state.get("conflict")
+    if isinstance(conflict, dict) and str(conflict.get("type") or "") == "coup":
+        conspirator = bool(conflict.get("is_conspirator"))
+        counterintel = bool(held & set(CRISIS_COUNTERINTEL_ROLES))
+        if not conspirator and not counterintel:
+            state["conflict"] = None
+        else:
+            conflict["can_counterintel"] = bool(counterintel and not conspirator)
+            if not conspirator:
+                conflict["members"] = []
+                conflict["reason"] = "Засекречено"
+                conflict["plot_score"] = 0
+
+    council = state.get("council")
+    if isinstance(council, dict):
+        member_ids = {
+            int(item.get("user_id"))
+            for item in council.get("members", [])
+            if isinstance(item, dict) and item.get("user_id") is not None
+        }
+        council["is_member"] = int(user_id) in member_ids
+
+
 def install_government_role_permissions_v148(core: Any) -> None:
     if getattr(core, "_government_role_permissions_v148_installed", False):
         return
@@ -169,6 +243,7 @@ def install_government_role_permissions_v148(core: Any) -> None:
     core.GOVERNMENT_VERSION = VERSION
 
     institutions._require_office = _strict_require_office
+    crisis._require_council_member = _strict_council_member
     luxury._inject_assets = _inject_assets
 
     original_state = gov._state
@@ -228,6 +303,8 @@ def install_government_role_permissions_v148(core: Any) -> None:
             institution_state["my_powers"] = powers
             institution_state["is_admin"] = False
             institution_state["owner_admin"] = int(user_id) == int(core_arg.DEVELOPER_ID)
+
+        _sanitize_crisis_state(payload, held, user_id)
         return payload
 
     gov._state = state_with_strict_roles
@@ -256,13 +333,16 @@ def install_government_role_permissions_v148(core: Any) -> None:
             if request.method.upper() == "POST" and path in {
                 "/government-v127/api/action",
                 "/government-v128/api/action",
+                "/government-v131/api/action",
             }:
                 try:
                     user, chat_id, data = await gov._auth(core, request)
                     if path == "/government-v127/api/action":
                         await _check_core_action(core, chat_id, int(user.id), data)
-                    else:
+                    elif path == "/government-v128/api/action":
                         await _check_power_action(core, chat_id, int(user.id), data)
+                    else:
+                        await _check_crisis_action(core, chat_id, int(user.id), data)
                 except PermissionError as exc:
                     return core.web.json_response({"ok": False, "reason": str(exc)}, status=403)
                 except Exception as exc:
