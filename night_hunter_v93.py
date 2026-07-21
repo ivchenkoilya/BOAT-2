@@ -11,7 +11,12 @@ import game_center_v75 as base
 VERSION = "Reality 116 · Dense Factory Stable"
 GAME_KEY = "night-hunter"
 GAME_PATH = Path(__file__).resolve().parent / "games" / GAME_KEY
-STYLE_FILENAMES = ("style-v108.css", "style-v110.css", "style-v115.css")
+STYLE_FILENAMES = (
+    "style-v108.css",
+    "style-v110.css",
+    "style-v115.css",
+    "style-v116.css",
+)
 SCRIPT_FILENAMES = (
     "game-v108.js",
     "game-v109.js",
@@ -89,6 +94,11 @@ def install_night_hunter_v93(core: Any) -> None:
             "/games/night-hunter/game-v115-access.js?v=117",
             "/games/night-hunter/game-v115-access.js?v=1162",
         )
+        if "style-v116.css" not in html:
+            html = html.replace(
+                "</head>",
+                '  <link rel="stylesheet" href="/games/night-hunter/style-v116.css?v=116">\n</head>',
+            )
         return core.web.Response(
             text=html,
             content_type="text/html",
