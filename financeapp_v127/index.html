@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#08060f">
+  <title>Финансовый центр</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="/finance-v127/style.css?v=127">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand"><small>ГЛАВНЫЙ ГЕРОЙ · REALITY 127</small><b>Финансовый центр</b></div>
+      <button class="icon-button" id="refreshButton" type="button" aria-label="Обновить">↻</button>
+    </header>
+
+    <section class="hero-card">
+      <div class="hero-row">
+        <div class="avatar">💸</div>
+        <div class="identity"><small>ТВОЙ ПРОФИЛЬ</small><b id="playerName">Загрузка…</b><span id="creditBadge">ПРОВЕРКА</span></div>
+        <div class="balance"><small>СВОБОДНО</small><b id="balance">—</b><em>влияния</em></div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric"><small>ВКЛАДЫ</small><b id="depositTotal">0</b></div>
+        <div class="metric"><small>АКЦИИ</small><b id="portfolioTotal">0</b></div>
+        <div class="metric"><small>РЕЗУЛЬТАТ</small><b id="portfolioProfit">0</b></div>
+      </div>
+    </section>
+
+    <section class="screen active" data-screen="home">
+      <div class="section-heading"><div><small>ФИНАНСЫ</small><b>Главная</b></div><em id="marketStatus">Биржа подключается…</em></div>
+      <div class="quick-grid">
+        <button class="quick primary" data-open="deposits" type="button"><span>🏦</span><b>Открыть вклад</b><small>До 25% за срок</small><i>›</i></button>
+        <button class="quick primary" data-open="market" type="button"><span>📈</span><b>Купить акции</b><small>Живой игровой рынок</small><i>›</i></button>
+        <button class="quick" data-open="transfer" type="button"><span>🎁</span><b>Перевод</b><small>Передать влияние</small><i>›</i></button>
+        <button class="quick" data-open="loan" type="button"><span>🤝</span><b>Займы</b><small>Договор или заявка</small><i>›</i></button>
+        <button class="quick" data-open="debts" type="button"><span>💳</span><b>Долги</b><small>Погашение и договоры</small><i>›</i></button>
+        <button class="quick" data-open="history" type="button"><span>🧾</span><b>История</b><small>Последние операции</small><i>›</i></button>
+      </div>
+      <article class="notice-card"><span>ℹ️</span><div><b>Игровая экономика</b><small>Вклады и акции используют только обычное влияние. Они не дают карьерные очки, очки Древа и награды событий.</small></div></article>
+    </section>
+
+    <section class="screen" data-screen="transfer">
+      <div class="section-heading"><div><small>ПЕРЕВОД</small><b>Передать влияние</b></div></div>
+      <article class="card">
+        <label class="field"><span>УЧАСТНИК</span><select id="transferTarget"></select></label>
+        <label class="field"><span>СУММА</span><input id="transferAmount" type="number" min="10" max="5000" step="10" value="500" inputmode="numeric"></label>
+        <div class="chips" data-chip-target="transferAmount"><button data-value="100" type="button">100</button><button class="active" data-value="500" type="button">500</button><button data-value="1000" type="button">1000</button><button data-value="5000" type="button">5000</button></div>
+        <div class="preview"><div><span>Получатель</span><b id="transferPreviewName">—</b></div><div><span>Будет отправлено</span><b id="transferPreviewAmount">500</b></div><div><span>Останется</span><b id="transferPreviewLeft">—</b></div></div>
+        <button class="action-button" id="transferSubmit" type="button">ПЕРЕДАТЬ ВЛИЯНИЕ</button>
+      </article>
+    </section>
+
+    <section class="screen" data-screen="loan">
+      <div class="section-heading"><div><small>ЗАЙМЫ</small><b>Договоры влияния</b></div></div>
+      <div class="segmented"><button class="active" data-loan-tab="give" type="button">ДАТЬ В ДОЛГ</button><button data-loan-tab="request" type="button">ПОПРОСИТЬ</button></div>
+      <article class="card loan-pane active" data-loan-pane="give">
+        <label class="field"><span>ЗАЁМЩИК</span><select id="loanTarget"></select></label>
+        <label class="field"><span>СУММА</span><input id="loanAmount" type="number" min="50" max="10000" step="50" value="1000" inputmode="numeric"></label>
+        <div class="triple-grid"><label class="field"><span>ПРОЦЕНТ</span><input id="loanInterest" type="number" min="0" max="20" value="10"></label><label class="field"><span>СРОК, ДНЕЙ</span><input id="loanDays" type="number" min="1" max="14" value="3"></label></div>
+        <div class="preview"><div><span>Получит</span><b id="loanPreviewAmount">1 000</b></div><div><span>Вернёт</span><b id="loanPreviewDue">1 100</b></div><div><span>Срок</span><b id="loanPreviewDays">3 дня</b></div></div>
+        <button class="action-button gold" id="loanSubmit" type="button">ОПУБЛИКОВАТЬ ДОГОВОР</button>
+      </article>
+      <article class="card loan-pane" data-loan-pane="request">
+        <div id="pendingRequest"></div>
+        <label class="field"><span>КРЕДИТОР</span><select id="requestTarget"></select></label>
+        <label class="field"><span>НУЖНАЯ СУММА</span><input id="requestAmount" type="number" min="50" max="10000" step="50" value="1000"></label>
+        <div class="triple-grid"><label class="field"><span>ПРОЦЕНТ</span><input id="requestInterest" type="number" min="0" max="20" value="10"></label><label class="field"><span>СРОК, ДНЕЙ</span><input id="requestDays" type="number" min="1" max="14" value="3"></label></div>
+        <button class="action-button" id="requestSubmit" type="button">ОПУБЛИКОВАТЬ ЗАЯВКУ</button>
+      </article>
+    </section>
+
+    <section class="screen" data-screen="debts">
+      <div class="section-heading"><div><small>ОБЯЗАТЕЛЬСТВА</small><b>Мои долги</b></div><em id="debtTotalLabel">0</em></div>
+      <div class="list" id="debtsList"></div>
+      <div class="section-heading"><div><small>КРЕДИТОР</small><b>Мне должны</b></div><em id="owedTotalLabel">0</em></div>
+      <div class="list" id="owedList"></div>
+    </section>
+
+    <section class="screen" data-screen="deposits">
+      <div class="section-heading"><div><small>ВКЛАДЫ</small><b>Проценты на влияние</b></div><em>Лимит 50 000</em></div>
+      <div class="plan-grid" id="planGrid"></div>
+      <article class="card">
+        <label class="field"><span>СУММА ВКЛАДА</span><input id="depositAmount" type="number" min="100" max="50000" step="100" value="1000"></label>
+        <div class="chips" data-chip-target="depositAmount"><button data-value="500" type="button">500</button><button class="active" data-value="1000" type="button">1 000</button><button data-value="5000" type="button">5 000</button><button data-value="10000" type="button">10 000</button></div>
+        <div class="preview"><div><span>Тариф</span><b id="depositPreviewPlan">—</b></div><div><span>Сумма</span><b id="depositPreviewAmount">1 000</b></div><div><span>К получению</span><b id="depositPreviewPayout">—</b></div><div><span>Срок</span><b id="depositPreviewTerm">—</b></div></div>
+        <button class="action-button gold" id="depositSubmit" type="button">ОТКРЫТЬ ВКЛАД</button>
+      </article>
+      <div class="section-heading"><div><small>МОИ ВКЛАДЫ</small><b>Активные</b></div></div>
+      <div class="list" id="depositList"></div>
+    </section>
+
+    <section class="screen" data-screen="market">
+      <div class="section-heading"><div><small>БИРЖА</small><b>Игровые акции</b></div><em><span class="live-dot"></span> LIVE</em></div>
+      <div class="ticker-strip" id="tickerStrip"></div>
+      <article class="market-card">
+        <div class="stock-head"><div class="stock-title"><span id="stockIcon">👑</span><div><b id="stockName">EGO Corp</b><small id="stockSymbol">EGO · Низкий риск</small></div></div><div class="stock-price"><b id="stockPrice">—</b><span id="stockChange">—</span></div></div>
+        <div class="periods"><button data-period="3600" type="button">1Ч</button><button class="active" data-period="86400" type="button">24Ч</button><button data-period="604800" type="button">7Д</button><button data-period="2592000" type="button">30Д</button></div>
+        <div class="chart-wrap"><svg id="stockChart" viewBox="0 0 640 250" role="img" aria-label="График цены акции"><defs><linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b66eff" stop-opacity=".38"></stop><stop offset="1" stop-color="#b66eff" stop-opacity="0"></stop></linearGradient></defs><g id="chartGrid"></g><path id="chartArea" fill="url(#chartFill)"></path><path id="chartLine" fill="none" stroke="#d49aff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path></svg><div class="chart-empty" id="chartEmpty">Загружаем график…</div></div>
+        <div class="stock-stats"><div><small>МИНИМУМ</small><b id="stockLow">—</b></div><div><small>МАКСИМУМ</small><b id="stockHigh">—</b></div><div><small>ОБЪЁМ</small><b id="stockVolume">—</b></div><div><small>ОБНОВЛЕНИЕ</small><b id="stockCountdown">—</b></div></div>
+        <div class="market-news" id="marketNews"><span>📰</span><div><b>Новостей пока нет</b><small>События рынка будут появляться здесь.</small></div></div>
+      </article>
+      <article class="card">
+        <div class="position-summary"><div><small>В ПОРТФЕЛЕ</small><b id="positionQuantity">0 акций</b></div><div><small>СТОИМОСТЬ</small><b id="positionValue">0</b></div><div><small>ПРИБЫЛЬ</small><b id="positionProfit">0</b></div></div>
+        <label class="field"><span>КОЛИЧЕСТВО АКЦИЙ</span><input id="stockQuantity" type="number" min="1" max="1000" step="1" value="1"></label>
+        <div class="trade-preview"><span>Сумма сделки с комиссией 1%</span><b id="tradeTotal">—</b></div>
+        <div class="trade-buttons"><button id="stockBuy" type="button">КУПИТЬ</button><button id="stockSell" type="button">ПРОДАТЬ</button></div>
+      </article>
+      <div class="section-heading"><div><small>ПОРТФЕЛЬ</small><b>Мои позиции</b></div></div>
+      <div class="list" id="portfolioList"></div>
+    </section>
+
+    <section class="screen" data-screen="history">
+      <div class="section-heading"><div><small>ИСТОРИЯ</small><b>Операции</b></div></div>
+      <div class="list" id="historyList"></div>
+      <div class="section-heading"><div><small>БИРЖА</small><b>Последние сделки</b></div></div>
+      <div class="list" id="tradeHistory"></div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Навигация">
+    <button class="active" data-nav="home" type="button"><span>⌂</span><small>Главная</small></button>
+    <button data-nav="transfer" type="button"><span>🎁</span><small>Перевод</small></button>
+    <button data-nav="loan" type="button"><span>🤝</span><small>Заём</small></button>
+    <button data-nav="deposits" type="button"><span>🏦</span><small>Вклады</small></button>
+    <button data-nav="market" type="button"><span>📈</span><small>Акции</small></button>
+  </nav>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <section class="modal" id="modal" aria-hidden="true"><div class="modal-card"><h3 id="modalTitle">Подтверждение</h3><p id="modalText"></p><div><button id="modalCancel" type="button">Отмена</button><button id="modalConfirm" type="button">Подтвердить</button></div></div></section>
+  <div class="loading" id="loading"><div><span></span><b>Загружаем финансы…</b></div></div>
+  <script src="/finance-v127/app.js?v=127"></script>
+</body>
+</html>
