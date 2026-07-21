@@ -8,6 +8,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 import government_v127 as gov
 from government_creator_control_v151 import install_government_creator_control_v151
+from government_creator_intervention_v151 import install_government_creator_intervention_v151
 from government_release_v150 import install_government_release_v150
 
 
@@ -35,6 +36,7 @@ def install_government_release_v151(core: Any) -> None:
 
     install_government_release_v150(core)
     install_government_creator_control_v151(core)
+    install_government_creator_intervention_v151(core)
     core.GOVERNMENT_VERSION = VERSION
 
     handlers = core.router.message.handlers
