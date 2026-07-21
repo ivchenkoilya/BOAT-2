@@ -23,11 +23,29 @@
     security:['security_meeting','emergency','security_report'],
     press:['statement','poll','daily_brief']
   };
+  const roleBillTypes={
+    president:['general','tax_policy','budget','win_tax'],
+    chair:['general'],
+    deputy:['general','tax_policy','budget','win_tax'],
+    finance:['general','tax_policy','budget','win_tax'],
+    oversight:['general']
+  };
   let offices=[];
   let allowed=new Set();
+  let allowedBills=new Set();
   let frame=0;
 
   const escapeHtml=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+
+  function versionNumber(text){
+    const match=String(text||'').match(/\d+/);
+    return match?Number(match[0]):0;
+  }
+
+  function setBrandVersion(){
+    const brand=document.querySelector('.brand small');
+    if(brand&&versionNumber(brand.textContent)<148)brand.textContent='REALITY 148';
+  }
 
   function toast(text){
     const node=document.getElementById('toast');
@@ -40,7 +58,11 @@
 
   function rebuildAllowed(){
     allowed=new Set();
-    offices.forEach(role=>(roleActions[role]||[]).forEach(action=>allowed.add(action)));
+    allowedBills=new Set();
+    offices.forEach(role=>{
+      (roleActions[role]||[]).forEach(action=>allowed.add(action));
+      (roleBillTypes[role]||[]).forEach(type=>allowedBills.add(type));
+    });
   }
 
   function officeTitle(key){
@@ -69,10 +91,29 @@
     if(banner.innerHTML!==markup)banner.innerHTML=markup;
   }
 
+  function filterBillTypes(){
+    const select=document.getElementById('billType');
+    if(!select)return;
+    let firstAllowed=null;
+    [...select.options].forEach(option=>{
+      const permitted=allowedBills.has(String(option.value||''));
+      option.hidden=!permitted;
+      option.disabled=!permitted;
+      if(permitted&&!firstAllowed)firstAllowed=option;
+    });
+    const selected=select.options[select.selectedIndex];
+    if(selected&&selected.disabled&&firstAllowed){
+      select.value=firstAllowed.value;
+      select.dispatchEvent(new Event('change',{bubbles:true}));
+    }
+    const form=select.closest('form');
+    if(form)form.classList.toggle('role-bill-filtered-v148',true);
+  }
+
   function applyAccess(){
-    const brand=document.querySelector('.brand small');
-    if(brand&&brand.textContent!=='REALITY 148')brand.textContent='REALITY 148';
+    setBrandVersion();
     renderAccessBanner();
+    filterBillTypes();
     document.querySelectorAll('.power-card').forEach(card=>{
       card.classList.toggle('role-current-v148',Boolean(card.querySelector('.power-action')));
     });
