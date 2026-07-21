@@ -44,10 +44,10 @@
     if(!marker){
       marker=document.createElement('div');
       marker.className='role-version-v148';
-      marker.textContent='REALITY 148';
+      marker.textContent='REALITY 150';
       const legacy=brand.querySelector(':scope > small');
       if(legacy)legacy.replaceWith(marker);else brand.prepend(marker);
-    }else if(marker.textContent!=='REALITY 148')marker.textContent='REALITY 148';
+    }else if(marker.textContent!=='REALITY 150')marker.textContent='REALITY 150';
   }
 
   function toast(text){
