@@ -33,6 +33,9 @@ def install_sanctions_hotfix_v126(core: Any) -> None:
     sanctions.FINANCE_COMMANDS.difference_update(
         {"finance", "money", "bank", "repay", "debts", "credit"}
     )
+    # Раздел /games остаётся видимым. Санкция Mini App блокирует именно запуск
+    # и сохранение забегов через API, а не разрешённые кубик и монетку в меню.
+    sanctions.MINIAPP_COMMANDS.clear()
     sanctions.GAMBLING_COMMANDS.add("ego")
 
     original_callback_category = sanctions._callback_category
