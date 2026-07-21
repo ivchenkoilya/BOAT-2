@@ -7,6 +7,7 @@ from aiogram.filters import Command
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from admin_career_v123 import install_admin_career_v123
+from admin_finance_compat_v123 import install_admin_finance_compat_v123
 from career_interactions_v122 import install_career_interactions_v122
 from career_system_v120 import install_career_system_v120
 from command_hub_v121 import install_command_hub_v121
@@ -92,10 +93,11 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     handlers[:] = preferred + [handler for handler in handlers if handler not in preferred]
 
     # Карьерная модель ставится первой, затем центры команд и мгновенные награды.
-    # Reality 123 устанавливается последней: добавляет отдельный защищённый
-    # админ-центр и заменяет вход /admin, не удаляя старую панель Reality 76.
+    # Финансовая совместимость добавляет актуальный остаток займа, после чего
+    # Reality 123 подключает новый защищённый админ-центр и вход /admin.
     install_career_system_v120(core)
     install_command_hub_v121(core)
     install_command_hub_compat_v121(core)
     install_career_interactions_v122(core)
+    install_admin_finance_compat_v123(core)
     install_admin_career_v123(core)
