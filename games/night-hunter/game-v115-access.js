@@ -3,6 +3,7 @@
 
 const TEST_PIN='6767';
 const STABLE_GAME='/games/night-hunter/game-v116.js?v=117';
+const HORROR_SCRIPT='/games/night-hunter/horror-v117.js?v=117';
 let loading=false;
 
 function loadScript(src){
@@ -28,7 +29,7 @@ function waitReady(){
       window.removeEventListener('night-hunter-error',failed);
     };
     const ready=()=>{cleanup();resolve()};
-    const failed=event=>{cleanup();reject(new Error(event.detail||'Ошибка подготовки Reality 116.'))};
+    const failed=event=>{cleanup();reject(new Error(event.detail||'Ошибка подготовки Reality 117.'))};
     const timer=setTimeout(()=>{cleanup();reject(new Error('Тестовая версия загружалась слишком долго.'))},28000);
     window.addEventListener('night-hunter-ready',ready,{once:true});
     window.addEventListener('night-hunter-error',failed,{once:true});
@@ -73,17 +74,18 @@ function initEarlyAccess(){
     loading=true;
     window.__NIGHT_HUNTER_READY__=false;
     window.__NIGHT_HUNTER_LOAD_ERROR__='';
-    if(start){start.disabled=true;start.textContent='ЗАГРУЗКА REALITY 116…'}
+    if(start){start.disabled=true;start.textContent='ЗАГРУЗКА HORROR CUT…'}
     if(input)input.disabled=true;
     if(button)button.disabled=true;
-    setHint('PIN принят. Загружаем расширенный завод и живую улицу…','loading');
+    setHint('PIN принят. Запускаем мистическую версию смены…','loading');
 
     try{
       await loadScript(STABLE_GAME);
       await waitReady();
+      await loadScript(HORROR_SCRIPT);
       if(start&&!start.classList.contains('hidden'))start.disabled=false;
       box?.classList.add('unlocked');
-      setHint('Reality 116 готова. Можно начинать смену.','ok');
+      setHint('Reality 117: Horror Cut готова. Можно начинать смену.','ok');
       setTimeout(()=>box?.classList.add('hiddenAccess'),900);
     }catch(err){
       loading=false;
