@@ -18,6 +18,7 @@ from finance_loan_requests_v118 import install_finance_loan_requests_v118
 from finance_products_v129 import install_finance_products_v129
 from finance_route_fix_v116 import install_finance_route_fix_v116
 from government_command_v129 import install_government_command_v129
+from government_crisis_hotfix_v131 import install_government_crisis_hotfix_v131
 from government_crisis_v131 import install_government_crisis_v131
 from government_economy_hotfix_v128 import install_government_economy_hotfix_v128
 from government_institutions_v128 import install_government_institutions_v128
@@ -126,3 +127,4 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_hierarchy_v130(core)
     install_hierarchy_activity_hotfix_v130(core)
     install_government_crisis_v131(core)
+    install_government_crisis_hotfix_v131(core)
