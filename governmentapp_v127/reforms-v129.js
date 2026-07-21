@@ -64,7 +64,11 @@
       card.style.cssText='margin-top:10px;padding:12px;border:1px solid #6b4b36;border-radius:13px;background:linear-gradient(145deg,#20140d,#100b09)';
       panel.appendChild(card);
     }
-    card.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><span><b style="display:block;font-size:11px">🎰 Налог на игровой выигрыш</b><small style="display:block;margin-top:4px;color:#a99cb2;font-size:8px">Удерживается автоматически и поступает в казну</small></span><strong style="font-size:19px;color:#efcc76">${winRate}%</strong></div>`;
+    const markup=`<div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><span><b style="display:block;font-size:11px">🎰 Налог на игровой выигрыш</b><small style="display:block;margin-top:4px;color:#a99cb2;font-size:8px">Удерживается автоматически и поступает в казну</small></span><strong style="font-size:19px;color:#efcc76">${winRate}%</strong></div>`;
+    if(card.dataset.rate!==String(winRate)){
+      card.dataset.rate=String(winRate);
+      card.innerHTML=markup;
+    }
   }
 
   function enhanceOfficeLabels(){
@@ -75,7 +79,7 @@
 
   function enhance(){
     const brand=document.querySelector('.brand small');
-    if(brand)brand.textContent='REALITY 129';
+    if(brand&&brand.textContent!=='REALITY 129')brand.textContent='REALITY 129';
     enhanceBillComposer();
     enhanceTreasury();
     enhanceOfficeLabels();
