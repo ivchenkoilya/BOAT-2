@@ -39,9 +39,10 @@ from hierarchy_v130 import install_hierarchy_v130
 from sanctions_hotfix_v126 import install_sanctions_hotfix_v126
 from sanctions_v126 import install_sanctions_v126
 from talent_career_v135 import install_talent_career_v135
+from telegram_network_resilience_v139 import install_telegram_network_resilience_v139
 
 
-VERSION = "Reality 137 · Лимит ставок ЦБ до миллиона"
+VERSION = "Reality 139 · Устойчивое соединение Telegram"
 FINANCE_PREFIX = "finance_"
 
 
@@ -54,7 +55,7 @@ def _finance_link(core: Any, chat_id: int) -> str:
     if core.WEBAPP_PUBLIC_URL:
         return (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/finance-v127/"
-            f"?chat_id={int(chat_id)}&build=137-{int(time.time())}"
+            f"?chat_id={int(chat_id)}&build=139-{int(time.time())}"
         )
     return ""
 
@@ -93,7 +94,7 @@ def install_finance_entry_fix_v115(core: Any) -> None:
             )
             return
         await message.answer(
-            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 137</b>\n\n"
+            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 139</b>\n\n"
             "Переводы и ставки до 1 000 000 обычного влияния, займы, вклады, "
             "биржа и инвестиционный портфель. Центральный банк может удерживать "
             "комиссию, а администратор управляет курсами и остановкой торгов.",
@@ -144,3 +145,4 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_talent_career_v135(core)
     install_bot_game_stake_limit_v136(core)
     install_central_bank_wager_limit_v137(core)
+    install_telegram_network_resilience_v139(core)
