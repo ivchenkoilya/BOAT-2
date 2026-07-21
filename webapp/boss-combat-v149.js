@@ -18,8 +18,6 @@
     const stage=document.getElementById('bossStage');
     if(!stage)return;
     document.body.classList.add('raid-v149-ready');
-
-    // Старый генератор фазовой музыки и все связанные с ним кнопки удалены.
     document.getElementById('raidMusicV149')?.remove();
     document.querySelectorAll('.raid-v149-music').forEach(node=>node.remove());
 
@@ -101,6 +99,14 @@
       const text=intro.querySelector('span');
       if(text)text.textContent='У босса 100 000 HP. Обычные ответы стали мягче, а кнопки игрока перезаряжаются быстрее.';
     }
+
+    scroll.querySelectorAll('small').forEach(node=>{
+      const value=node.textContent||'';
+      if(value.includes('Перезарядка — 5 секунд')){
+        node.textContent=value.replace('Перезарядка — 5 секунд','Перезарядка — 3 секунды');
+      }
+    });
+
     let card=scroll.querySelector('.raid-v149-help-card');
     if(!card){
       card=document.createElement('div');
