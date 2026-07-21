@@ -1,17 +1,16 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Callable
 
 import government_mandate_luxury_v147 as luxury
 import government_v127 as gov
 
 
 VERSION = "Reality 149 · Теневая казна"
-_ORIGINAL_INJECT = luxury._inject_assets
 
 
-def _inject_assets(source: str) -> str:
-    source = _ORIGINAL_INJECT(source)
+def _with_crisis_assets(previous_inject: Callable[[str], str], source: str) -> str:
+    source = previous_inject(source)
     if "crisis-v131.css" not in source:
         source = source.replace(
             "</head>",
@@ -31,9 +30,14 @@ def install_government_crisis_ui_hotfix_v149(core: Any) -> None:
     core._government_crisis_ui_hotfix_v149_installed = True
     core.GOVERNMENT_VERSION = VERSION
 
-    # The luxury mandate middleware serves the final HTML. Patch its injector so
-    # the political-crisis UI is not lost when the document is rebuilt.
-    luxury._inject_assets = _inject_assets
+    # Capture the injector at installation time. At this point the mandate and
+    # strict-role layers are already installed, so their assets remain present.
+    previous_inject = luxury._inject_assets
+
+    def inject_with_crisis(source: str) -> str:
+        return _with_crisis_assets(previous_inject, source)
+
+    luxury._inject_assets = inject_with_crisis
 
     original_state = gov._state
 
@@ -56,7 +60,9 @@ def install_government_crisis_ui_hotfix_v149(core: Any) -> None:
                 theft["treasury_balance"] = balance
                 if balance < 10:
                     theft["can_attempt"] = False
-                    theft["remaining"] = "в казне недостаточно средств — нужно минимум 10 влияния"
+                    theft["remaining"] = (
+                        "в казне недостаточно средств — нужно минимум 10 влияния"
+                    )
 
         return payload
 
