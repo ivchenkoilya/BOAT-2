@@ -54,7 +54,7 @@ async def _enrich_laws_fixed(core: Any, chat_id: int, laws: list[dict[str, Any]]
         law_id = str(law.get("law_id") or "")
         cursor = await conn.execute(
             """
-            SELECT l.bill_id,b.author_id,m.signed_by,
+            SELECT l.number current_number,l.bill_id,b.author_id,m.signed_by,
                    COALESCE(SUM(CASE WHEN v.vote='yes' THEN 1 ELSE 0 END),0) yes_votes,
                    COALESCE(SUM(CASE WHEN v.vote='no' THEN 1 ELSE 0 END),0) no_votes,
                    COALESCE(SUM(CASE WHEN v.vote='abstain' THEN 1 ELSE 0 END),0) abstain_votes
@@ -63,11 +63,13 @@ async def _enrich_laws_fixed(core: Any, chat_id: int, laws: list[dict[str, Any]]
             LEFT JOIN government_bill_votes_v127 v ON v.bill_id=l.bill_id
             LEFT JOIN government_law_meta_v143 m ON m.law_id=l.law_id
             WHERE l.law_id=? AND l.chat_id=?
-            GROUP BY l.bill_id,b.author_id,m.signed_by
+            GROUP BY l.number,l.bill_id,b.author_id,m.signed_by
             """,
             (law_id, int(chat_id)),
         )
         row = await cursor.fetchone()
+        if row is not None:
+            law["number"] = int(row["current_number"])
         law["author_id"] = int(row["author_id"] if row and row["author_id"] is not None else 0)
         law["signed_by"] = int(row["signed_by"] if row and row["signed_by"] is not None else 0)
         law["votes"] = {
