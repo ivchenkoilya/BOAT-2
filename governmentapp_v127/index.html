@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#08070c">
   <title>Государство реальности</title>
-  <link rel="stylesheet" href="/government-v127/app.css?v=127">
+  <link rel="stylesheet" href="/government-v127/app.css?v=128">
+  <link rel="stylesheet" href="/government-v127/powers-v128.css?v=128">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -13,7 +14,7 @@
   <main class="app-shell">
     <header class="topbar">
       <div class="seal">🏛</div>
-      <div class="brand"><small>REALITY 127</small><h1>Государство реальности</h1><p id="chatTitle">Подключение к беседе…</p></div>
+      <div class="brand"><small>REALITY 128</small><h1>Государство реальности</h1><p id="chatTitle">Подключение к беседе…</p></div>
       <button class="icon-button" id="refreshButton" aria-label="Обновить">↻</button>
     </header>
 
@@ -57,6 +58,36 @@
         <div id="sanctionComposer"></div>
         <div id="sanctionBills"></div>
       </section>
+
+      <section class="screen" data-screen="powers">
+        <div id="powerHero"></div>
+
+        <div class="section-head"><div><small>РАСШИРЕННОЕ ГОСУДАРСТВО</small><h2>Новые структуры</h2></div></div>
+        <div class="institution-grid" id="institutionGrid"></div>
+
+        <div class="section-head"><div><small>ТОЛЬКО ДЛЯ ВАШЕЙ ДОЛЖНОСТИ</small><h2>Панель полномочий</h2></div></div>
+        <div id="myPowerCards"></div>
+
+        <div class="section-head"><div><small>ДЛЯ КАЖДОГО УЧАСТНИКА</small><h2>Подать жалобу</h2></div></div>
+        <article class="panel citizen-panel">
+          <div class="panel-title"><span>📨</span><div><b>Официальное обращение</b><small>Жалоба попадёт омбудсмену и может быть передана в суд или прокуратуру</small></div></div>
+          <form id="citizenComplaintForm">
+            <div class="field"><label>НАЗВАНИЕ</label><input name="title" maxlength="140" placeholder="Кратко о проблеме"></div>
+            <div class="field"><label>УЧАСТНИК, НА КОТОРОГО ПОДАЁТСЯ ЖАЛОБА</label><select name="target_user_id" id="complaintTarget"><option value="0">Без конкретного участника</option></select></div>
+            <div class="field"><label>ОПИСАНИЕ</label><textarea name="description" maxlength="1500" placeholder="Что произошло и какое решение требуется"></textarea></div>
+            <button class="positive wide" type="submit">📨 ЗАРЕГИСТРИРОВАТЬ ЖАЛОБУ</button>
+          </form>
+        </article>
+
+        <div class="section-head"><div><small>ЦЕНТРАЛЬНЫЙ БАНК И СОВБЕЗ</small><h2>Действующие режимы</h2></div></div>
+        <div id="powerPolicy"></div>
+
+        <div class="section-head"><div><small>СУД, ПРОКУРАТУРА И ОМБУДСМЕН</small><h2>Государственные дела</h2></div></div>
+        <div id="powerCases"></div>
+
+        <div class="section-head"><div><small>ПРОЗРАЧНОСТЬ ВЛАСТИ</small><h2>Журнал полномочий</h2></div></div>
+        <div id="powerLog"></div>
+      </section>
     </div>
   </main>
 
@@ -67,10 +98,19 @@
     <button data-tab="laws"><span>📜</span><small>Законы</small></button>
     <button data-tab="treasury"><span>💰</span><small>Казна</small></button>
     <button data-tab="oversight"><span>🚨</span><small>Надзор</small></button>
+    <button data-tab="powers"><span>⚙️</span><small>Полномочия</small></button>
   </nav>
 
-  <div class="loading" id="loading"><div class="spinner"></div><b>Формируем государство</b><span>Загружаем власть, выборы, казну и законы</span></div>
+  <div class="power-modal" id="powerModal">
+    <section class="power-sheet">
+      <div class="power-sheet-head"><div><small id="powerModalOffice">ГОСУДАРСТВЕННОЕ ПОЛНОМОЧИЕ</small><h3 id="powerModalTitle">Действие</h3></div><button class="power-sheet-close" data-power-close>×</button></div>
+      <form class="power-form" id="powerForm"><div id="powerFormFields"></div><button class="action" type="submit">🏛 ПОДТВЕРДИТЬ ДЕЙСТВИЕ</button></form>
+    </section>
+  </div>
+
+  <div class="loading" id="loading"><div class="spinner"></div><b>Формируем государство</b><span>Загружаем власть, структуры, полномочия и законы</span></div>
   <div class="toast" id="toast"></div>
-  <script src="/government-v127/app.js?v=127"></script>
+  <script src="/government-v127/app.js?v=128"></script>
+  <script src="/government-v127/powers-v128.js?v=128"></script>
 </body>
 </html>
