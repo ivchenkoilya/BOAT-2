@@ -2,7 +2,7 @@
 'use strict';
 
 const TEST_PIN='6767';
-const STABLE_GAME='/games/night-hunter/game-v116.js?v=116';
+const STABLE_GAME='/games/night-hunter/game-v116.js?v=117';
 let loading=false;
 
 function loadScript(src){
@@ -21,12 +21,17 @@ function loadScript(src){
 function waitReady(){
   return new Promise((resolve,reject)=>{
     if(window.__NIGHT_HUNTER_READY__){resolve();return}
-    const ready=()=>{clearTimeout(timer);resolve()};
-    const timer=setTimeout(()=>{
+    if(window.__NIGHT_HUNTER_LOAD_ERROR__){reject(new Error(window.__NIGHT_HUNTER_LOAD_ERROR__));return}
+    const cleanup=()=>{
+      clearTimeout(timer);
       window.removeEventListener('night-hunter-ready',ready);
-      reject(new Error('Тестовая версия загружалась слишком долго.'));
-    },25000);
+      window.removeEventListener('night-hunter-error',failed);
+    };
+    const ready=()=>{cleanup();resolve()};
+    const failed=event=>{cleanup();reject(new Error(event.detail||'Ошибка подготовки Reality 116.'))};
+    const timer=setTimeout(()=>{cleanup();reject(new Error('Тестовая версия загружалась слишком долго.'))},28000);
     window.addEventListener('night-hunter-ready',ready,{once:true});
+    window.addEventListener('night-hunter-error',failed,{once:true});
   });
 }
 
@@ -66,6 +71,8 @@ function initEarlyAccess(){
   const launchTest=async()=>{
     if(loading)return;
     loading=true;
+    window.__NIGHT_HUNTER_READY__=false;
+    window.__NIGHT_HUNTER_LOAD_ERROR__='';
     if(start){start.disabled=true;start.textContent='ЗАГРУЗКА REALITY 116…'}
     if(input)input.disabled=true;
     if(button)button.disabled=true;
@@ -80,10 +87,11 @@ function initEarlyAccess(){
       setTimeout(()=>box?.classList.add('hiddenAccess'),900);
     }catch(err){
       loading=false;
-      if(start){start.disabled=true;start.textContent='РАННИЙ ДОСТУП · 25 ИЮЛЯ'}
+      if(start){start.disabled=true;start.textContent='ОШИБКА ЗАГРУЗКИ'}
       if(input)input.disabled=false;
       if(button)button.disabled=false;
       setHint(err.message||'Ошибка загрузки тестовой версии.','bad');
+      if(error){error.textContent=err.message||'Ошибка загрузки тестовой версии.';error.style.display='block'}
     }
   };
 
