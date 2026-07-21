@@ -15,9 +15,10 @@ from command_hub_v121 import install_command_hub_v121
 from command_hub_compat_v121 import install_command_hub_compat_v121
 from finance_route_fix_v116 import install_finance_route_fix_v116
 from finance_loan_requests_v118 import install_finance_loan_requests_v118
+from sanctions_v126 import install_sanctions_v126
 
 
-VERSION = "Reality 124 · Полный карьерный админ-центр"
+VERSION = "Reality 126 · Надзор и санкции"
 FINANCE_PREFIX = "finance_"
 
 
@@ -30,7 +31,7 @@ def _finance_link(core: Any, chat_id: int) -> str:
     if core.WEBAPP_PUBLIC_URL:
         return (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/finance-v118/"
-            f"?chat_id={int(chat_id)}&build=124-{int(time.time())}"
+            f"?chat_id={int(chat_id)}&build=126-{int(time.time())}"
         )
     return ""
 
@@ -71,7 +72,7 @@ def install_finance_entry_fix_v115(core: Any) -> None:
             )
             return
         await message.answer(
-            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 124</b>\n\n"
+            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 126</b>\n\n"
             "Переводи обычное влияние, выдавай займы или публикуй заявку. "
             "Карьерное влияние не тратится и определяет постоянную роль.",
             reply_markup=InlineKeyboardMarkup(
@@ -93,9 +94,9 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     ]
     handlers[:] = preferred + [handler for handler in handlers if handler not in preferred]
 
-    # Reality 123 оставляет отдельный карьерный API, а Reality 124 использует
-    # полный интерфейс Reality 76 со всеми игровыми, рейдовыми, событийными,
-    # финансовыми и талантными инструментами, добавляя карьеру поверх него.
+    # Санкции ставятся последним слоем после всех игр, финансов, карьеры и
+    # админ-панели. Так ограничения проверяются раньше старых обработчиков,
+    # а раздел санкций появляется внутри полного Reality 126.
     install_career_system_v120(core)
     install_command_hub_v121(core)
     install_command_hub_compat_v121(core)
@@ -103,3 +104,4 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_admin_finance_compat_v123(core)
     install_admin_career_v123(core)
     install_admin_full_v124(core)
+    install_sanctions_v126(core)
