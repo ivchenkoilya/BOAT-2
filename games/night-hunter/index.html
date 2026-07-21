@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="/games/night-hunter/style-v108.css?v=117">
   <link rel="stylesheet" href="/games/night-hunter/style-v110.css?v=117">
   <link rel="stylesheet" href="/games/night-hunter/style-v115.css?v=117">
+  <link rel="stylesheet" href="/games/night-hunter/style-v116.css?v=117">
+  <link rel="stylesheet" href="/games/night-hunter/style-v117.css?v=117">
 </head>
 <body>
 <main class="app">
@@ -25,14 +27,14 @@
 
     <div class="hudTop">
       <span class="clock" id="clock">17:42</span>
-      <div class="objective"><small>ТЕКУЩАЯ ЗАДАЧА</small><b id="objective">ДОЙДИ ДО ПРОХОДНОЙ</b><span class="objectiveDetail" id="objectiveDetail">Дневная смена выходит с территории. У проходной слишком много людей, но один из них не двигается.</span></div>
+      <div class="objective"><small>ТЕКУЩАЯ ЗАДАЧА</small><b id="objective">ДОЙДИ ДО ПРОХОДНОЙ</b><span class="objectiveDetail" id="objectiveDetail">Все рабочие выходят с территории, но один человек стоит против потока и смотрит только на тебя.</span></div>
     </div>
 
     <div class="battery hidden" id="batteryHud">
       <small>ФОНАРЬ</small><i><b id="batteryBar"></b></i><strong id="batteryText">100%</strong>
     </div>
 
-    <div class="caption" id="caption">Тёплый вечер. Ты идёшь на первую ночную смену в ALIVSPORT.</div>
+    <div class="caption" id="caption">На территории уже зарегистрирован сотрудник с твоим именем.</div>
     <div class="eventBanner" id="eventBanner"><small>СМЕНА №184</small><b>ПРИБЫТИЕ</b></div>
 
     <div class="joystick" id="joystick"><div class="joystickRing"></div><div class="joystickKnob" id="joystickKnob"></div></div>
@@ -53,9 +55,9 @@
     <div class="factoryPoster">
       <div class="sun"></div><div class="factorySilhouette"></div><div class="workerSilhouette"></div><div class="nightLayer"></div>
     </div>
-    <div class="eyebrow">REALITY 115 · В РАЗРАБОТКЕ</div>
+    <div class="eyebrow">REALITY 117 · HORROR CUT · В РАЗРАБОТКЕ</div>
     <h1>Ночной охотник:<br>Последняя смена</h1>
-    <p>Большая переработка мистической ночной смены на заводе ALIVSPORT. Мы расширяем цех, улучшаем окружение, камеры, анимации и сюжетные документы.</p>
+    <p>На заводе уже началась твоя смена. Камеры показывают, что ты внутри, хотя ты всё ещё стоишь у проходной.</p>
     <div class="developmentStatus">
       <span class="developmentPulse"></span>
       <div><b>РАЗДЕЛ В ТОТАЛЬНОЙ РАЗРАБОТКЕ</b><small>Ранний доступ для игроков откроется 25 июля</small></div>
@@ -65,7 +67,7 @@
         <b>ВНУТРЕННЕЕ ТЕСТИРОВАНИЕ</b>
         <span>Введите PIN владельца проекта</span>
       </div>
-      <p>Введите четырёхзначный PIN-код, чтобы запустить стабильную тестовую сборку.</p>
+      <p>Введите четырёхзначный PIN-код, чтобы запустить мистическую тестовую сборку.</p>
       <div class="earlyAccessPin">
         <input id="devPinInput" type="password" inputmode="numeric" autocomplete="off" maxlength="4" aria-label="PIN-код тестировщика" placeholder="••••">
         <button id="devPinButton" type="button">ТЕСТОВЫЙ ВХОД</button>
@@ -73,9 +75,9 @@
       <div class="earlyAccessHint" id="devPinHint">PIN-код состоит из 4 цифр.</div>
     </div>
     <div class="features">
-      <div><b>ЖИВАЯ УЛИЦА</b><span>Больше работников, машин, движения, деревьев и деталей у проходной</span></div>
-      <div><b>РАСШИРЕННЫЙ ЦЕХ</b><span>Новые зоны, архивный склад, сервисный коридор и детализированное оборудование</span></div>
-      <div><b>АРХИВ 047</b><span>Загадочные документы и улучшенная система наблюдения за тайным человеком</span></div>
+      <div><b>ТОЛПА НЕ УХОДИТ</b><span>Рабочие покидают завод снова и снова, но их количество не уменьшается</span></div>
+      <div><b>ЦЕХ №0</b><span>Помещение отсутствует на плане, но знает имя ночного оператора</span></div>
+      <div><b>КАМЕРЫ ПОМНЯТ</b><span>Записи показывают события раньше, чем они происходят</span></div>
     </div>
     <button class="primary" id="start" type="button" disabled>РАННИЙ ДОСТУП · 25 ИЮЛЯ</button>
     <button class="secondary hidden" id="demo" type="button">ЗАПУСТИТЬ ДЕМО</button>
@@ -136,12 +138,12 @@
 <div class="overlay hidden" id="choiceModal">
   <section class="choiceCard">
     <div class="eyebrow">06:00 · ПЕРЕДАЧА СМЕНЫ</div>
-    <h1>Кому Ивч передаёт смену?</h1>
-    <p>На камере проходной стоит человек в той же рабочей одежде. Система ALIVSPORT требует подпись в графе «Смену принял».</p>
+    <h1>Кто из вас на самом деле закончил смену?</h1>
+    <p>На проходной стоит человек с твоим лицом. Монитор показывает второго — он находится за твоим креслом.</p>
     <div class="choiceCamera"><canvas id="choiceFeed" width="800" height="360"></canvas><span>КАМЕРА 01 · ПРОХОДНАЯ ALIVSPORT</span></div>
     <div class="choiceGrid">
-      <button id="signAgain" type="button"><b>ПОСТАВИТЬ ПОДПИСЬ</b><small>Передать смену самому себе</small></button>
-      <button id="refuseSign" type="button"><b>ОТКАЗАТЬСЯ</b><small>Попытаться выйти без передачи смены</small></button>
+      <button id="signAgain" type="button"><b>ПОДПИСАТЬ ЕГО ИМЕНЕМ</b><small>Оставить ему своё место снаружи</small></button>
+      <button id="refuseSign" type="button"><b>НЕ ПЕРЕДАВАТЬ СМЕНУ</b><small>Остаться единственным оператором внутри</small></button>
     </div>
   </section>
 </div>
@@ -152,7 +154,7 @@
     <div class="eyebrow" id="endingEyebrow">СМЕНА №185 ПРИНЯТА</div>
     <h1 id="endingTitle">Ты уже был здесь</h1>
     <p id="endingText"></p>
-    <blockquote id="endingQuote">«В следующий раз не ремонтируй станок №0»</blockquote>
+    <blockquote id="endingQuote">«Спасибо, что закончил мою смену»</blockquote>
     <div class="resultGrid">
       <div><small>ОЧКИ</small><b id="resultScore">0</b></div>
       <div><small>РЕМОНТЫ</small><b id="resultRepairs">0/4</b></div>
@@ -164,6 +166,6 @@
   </section>
 </div>
 
-<script src="/games/night-hunter/game-v115-access.js?v=117"></script>
+<script src="/games/night-hunter/game-v115-access.js?v=1173"></script>
 </body>
 </html>
