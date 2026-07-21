@@ -28,6 +28,18 @@ def _store_bucket(bucket: int, current_bucket: int) -> bool:
     return bucket % 15 == 0
 
 
+async def _ensure_news_applied_column(core: Any) -> None:
+    conn = core.db._require_connection()
+    async with core.db.lock:
+        cursor = await conn.execute("PRAGMA table_info(finance_market_news_v128)")
+        columns = {str(row["name"]) for row in await cursor.fetchall()}
+        if "applied" not in columns:
+            await conn.execute(
+                "ALTER TABLE finance_market_news_v128 ADD COLUMN applied INTEGER NOT NULL DEFAULT 0"
+            )
+            await conn.commit()
+
+
 async def _seed_history_locked(
     conn: Any,
     chat_id: int,
@@ -119,6 +131,7 @@ async def _initialize_market(core: Any, chat_id: int) -> None:
 
 async def _advance_market(core: Any, chat_id: int) -> None:
     await _ensure_schema(core)
+    await _ensure_news_applied_column(core)
     await sync_government_news(core, chat_id)
     await _initialize_market(core, chat_id)
     conn = core.db._require_connection()
@@ -133,42 +146,55 @@ async def _advance_market(core: Any, chat_id: int) -> None:
             row = await cursor.fetchone()
             if row is None:
                 continue
+            cursor = await conn.execute(
+                """
+                SELECT * FROM finance_market_news_v128
+                WHERE chat_id=? AND symbol=? AND applied=0 AND event_at<=?
+                ORDER BY event_at ASC,created_at ASC
+                """,
+                (chat_id, symbol, current_bucket * MARKET_TICK_SECONDS),
+            )
+            pending_news = [dict(item) for item in await cursor.fetchall()]
             last_bucket = int(row["updated_at"]) // MARKET_TICK_SECONDS
-            if last_bucket >= current_bucket:
+            if last_bucket >= current_bucket and not pending_news:
                 continue
-            first_bucket = max(last_bucket + 1, current_bucket - 7 * 24 * 60)
+            first_bucket = (
+                max(last_bucket + 1, current_bucket - 7 * 24 * 60)
+                if last_bucket < current_bucket
+                else current_bucket
+            )
             price = int(row["price"])
             previous = price
             high = int(row["high_price"])
             low = int(row["low_price"])
             last_event = str(row["last_event"] or "")
             last_event_at = int(row["last_event_at"] or 0)
-            news_rows = await news_for_range(
-                conn, chat_id, symbol,
-                first_bucket * MARKET_TICK_SECONDS,
-                current_bucket * MARKET_TICK_SECONDS,
-            )
             news_by_bucket: dict[int, list[dict[str, Any]]] = {}
-            for item in news_rows:
-                news_by_bucket.setdefault(int(item["event_at"]) // MARKET_TICK_SECONDS, []).append(item)
+            for item in pending_news:
+                original_bucket = int(item["event_at"]) // MARKET_TICK_SECONDS
+                target_bucket = max(first_bucket, min(current_bucket, original_bucket))
+                news_by_bucket.setdefault(target_bucket, []).append(item)
 
             history_rows: list[tuple[int, str, int, int, int]] = []
             total_volume = 0
+            applied_ids: list[str] = []
             for bucket in range(first_bucket, current_bucket + 1):
                 previous = price
                 rnd, event_rnd, selector = _hash_numbers(chat_id, symbol, bucket)
                 step_bp = float(spec["drift_bp"]) + (rnd * 2 - 1) * float(spec["volatility_bp"])
                 bucket_news = list(news_by_bucket.get(bucket, []))
+                applied_ids.extend(str(item["news_id"]) for item in bucket_news)
 
-                if event_rnd < 0.0012:
+                if bucket > last_bucket and event_rnd < 0.0012:
                     direction = 1 if selector % 2 == 0 else -1
                     random_effect = direction * (140 + selector % 360)
                     title, summary, body = random_company_news(symbol, selector, direction)
+                    source_key = f"company:{symbol}:{bucket}"
                     await _insert_news(
                         conn,
                         chat_id=chat_id,
                         symbol=symbol,
-                        source_key=f"company:{symbol}:{bucket}",
+                        source_key=source_key,
                         source_type="company_news",
                         category="Новости компании",
                         title=title,
@@ -178,12 +204,13 @@ async def _advance_market(core: Any, chat_id: int) -> None:
                         event_at=bucket * MARKET_TICK_SECONDS,
                         source_at=bucket * MARKET_TICK_SECONDS,
                     )
-                    random_item = {
-                        "title": title,
-                        "effect_bp": random_effect,
-                        "event_at": bucket * MARKET_TICK_SECONDS,
-                    }
-                    bucket_news.append(random_item)
+                    await conn.execute(
+                        "UPDATE finance_market_news_v128 SET applied=1 WHERE chat_id=? AND symbol=? AND source_key=?",
+                        (chat_id, symbol, source_key),
+                    )
+                    bucket_news.append(
+                        {"title": title, "effect_bp": random_effect, "event_at": bucket * MARKET_TICK_SECONDS}
+                    )
 
                 if bucket_news:
                     step_bp += sum(int(item["effect_bp"]) for item in bucket_news)
@@ -208,9 +235,15 @@ async def _advance_market(core: Any, chat_id: int) -> None:
                     INSERT INTO finance_stock_history_v127(chat_id,symbol,bucket,price,volume)
                     VALUES(?,?,?,?,?)
                     ON CONFLICT(chat_id,symbol,bucket) DO UPDATE SET
-                    price=excluded.price,volume=MAX(finance_stock_history_v127.volume,excluded.volume)
+                    price=excluded.price,volume=finance_stock_history_v127.volume+excluded.volume
                     """,
                     history_rows,
+                )
+            if applied_ids:
+                placeholders = ",".join("?" for _ in applied_ids)
+                await conn.execute(
+                    f"UPDATE finance_market_news_v128 SET applied=1 WHERE news_id IN ({placeholders})",
+                    tuple(applied_ids),
                 )
             await conn.execute(
                 """
