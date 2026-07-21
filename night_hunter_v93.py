@@ -8,7 +8,7 @@ from aiohttp import web
 import game_center_v75 as base
 
 
-VERSION = "Reality 118 · Escape Cut"
+VERSION = "Reality 118 · Standalone Factory Escape"
 GAME_KEY = "night-hunter"
 GAME_PATH = Path(__file__).resolve().parent / "games" / GAME_KEY
 STYLE_FILENAMES = (
@@ -43,7 +43,7 @@ ASSET_FILENAMES = (
 
 
 def install_night_hunter_v93(core: Any) -> None:
-    """Подключает закрытый ранний доступ Night Hunter Reality 118 Escape Cut."""
+    """Подключает самостоятельную игру «Сбежать с завода»."""
     if getattr(core, "_night_hunter_v93_installed", False):
         return
     core._night_hunter_v93_installed = True
@@ -94,7 +94,7 @@ def install_night_hunter_v93(core: Any) -> None:
         html = html.replace("ALIVSPORT", "ALIV GYM")
         html = html.replace(
             "REALITY 117 · HORROR CUT · В РАЗРАБОТКЕ",
-            "REALITY 118 · ESCAPE CUT · В РАЗРАБОТКЕ",
+            "REALITY 118 · STANDALONE FACTORY ESCAPE",
         )
         html = html.replace(
             "На заводе уже началась твоя смена. Камеры показывают, что ты внутри, хотя ты всё ещё стоишь у проходной.",
@@ -114,12 +114,16 @@ def install_night_hunter_v93(core: Any) -> None:
         )
         html = html.replace(
             "/games/night-hunter/game-v115-access.js?v=1173",
+            "/games/night-hunter/game-v115-access.js?v=1187",
+        )
+        html = html.replace(
             "/games/night-hunter/game-v115-access.js?v=1184",
+            "/games/night-hunter/game-v115-access.js?v=1187",
         )
         if "style-v118.css" not in html:
             html = html.replace(
                 "</head>",
-                '  <link rel="stylesheet" href="/games/night-hunter/style-v118.css?v=118">\n</head>',
+                '  <link rel="stylesheet" href="/games/night-hunter/style-v118.css?v=1187">\n</head>',
             )
         return core.web.Response(
             text=html,
