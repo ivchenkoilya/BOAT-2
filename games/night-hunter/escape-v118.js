@@ -106,14 +106,16 @@ function applyStory(){
   const scene=story[key];
   if(!scene)return;
 
-  objective.textContent=scene.title;
-  if(detail)detail.textContent=scene.detail;
-  if(locationLabel)locationLabel.textContent=scene.place;
-  if(clock)clock.textContent=scene.time;
-  doneEl.textContent=String(scene.done);
-  orderEl.textContent=orders[Math.min(orders.length-1,Math.floor(scene.done/5))];
+  const phaseChanged=currentKey!==key;
+  if(objective.textContent!==scene.title)objective.textContent=scene.title;
+  if(detail&&detail.textContent!==scene.detail)detail.textContent=scene.detail;
+  if(locationLabel&&locationLabel.textContent!==scene.place)locationLabel.textContent=scene.place;
+  if(clock&&clock.textContent!==scene.time)clock.textContent=scene.time;
+  if(doneEl.textContent!==String(scene.done))doneEl.textContent=String(scene.done);
+  const orderName=orders[Math.min(orders.length-1,Math.floor(scene.done/5))];
+  if(orderEl.textContent!==orderName)orderEl.textContent=orderName;
 
-  if(currentKey===key)return;
+  if(!phaseChanged)return;
   currentKey=key;
   document.body.dataset.escapePhase=key;
 
@@ -137,10 +139,12 @@ function rewriteIntro(){
 }
 
 function rewriteNotes(){
-  const modal=$('noteModal');if(!modal||modal.classList.contains('hidden'))return;
+  const modal=$('noteModal');if(!modal)return;
+  if(modal.classList.contains('hidden')){modal.dataset.escapeRewritten='';return}
   const title=$('noteTitle'),kind=$('noteKind'),body=$('noteBody');
-  if(!title||!body)return;
+  if(!title||!body||modal.dataset.escapeRewritten)return;
   const original=title.textContent;
+  modal.dataset.escapeRewritten='1';
   if(/Правила|инструкц/i.test(original)){
     kind.textContent='РАСПЕЧАТКА ИЗ 1С';title.textContent='Заказы, которые «точно последние»';
     body.textContent='1. Стойка приседа напольная — 4 шт.\n2. Жим ногами + гакк-присед — 3 шт.\n3. Супер Гакс 3 в 1 — 2 шт.\n4. Гравитрон — 4 шт.\n5. Машина Смита — 5 шт.\n6. Стойки под штангу — 8 шт.\n\nВнизу ручкой отца: «Закончишь — подойди. Есть ещё работа».';
@@ -154,7 +158,10 @@ function rewriteNotes(){
 }
 
 function rewriteCamera(){
-  const modal=$('cameraModal');if(!modal||modal.classList.contains('hidden'))return;
+  const modal=$('cameraModal');if(!modal)return;
+  if(modal.classList.contains('hidden')){modal.dataset.escapeRewritten='';return}
+  if(modal.dataset.escapeRewritten)return;
+  modal.dataset.escapeRewritten='1';
   const title=$('cameraTitle'),status=$('cameraStatus');
   if(title)title.textContent=currentKey==='zeroCam'?'ПРОВЕРКА ВЫЕЗДА НАЧАЛЬСТВА':'КОНТРОЛЬ ПРОИЗВОДСТВА';
   if(status)status.textContent=currentKey==='zeroCam'?'На камере видно: отец и дядя Шварц готовятся уезжать. Дождись 16:35.':'Проверь участки и вернись к заказам.';
