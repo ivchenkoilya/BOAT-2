@@ -6,6 +6,7 @@ from typing import Any
 from aiogram.filters import Command
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
+from admin_career_v123 import install_admin_career_v123
 from career_interactions_v122 import install_career_interactions_v122
 from career_system_v120 import install_career_system_v120
 from command_hub_v121 import install_command_hub_v121
@@ -14,7 +15,7 @@ from finance_route_fix_v116 import install_finance_route_fix_v116
 from finance_loan_requests_v118 import install_finance_loan_requests_v118
 
 
-VERSION = "Reality 122 · Карьера за действия"
+VERSION = "Reality 123 · Карьерный админ-центр"
 FINANCE_PREFIX = "finance_"
 
 
@@ -27,7 +28,7 @@ def _finance_link(core: Any, chat_id: int) -> str:
     if core.WEBAPP_PUBLIC_URL:
         return (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/finance-v118/"
-            f"?chat_id={int(chat_id)}&build=122-{int(time.time())}"
+            f"?chat_id={int(chat_id)}&build=123-{int(time.time())}"
         )
     return ""
 
@@ -68,7 +69,7 @@ def install_finance_entry_fix_v115(core: Any) -> None:
             )
             return
         await message.answer(
-            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 122</b>\n\n"
+            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 123</b>\n\n"
             "Переводи обычное влияние, выдавай займы или публикуй заявку. "
             "Карьерное влияние не тратится и определяет постоянную роль.",
             reply_markup=InlineKeyboardMarkup(
@@ -90,9 +91,11 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     ]
     handlers[:] = preferred + [handler for handler in handlers if handler not in preferred]
 
-    # Карьерная модель ставится первой, затем центры команд, после чего Reality 122
-    # подключает мгновенные награды за рулетку и подтверждённые задания.
+    # Карьерная модель ставится первой, затем центры команд и мгновенные награды.
+    # Reality 123 устанавливается последней: добавляет отдельный защищённый
+    # админ-центр и заменяет вход /admin, не удаляя старую панель Reality 76.
     install_career_system_v120(core)
     install_command_hub_v121(core)
     install_command_hub_compat_v121(core)
     install_career_interactions_v122(core)
+    install_admin_career_v123(core)
