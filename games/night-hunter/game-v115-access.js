@@ -2,8 +2,8 @@
 'use strict';
 
 const TEST_PIN='6767';
-const STABLE_GAME='/games/night-hunter/game-v116.js?v=117';
-const HORROR_SCRIPT='/games/night-hunter/horror-v117.js?v=117';
+const STABLE_GAME='/games/night-hunter/game-v116.js?v=118';
+const ESCAPE_SCRIPT='/games/night-hunter/escape-v118.js?v=118';
 let loading=false;
 
 function loadScript(src){
@@ -29,7 +29,7 @@ function waitReady(){
       window.removeEventListener('night-hunter-error',failed);
     };
     const ready=()=>{cleanup();resolve()};
-    const failed=event=>{cleanup();reject(new Error(event.detail||'Ошибка подготовки Reality 117.'))};
+    const failed=event=>{cleanup();reject(new Error(event.detail||'Ошибка подготовки Reality 118.'))};
     const timer=setTimeout(()=>{cleanup();reject(new Error('Тестовая версия загружалась слишком долго.'))},28000);
     window.addEventListener('night-hunter-ready',ready,{once:true});
     window.addEventListener('night-hunter-error',failed,{once:true});
@@ -74,18 +74,19 @@ function initEarlyAccess(){
     loading=true;
     window.__NIGHT_HUNTER_READY__=false;
     window.__NIGHT_HUNTER_LOAD_ERROR__='';
-    if(start){start.disabled=true;start.textContent='ЗАГРУЗКА HORROR CUT…'}
+    if(start){start.disabled=true;start.textContent='ЗАГРУЗКА ESCAPE CUT…'}
     if(input)input.disabled=true;
     if(button)button.disabled=true;
-    setHint('PIN принят. Запускаем мистическую версию смены…','loading');
+    setHint('PIN принят. Загружаем рабочий день и побег с ALIV GYM…','loading');
 
     try{
       await loadScript(STABLE_GAME);
       await waitReady();
-      await loadScript(HORROR_SCRIPT);
+      await loadScript(ESCAPE_SCRIPT);
+      if(!window.__NIGHT_HUNTER_ESCAPE_READY__)throw new Error('Сюжет побега не успел подготовиться.');
       if(start&&!start.classList.contains('hidden'))start.disabled=false;
       box?.classList.add('unlocked');
-      setHint('Reality 117: Horror Cut готова. Можно начинать смену.','ok');
+      setHint('Reality 118: Escape Cut готова. Можно начинать рабочий день.','ok');
       setTimeout(()=>box?.classList.add('hiddenAccess'),900);
     }catch(err){
       loading=false;
