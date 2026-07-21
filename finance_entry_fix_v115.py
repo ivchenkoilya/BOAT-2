@@ -36,6 +36,7 @@ from hierarchy_activity_hotfix_v130 import install_hierarchy_activity_hotfix_v13
 from hierarchy_v130 import install_hierarchy_v130
 from sanctions_hotfix_v126 import install_sanctions_hotfix_v126
 from sanctions_v126 import install_sanctions_v126
+from talent_career_v135 import install_talent_career_v135
 
 
 VERSION = "Reality 134 · Кнопка выборов"
@@ -138,3 +139,4 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_finance_transfer_limit_v133(core)
     install_admin_election_now_v133(core)
     install_admin_election_button_hotfix_v134(core)
+    install_talent_career_v135(core)
