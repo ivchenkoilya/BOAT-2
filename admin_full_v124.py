@@ -48,7 +48,8 @@ def _full_html() -> str:
         '  <script src="/admin-v112/finance-admin.js?v=126"></script>\n'
         '  <script src="/admin-v126/sanctions-admin.js?v=126"></script>\n'
         '  <script src="/admin-v124/full-career.js?v=126"></script>\n'
-        '  <script src="/admin-v76/admin.js?v=126"></script>'
+        '  <script src="/admin-v76/admin.js?v=126"></script>\n'
+        '  <script>setInterval(()=>{const v=document.getElementById("versionText");if(v)v.textContent="Reality 126 · Санкции"},800);</script>'
     )
     source = source.replace(old_scripts, new_scripts)
     return source
