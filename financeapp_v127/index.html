@@ -6,12 +6,12 @@
   <meta name="theme-color" content="#08060f">
   <title>Финансовый центр</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="/finance-v127/style.css?v=127">
+  <link rel="stylesheet" href="/finance-v127/style.css?v=128">
 </head>
 <body>
   <main class="app">
     <header class="topbar">
-      <div class="brand"><small>ГЛАВНЫЙ ГЕРОЙ · REALITY 127</small><b>Финансовый центр</b></div>
+      <div class="brand"><small>ГЛАВНЫЙ ГЕРОЙ · REALITY 128</small><b>Финансовый центр</b></div>
       <button class="icon-button" id="refreshButton" type="button" aria-label="Обновить">↻</button>
     </header>
 
@@ -38,7 +38,7 @@
         <button class="quick" data-open="debts" type="button"><span>💳</span><b>Долги</b><small>Погашение и договоры</small><i>›</i></button>
         <button class="quick" data-open="history" type="button"><span>🧾</span><b>История</b><small>Последние операции</small><i>›</i></button>
       </div>
-      <article class="notice-card"><span>ℹ️</span><div><b>Игровая экономика</b><small>Вклады и акции используют только обычное влияние. Они не дают карьерные очки, очки Древа и награды событий.</small></div></article>
+      <article class="notice-card"><span>🏛️</span><div><b>Живая экономика беседы</b><small>Курс пересчитывается каждую минуту и зависит от законов, решений правительства, новостей компаний и покупок или продаж игроков.</small></div></article>
     </section>
 
     <section class="screen" data-screen="transfer">
@@ -92,21 +92,53 @@
     </section>
 
     <section class="screen" data-screen="market">
-      <div class="section-heading"><div><small>БИРЖА</small><b>Игровые акции</b></div><em><span class="live-dot"></span> LIVE</em></div>
+      <div class="section-heading"><div><small>БИРЖА</small><b>Игровые акции</b></div><em><span class="live-dot"></span> LIVE · 1 МИН</em></div>
       <div class="ticker-strip" id="tickerStrip"></div>
       <article class="market-card">
         <div class="stock-head"><div class="stock-title"><span id="stockIcon">👑</span><div><b id="stockName">EGO Corp</b><small id="stockSymbol">EGO · Низкий риск</small></div></div><div class="stock-price"><b id="stockPrice">—</b><span id="stockChange">—</span></div></div>
         <div class="periods"><button data-period="3600" type="button">1Ч</button><button class="active" data-period="86400" type="button">24Ч</button><button data-period="604800" type="button">7Д</button><button data-period="2592000" type="button">30Д</button></div>
-        <div class="chart-wrap"><svg id="stockChart" viewBox="0 0 640 250" role="img" aria-label="График цены акции"><defs><linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b66eff" stop-opacity=".38"></stop><stop offset="1" stop-color="#b66eff" stop-opacity="0"></stop></linearGradient></defs><g id="chartGrid"></g><path id="chartArea" fill="url(#chartFill)"></path><path id="chartLine" fill="none" stroke="#d49aff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path></svg><div class="chart-empty" id="chartEmpty">Загружаем график…</div></div>
+
+        <div class="chart-inspector" id="chartInspector" aria-hidden="true">
+          <div><small>ЦЕНА В ТОЧКЕ</small><b id="inspectPrice">—</b></div>
+          <div><small>ИЗМЕНЕНИЕ</small><b id="inspectChange">—</b></div>
+          <div><small>ВРЕМЯ</small><b id="inspectTime">—</b></div>
+          <div><small>ОБЪЁМ</small><b id="inspectVolume">—</b></div>
+        </div>
+
+        <div class="chart-wrap" id="chartWrap">
+          <svg id="stockChart" viewBox="0 0 640 300" role="img" aria-label="Интерактивный график цены акции">
+            <defs>
+              <linearGradient id="chartFillUp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d394ff" stop-opacity=".42"></stop><stop offset="1" stop-color="#8d45cf" stop-opacity="0"></stop></linearGradient>
+              <linearGradient id="chartFillDown" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff718f" stop-opacity=".34"></stop><stop offset="1" stop-color="#ff718f" stop-opacity="0"></stop></linearGradient>
+              <filter id="lineGlow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="4" result="blur"></feGaussianBlur><feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter>
+              <filter id="dotGlow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="5" result="blur"></feGaussianBlur><feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter>
+            </defs>
+            <g id="chartGrid"></g>
+            <path id="chartArea"></path>
+            <path id="chartLine" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" filter="url(#lineGlow)"></path>
+            <g id="chartEventMarkers"></g>
+            <line id="chartCrosshair" class="chart-crosshair" x1="0" x2="0" y1="18" y2="270"></line>
+            <circle id="chartPoint" class="chart-point" r="7" cx="0" cy="0" filter="url(#dotGlow)"></circle>
+            <g id="chartPriceTag" class="chart-price-tag"><rect x="0" y="0" rx="10" width="82" height="34"></rect><text x="41" y="22" text-anchor="middle" id="chartPriceTagText">—</text></g>
+            <rect id="chartHitArea" class="chart-hit-area" x="0" y="0" width="640" height="300"></rect>
+          </svg>
+          <div class="chart-empty" id="chartEmpty">Загружаем график…</div>
+          <div class="chart-hint" id="chartHint">Зажми и веди пальцем по графику</div>
+        </div>
+
         <div class="stock-stats"><div><small>МИНИМУМ</small><b id="stockLow">—</b></div><div><small>МАКСИМУМ</small><b id="stockHigh">—</b></div><div><small>ОБЪЁМ</small><b id="stockVolume">—</b></div><div><small>ОБНОВЛЕНИЕ</small><b id="stockCountdown">—</b></div></div>
-        <div class="market-news" id="marketNews"><span>📰</span><div><b>Новостей пока нет</b><small>События рынка будут появляться здесь.</small></div></div>
+        <button class="market-news" id="marketNews" type="button"><span>📰</span><div><b>Новостей пока нет</b><small>События рынка будут появляться здесь.</small></div><i>›</i></button>
       </article>
+
       <article class="card">
         <div class="position-summary"><div><small>В ПОРТФЕЛЕ</small><b id="positionQuantity">0 акций</b></div><div><small>СТОИМОСТЬ</small><b id="positionValue">0</b></div><div><small>ПРИБЫЛЬ</small><b id="positionProfit">0</b></div></div>
         <label class="field"><span>КОЛИЧЕСТВО АКЦИЙ</span><input id="stockQuantity" type="number" min="1" max="1000" step="1" value="1"></label>
         <div class="trade-preview"><span>Сумма сделки с комиссией 1%</span><b id="tradeTotal">—</b></div>
         <div class="trade-buttons"><button id="stockBuy" type="button">КУПИТЬ</button><button id="stockSell" type="button">ПРОДАТЬ</button></div>
       </article>
+
+      <div class="section-heading"><div><small>НОВОСТИ</small><b>Компании и правительство</b></div><em>Нажми, чтобы прочитать</em></div>
+      <div class="news-feed" id="marketNewsFeed"></div>
       <div class="section-heading"><div><small>ПОРТФЕЛЬ</small><b>Мои позиции</b></div></div>
       <div class="list" id="portfolioList"></div>
     </section>
@@ -129,7 +161,8 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <section class="modal" id="modal" aria-hidden="true"><div class="modal-card"><h3 id="modalTitle">Подтверждение</h3><p id="modalText"></p><div><button id="modalCancel" type="button">Отмена</button><button id="modalConfirm" type="button">Подтвердить</button></div></div></section>
+  <section class="news-modal" id="newsModal" aria-hidden="true"><article class="news-modal-card"><button class="news-close" id="newsClose" type="button" aria-label="Закрыть">×</button><div class="news-modal-meta"><span id="newsCategory">НОВОСТЬ</span><em id="newsDate">—</em></div><h2 id="newsTitle">—</h2><p class="news-summary" id="newsSummary"></p><div class="news-effect" id="newsEffect">—</div><p class="news-body" id="newsBody"></p><button class="news-done" id="newsDone" type="button">ПОНЯТНО</button></article></section>
   <div class="loading" id="loading"><div><span></span><b>Загружаем финансы…</b></div></div>
-  <script src="/finance-v127/app.js?v=127"></script>
+  <script src="/finance-v127/app.js?v=128"></script>
 </body>
 </html>
