@@ -8,7 +8,7 @@ from aiohttp import web
 import game_center_v75 as base
 
 
-VERSION = "Reality 116 · Dense Factory Stable"
+VERSION = "Reality 117 · Horror Cut"
 GAME_KEY = "night-hunter"
 GAME_PATH = Path(__file__).resolve().parent / "games" / GAME_KEY
 STYLE_FILENAMES = (
@@ -16,6 +16,7 @@ STYLE_FILENAMES = (
     "style-v110.css",
     "style-v115.css",
     "style-v116.css",
+    "style-v117.css",
 )
 SCRIPT_FILENAMES = (
     "game-v108.js",
@@ -27,6 +28,7 @@ SCRIPT_FILENAMES = (
     "game-v115-loader.js",
     "game-v115-ui.js",
     "game-v115-access.js",
+    "horror-v117.js",
 )
 ASSET_FILENAMES = (
     "assets/machine-cnc-blue-v114.svg",
@@ -39,7 +41,7 @@ ASSET_FILENAMES = (
 
 
 def install_night_hunter_v93(core: Any) -> None:
-    """Подключает закрытый ранний доступ Night Hunter Reality 116."""
+    """Подключает закрытый ранний доступ Night Hunter Reality 117 Horror Cut."""
     if getattr(core, "_night_hunter_v93_installed", False):
         return
     core._night_hunter_v93_installed = True
@@ -86,19 +88,6 @@ def install_night_hunter_v93(core: Any) -> None:
 
     async def night_index(_: web.Request) -> web.StreamResponse:
         html = (GAME_PATH / "index.html").read_text(encoding="utf-8")
-        html = html.replace(
-            "REALITY 115 · В РАЗРАБОТКЕ",
-            "REALITY 116 · В РАЗРАБОТКЕ",
-        )
-        html = html.replace(
-            "/games/night-hunter/game-v115-access.js?v=117",
-            "/games/night-hunter/game-v115-access.js?v=1162",
-        )
-        if "style-v116.css" not in html:
-            html = html.replace(
-                "</head>",
-                '  <link rel="stylesheet" href="/games/night-hunter/style-v116.css?v=116">\n</head>',
-            )
         return core.web.Response(
             text=html,
             content_type="text/html",
