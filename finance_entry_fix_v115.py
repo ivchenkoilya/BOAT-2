@@ -25,6 +25,7 @@ from government_reform_v129 import install_government_reform_v129
 from government_small_group_v130 import install_government_small_group_v130
 from government_v127 import install_government_v127
 from government_win_tax_hotfix_v129 import install_government_win_tax_hotfix_v129
+from hierarchy_activity_hotfix_v130 import install_hierarchy_activity_hotfix_v130
 from hierarchy_v130 import install_hierarchy_v130
 from sanctions_hotfix_v126 import install_sanctions_hotfix_v126
 from sanctions_v126 import install_sanctions_v126
@@ -122,3 +123,4 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_government_reform_assets_v129(core)
     install_government_command_v129(core)
     install_hierarchy_v130(core)
+    install_hierarchy_activity_hotfix_v130(core)
