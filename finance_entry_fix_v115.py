@@ -32,6 +32,7 @@ from government_crisis_hotfix_v131 import install_government_crisis_hotfix_v131
 from government_crisis_v131 import install_government_crisis_v131
 from government_economy_hotfix_v128 import install_government_economy_hotfix_v128
 from government_institutions_v128 import install_government_institutions_v128
+from government_mandates_v143 import install_government_mandates_v143
 from government_reform_assets_v129 import install_government_reform_assets_v129
 from government_reform_v129 import install_government_reform_v129
 from government_small_group_v130 import install_government_small_group_v130
@@ -45,7 +46,7 @@ from talent_career_v135 import install_talent_career_v135
 from telegram_network_resilience_v139 import install_telegram_network_resilience_v139
 
 
-VERSION = "Reality 142 · Свежий админ-центр"
+VERSION = "Reality 143 · Мандаты и основные законы"
 FINANCE_PREFIX = "finance_"
 
 
@@ -58,7 +59,7 @@ def _finance_link(core: Any, chat_id: int) -> str:
     if core.WEBAPP_PUBLIC_URL:
         return (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/finance-v127/"
-            f"?chat_id={int(chat_id)}&build=142-{int(time.time())}"
+            f"?chat_id={int(chat_id)}&build=143-{int(time.time())}"
         )
     return ""
 
@@ -97,7 +98,7 @@ def install_finance_entry_fix_v115(core: Any) -> None:
             )
             return
         await message.answer(
-            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 142</b>\n\n"
+            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 143</b>\n\n"
             "Переводы и ставки до 1 000 000 обычного влияния, займы, вклады, "
             "биржа и инвестиционный портфель. Центральный банк может удерживать "
             "комиссию, а администратор управляет курсами и остановкой торгов.",
@@ -152,3 +153,4 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_admin_election_action_fix_v140(core)
     install_admin_election_force_voting_v141(core)
     install_admin_fresh_v142(core)
+    install_government_mandates_v143(core)
