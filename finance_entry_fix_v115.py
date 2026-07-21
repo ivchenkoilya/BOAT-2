@@ -19,6 +19,7 @@ from finance_investments_v127 import install_finance_investments_v127
 from finance_loan_requests_v118 import install_finance_loan_requests_v118
 from finance_products_v129 import install_finance_products_v129
 from finance_route_fix_v116 import install_finance_route_fix_v116
+from finance_transfer_limit_v133 import install_finance_transfer_limit_v133
 from government_command_v129 import install_government_command_v129
 from government_crisis_hotfix_v131 import install_government_crisis_hotfix_v131
 from government_crisis_v131 import install_government_crisis_v131
@@ -35,7 +36,7 @@ from sanctions_hotfix_v126 import install_sanctions_hotfix_v126
 from sanctions_v126 import install_sanctions_v126
 
 
-VERSION = "Reality 132 · Админ власти и биржи"
+VERSION = "Reality 133 · Переводы до миллиона"
 FINANCE_PREFIX = "finance_"
 
 
@@ -48,7 +49,7 @@ def _finance_link(core: Any, chat_id: int) -> str:
     if core.WEBAPP_PUBLIC_URL:
         return (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/finance-v127/"
-            f"?chat_id={int(chat_id)}&build=132-{int(time.time())}"
+            f"?chat_id={int(chat_id)}&build=133-{int(time.time())}"
         )
     return ""
 
@@ -87,10 +88,10 @@ def install_finance_entry_fix_v115(core: Any) -> None:
             )
             return
         await message.answer(
-            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 132</b>\n\n"
-            "Переводы, займы, вклады, биржа и инвестиционный портфель. "
-            "Центральный банк устанавливает лимиты, а администратор управляет "
-            "курсами, рыночными событиями и остановкой торгов.",
+            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 133</b>\n\n"
+            "Переводы до 1 000 000 влияния, займы, вклады, биржа и "
+            "инвестиционный портфель. Центральный банк может удерживать комиссию, "
+            "а администратор управляет курсами и остановкой торгов.",
             reply_markup=InlineKeyboardMarkup(
                 inline_keyboard=[[
                     InlineKeyboardButton(
@@ -132,3 +133,4 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_government_crisis_hotfix_v131(core)
     install_admin_government_market_v132(core)
     install_admin_market_lock_hotfix_v132(core)
+    install_finance_transfer_limit_v133(core)
