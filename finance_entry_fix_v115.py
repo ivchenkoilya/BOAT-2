@@ -15,11 +15,12 @@ from command_hub_v121 import install_command_hub_v121
 from command_hub_compat_v121 import install_command_hub_compat_v121
 from finance_route_fix_v116 import install_finance_route_fix_v116
 from finance_loan_requests_v118 import install_finance_loan_requests_v118
+from government_v127 import install_government_v127
 from sanctions_hotfix_v126 import install_sanctions_hotfix_v126
 from sanctions_v126 import install_sanctions_v126
 
 
-VERSION = "Reality 126 · Надзор и санкции"
+VERSION = "Reality 127 · Государство реальности"
 FINANCE_PREFIX = "finance_"
 
 
@@ -32,7 +33,7 @@ def _finance_link(core: Any, chat_id: int) -> str:
     if core.WEBAPP_PUBLIC_URL:
         return (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/finance-v118/"
-            f"?chat_id={int(chat_id)}&build=126-{int(time.time())}"
+            f"?chat_id={int(chat_id)}&build=127-{int(time.time())}"
         )
     return ""
 
@@ -73,7 +74,7 @@ def install_finance_entry_fix_v115(core: Any) -> None:
             )
             return
         await message.answer(
-            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 126</b>\n\n"
+            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 127</b>\n\n"
             "Переводи обычное влияние, выдавай займы или публикуй заявку. "
             "Карьерное влияние не тратится и определяет постоянную роль.",
             reply_markup=InlineKeyboardMarkup(
@@ -95,9 +96,9 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     ]
     handlers[:] = preferred + [handler for handler in handlers if handler not in preferred]
 
-    # Сначала подключается полная панель и базовая таблица санкций. Последний
-    # hotfix закрывает inline-обходы и разрешает должнику погашать старый долг,
-    # не позволяя создавать новые переводы, займы или заявки.
+    # Санкции подключаются до государства: закон, утверждённый Госдумой и
+    # Президентом, использует уже действующую систему Надзора. Reality 127
+    # ставится последней и добавляет отдельное Mini App, выборы, законы и казну.
     install_career_system_v120(core)
     install_command_hub_v121(core)
     install_command_hub_compat_v121(core)
@@ -107,3 +108,4 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_admin_full_v124(core)
     install_sanctions_v126(core)
     install_sanctions_hotfix_v126(core)
+    install_government_v127(core)
