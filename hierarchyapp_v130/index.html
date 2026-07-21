@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#09070d">
+  <title>Иерархия реальности</title>
+  <link rel="stylesheet" href="/hierarchy-v130/app.css?v=130">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <main class="app">
+    <header class="topbar">
+      <div class="logo">👑</div>
+      <div><small>REALITY 130</small><h1>Иерархия реальности</h1><p id="chatTitle">Загрузка беседы…</p></div>
+      <button class="icon" id="refresh" type="button" aria-label="Обновить">↻</button>
+    </header>
+
+    <section class="summary" id="summary"></section>
+
+    <div class="screens">
+      <section class="screen active" data-screen="top">
+        <div class="section-head"><div><small>ЗАЛ СЛАВЫ</small><h2>Главные участники</h2></div><span class="badge" id="activeBadge"></span></div>
+        <div class="podium" id="podium"></div>
+        <div class="section-head"><div><small>ОБЩАЯ СИЛА</small><h2>Полный рейтинг</h2></div></div>
+        <div class="rank-list" id="topList"></div>
+      </section>
+
+      <section class="screen" data-screen="people">
+        <div class="section-head"><div><small>ПАСПОРТА РЕАЛЬНОСТИ</small><h2>Все участники</h2></div></div>
+        <label class="search"><span>⌕</span><input id="peopleSearch" type="search" placeholder="Имя, звание, должность или типаж"></label>
+        <div class="people-grid" id="peopleGrid"></div>
+      </section>
+
+      <section class="screen" data-screen="ratings">
+        <div class="section-head"><div><small>СРАВНЕНИЕ</small><h2>Отдельные рейтинги</h2></div></div>
+        <div class="filter-row" id="ratingFilters">
+          <button class="active" type="button" data-metric="power_score">Могущество</button>
+          <button type="button" data-metric="career_points">Карьера</button>
+          <button type="button" data-metric="points">Влияние</button>
+          <button type="button" data-metric="talent_spent">Таланты</button>
+          <button type="button" data-metric="government_score">Власть</button>
+          <button type="button" data-metric="activity_score">Активность</button>
+          <button type="button" data-metric="game_profit">Игры</button>
+        </div>
+        <div class="rank-list" id="ratingList"></div>
+      </section>
+
+      <section class="screen" data-screen="government">
+        <div class="section-head"><div><small>ГОСУДАРСТВО</small><h2>Кто управляет беседой</h2></div></div>
+        <div class="government-note" id="governmentNote"></div>
+        <div class="office-list" id="governmentList"></div>
+      </section>
+
+      <section class="screen" data-screen="me">
+        <div class="section-head"><div><small>ЛИЧНОЕ ДОСЬЕ</small><h2>Мой профиль</h2></div></div>
+        <div id="myProfile"></div>
+      </section>
+    </div>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="active" type="button" data-tab="top"><span>🏆</span><small>Топ</small></button>
+    <button type="button" data-tab="people"><span>👥</span><small>Участники</small></button>
+    <button type="button" data-tab="ratings"><span>📊</span><small>Рейтинги</small></button>
+    <button type="button" data-tab="government"><span>🏛</span><small>Власть</small></button>
+    <button type="button" data-tab="me"><span>👤</span><small>Профиль</small></button>
+  </nav>
+
+  <div class="profile-modal" id="profileModal" aria-hidden="true">
+    <section class="profile-sheet">
+      <button class="close" id="profileClose" type="button" aria-label="Закрыть">×</button>
+      <div id="profileContent"></div>
+    </section>
+  </div>
+
+  <div class="loading" id="loading"><div class="spinner"></div><b>Собираем иерархию</b><span>Карьера, таланты, власть, типажи и игры</span></div>
+  <div class="toast" id="toast"></div>
+  <script src="/hierarchy-v130/app.js?v=130"></script>
+</body>
+</html>
