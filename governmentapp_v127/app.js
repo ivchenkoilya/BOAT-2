@@ -11,11 +11,58 @@
   const fmt=value=>new Intl.NumberFormat('ru-RU').format(Number(value)||0);
   const esc=value=>String(value??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
   const date=value=>value?new Date(Number(value)*1000).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
-  let state=null,busy=false,toastTimer=null,refreshTimer=null;
+  const draftStorageKey=`government-drafts-v130:${chatId}`;
+  let state=null,busy=false,toastTimer=null,refreshTimer=null,drafts={};
+
+  try{drafts=JSON.parse(sessionStorage.getItem(draftStorageKey)||'{}')||{}}catch(_error){drafts={}}
 
   function toast(text,type='success'){
     const node=$('toast');node.textContent=text;node.className=`toast show ${type}`;
     clearTimeout(toastTimer);toastTimer=setTimeout(()=>node.className='toast',3400);
+  }
+
+  function formKey(form){
+    if(form.matches('.nominate-form'))return `nominate:${form.dataset.election||''}`;
+    return form.id||'';
+  }
+
+  function captureDrafts(){
+    document.querySelectorAll('form').forEach(form=>{
+      const key=formKey(form);if(!key)return;
+      const values={};
+      form.querySelectorAll('input[name],textarea[name],select[name]').forEach(field=>{
+        if(field.type==='checkbox'){
+          if(!Array.isArray(values[field.name]))values[field.name]=[];
+          if(field.checked)values[field.name].push(field.value);
+        }else values[field.name]=field.value;
+      });
+      drafts[key]=values;
+    });
+    try{sessionStorage.setItem(draftStorageKey,JSON.stringify(drafts))}catch(_error){}
+  }
+
+  function restoreDrafts(){
+    document.querySelectorAll('form').forEach(form=>{
+      const values=drafts[formKey(form)];if(!values)return;
+      form.querySelectorAll('input[name],textarea[name],select[name]').forEach(field=>{
+        if(!(field.name in values))return;
+        if(field.type==='checkbox')field.checked=Array.isArray(values[field.name])&&values[field.name].includes(field.value);
+        else field.value=String(values[field.name]??'');
+      });
+      if(form.id==='billForm'&&$('billType')&&$('billExtra')){
+        const type=$('billType').value;
+        $('billExtra').innerHTML=billExtra(type);
+        const refreshed=drafts[formKey(form)]||{};
+        $('billExtra').querySelectorAll('input[name],textarea[name],select[name]').forEach(field=>{
+          if(field.name in refreshed)field.value=String(refreshed[field.name]??'');
+        });
+      }
+    });
+  }
+
+  function isEditing(){
+    const active=document.activeElement;
+    return Boolean(active&&active.matches('input,textarea,select')&&active.closest('form'));
   }
 
   async function api(path,options={}){
@@ -31,20 +78,21 @@
 
   async function load(silent=false){
     if(busy&&!silent)return;
+    captureDrafts();
     try{
       state=await api(`state?chat_id=${encodeURIComponent(chatId)}`);
-      render();$('loading').classList.add('hidden');
+      render();restoreDrafts();$('loading').classList.add('hidden');
     }catch(error){$('loading').classList.add('hidden');toast(error.message||'Не удалось загрузить государство.','error')}
   }
 
   async function action(name,payload={},confirmText=''){
-    if(busy)return;
-    if(confirmText&&!confirm(confirmText))return;
-    busy=true;
+    if(busy)return false;
+    if(confirmText&&!confirm(confirmText))return false;
+    captureDrafts();busy=true;
     try{
       const data=await api('action',{method:'POST',body:JSON.stringify({action:name,chat_id:chatId,...payload})});
-      toast(data.message||'Готово.');tg?.HapticFeedback?.notificationOccurred?.('success');await load(true);
-    }catch(error){toast(error.message||'Действие не выполнено.','error');tg?.HapticFeedback?.notificationOccurred?.('error')}
+      toast(data.message||'Готово.');tg?.HapticFeedback?.notificationOccurred?.('success');await load(true);return true;
+    }catch(error){toast(error.message||'Действие не выполнено.','error');tg?.HapticFeedback?.notificationOccurred?.('error');return false}
     finally{busy=false}
   }
 
@@ -67,7 +115,8 @@
 
   function renderHome(){
     const president=(state.offices||[]).find(x=>x.office_key==='president');
-    $('homeHero').innerHTML=`<article class="hero"><div class="hero-head"><div class="hero-icon">${president?'🦅':'🏛'}</div><div><small>${president?'ПРЕЗИДЕНТ РЕАЛЬНОСТИ':'ГОСУДАРСТВО ФОРМИРУЕТСЯ'}</small><b>${esc(president?.name||'Президент ещё не избран')}</b></div></div><div class="metric-grid"><div class="metric"><small>КАЗНА</small><b>${fmt(state.treasury?.balance)} 💰</b></div><div class="metric"><small>ДЕЙСТВУЮЩИЕ ЗАКОНЫ</small><b>${(state.laws||[]).filter(x=>x.active).length}</b></div><div class="metric"><small>ДЕПУТАТЫ</small><b>${(state.offices||[]).filter(x=>x.office_key==='deputy').length}/5</b></div><div class="metric"><small>НАЛОГОВЫЙ ЦИКЛ</small><b>${state.tax?.enabled?'ВКЛЮЧЁН':'ВЫКЛЮЧЕН'}</b></div></div></article>`;
+    const deputySeats=Number(state.office_specs?.deputy?.seats)||5;
+    $('homeHero').innerHTML=`<article class="hero"><div class="hero-head"><div class="hero-icon">${president?'🦅':'🏛'}</div><div><small>${president?'ПРЕЗИДЕНТ РЕАЛЬНОСТИ':'ГОСУДАРСТВО ФОРМИРУЕТСЯ'}</small><b>${esc(president?.name||'Президент ещё не избран')}</b></div></div><div class="metric-grid"><div class="metric"><small>КАЗНА</small><b>${fmt(state.treasury?.balance)} 💰</b></div><div class="metric"><small>ДЕЙСТВУЮЩИЕ ЗАКОНЫ</small><b>${(state.laws||[]).filter(x=>x.active).length}</b></div><div class="metric"><small>ДЕПУТАТЫ</small><b>${(state.offices||[]).filter(x=>x.office_key==='deputy').length}/${deputySeats}</b></div><div class="metric"><small>НАЛОГОВЫЙ ЦИКЛ</small><b>${state.tax?.enabled?'ВКЛЮЧЁН':'ВЫКЛЮЧЕН'}</b></div></div></article>`;
     const order=['president','chair','deputy','finance','oversight'];
     $('officeGrid').innerHTML=order.map(key=>{const spec=state.office_specs[key];return Array.from({length:Number(spec.seats)||1},(_,i)=>officeCard(spec,key,i+1)).join('')}).join('');
     const activeE=(state.elections||[]).filter(x=>['nomination','voting'].includes(x.phase));
@@ -78,25 +127,26 @@
 
   function renderElectionControls(){
     const p=state.permissions||{};const active=(state.elections||[]).filter(x=>['nomination','voting'].includes(x.phase));
-    const has=key=>active.some(x=>x.office_key===key);
-    const buttons=[];
+    const has=key=>active.some(x=>x.office_key===key);const buttons=[];
     if(p.can_start_president&&!has('president'))buttons.push('<button class="action" data-start-election="president">🦅 Выборы президента</button>');
     if(p.can_start_deputy&&!has('deputy'))buttons.push('<button class="action" data-start-election="deputy">🗳 Выборы депутатов</button>');
     if(p.can_start_chair&&!has('chair'))buttons.push('<button class="secondary" data-start-election="chair">🏛 Выборы председателя</button>');
-    $('electionControls').innerHTML=buttons.length?`<article class="panel"><div class="panel-title"><span>🗳</span><div><b>Открыть избирательную кампанию</b><small>Выдвижение 24 часа, затем голосование 24 часа</small></div></div><div class="button-grid">${buttons.join('')}</div></article>`:'';
+    const scale=state.government_scale||{};
+    const note=scale.active_users?`<p class="hint">Активных за ${fmt(scale.activity_window_days||14)} дней: ${fmt(scale.active_users)}. Депутатских мест: ${fmt(scale.deputy_seats)}. Кворум: ${fmt(scale.quorum)}.</p>`:'';
+    $('electionControls').innerHTML=buttons.length?`<article class="panel"><div class="panel-title"><span>🗳</span><div><b>Открыть избирательную кампанию</b><small>Выдвижение 24 часа, затем голосование 24 часа</small></div></div>${note}<div class="button-grid">${buttons.join('')}</div></article>`:'';
   }
 
   function electionCard(election){
     const phase=election.phase==='nomination'?'ВЫДВИЖЕНИЕ':election.phase==='voting'?'ГОЛОСОВАНИЕ':election.phase==='resolved'?'ЗАВЕРШЕНО':'ОТМЕНЕНО';
     const canNominate=election.phase==='nomination';
     const candidates=election.candidates?.length?`<div class="candidate-list">${election.candidates.map(c=>`<div class="candidate"><span><b>${esc(c.name)}</b><small>⭐ ${fmt(c.career_points)} · ${esc(c.program)}</small></span>${election.phase==='voting'?`<button class="${Number(election.my_vote)===Number(c.user_id)?'selected':''}" data-vote-election="${esc(election.election_id)}" data-candidate="${c.user_id}">${Number(election.my_vote)===Number(c.user_id)?'✓ ВЫБРАН':'ГОЛОСОВАТЬ'}${state.user?.is_admin?` · ${c.votes}`:''}</button>`:`<strong>${state.user?.is_admin?c.votes:''}</strong>`}</div>`).join('')}</div>`:'<div class="empty">Кандидатов пока нет.</div>';
-    const nominate=canNominate?`<form class="nominate-form" data-election="${esc(election.election_id)}"><div class="field"><label>ПРОГРАММА КАНДИДАТА</label><textarea name="program" maxlength="600" placeholder="Что ты изменишь за семь дней?"></textarea></div><button class="action wide" type="submit">📣 ВЫДВИНУТЬ СВОЮ КАНДИДАТУРУ</button></form>`:'';
+    const nominate=canNominate?`<form class="nominate-form" data-election="${esc(election.election_id)}"><div class="field"><label>ПРОГРАММА КАНДИДАТА</label><textarea name="program" maxlength="600" placeholder="Что ты изменишь за семь дней?"></textarea><small class="hint">Черновик сохраняется автоматически и не исчезнет при обновлении.</small></div><button class="action wide" type="submit">📣 ВЫДВИНУТЬ СВОЮ КАНДИДАТУРУ</button></form>`:'';
     return `<article class="election-card"><div class="card-head"><div><b>${election.emoji} ${esc(election.office_title)}</b><small>${election.seats} мест · осталось ${esc(election.remaining)}</small></div><span class="badge gold">${phase}</span></div>${candidates}${nominate}</article>`;
   }
 
   function renderElections(){
-    renderElectionControls();const rows=state.elections||[];
-    $('electionList').innerHTML=rows.length?rows.map(electionCard).join(''):'<div class="empty">Выборов ещё не проводилось. Начни с президента и пяти депутатов.</div>';
+    renderElectionControls();const rows=state.elections||[];const seats=Number(state.office_specs?.deputy?.seats)||3;
+    $('electionList').innerHTML=rows.length?rows.map(electionCard).join(''):`<div class="empty">Выборов ещё не проводилось. Начни с президента и ${seats} депутатов.</div>`;
   }
 
   function userOptions(selected=0){return (state.eligible_users||[]).map(u=>`<option value="${u.user_id}" ${Number(selected)===Number(u.user_id)?'selected':''}>${esc(u.name)} · ⭐ ${fmt(u.career_points)}</option>`).join('')}
@@ -124,15 +174,8 @@
     return `<article class="bill-card"><div class="card-head"><div><b>${bill.emoji} Законопроект №${bill.number}</b><small>${esc(bill.type_title)} · автор ${esc(bill.author_name)}${bill.remaining?` · ${esc(bill.remaining)}`:''}</small></div>${statusBadge(bill.status)}</div><h3>${esc(bill.title)}</h3><p class="bill-text">${esc(bill.description)}</p><div class="vote-stats"><span>✅ За: <b>${bill.votes.yes}</b></span><span>❌ Против: <b>${bill.votes.no}</b></span><span>⚪ ${bill.votes.abstain}</span></div>${voteButtons}${president}${override}</article>`;
   }
 
-  function renderDuma(){
-    renderBillComposer();const bills=(state.bills||[]).filter(x=>x.bill_type!=='sanction');
-    $('billList').innerHTML=bills.length?bills.map(billCard).join(''):'<div class="empty">Законопроектов пока нет.</div>';
-  }
-
-  function renderLaws(){
-    const laws=state.laws||[];
-    $('lawList').innerHTML=laws.length?laws.map(law=>`<article class="law-card"><div class="card-head"><div><b>${law.emoji} Закон №${law.number}</b><small>${esc(law.type_title)} · ${date(law.enacted_at)}</small></div><span class="badge green">ДЕЙСТВУЕТ</span></div><h3>${esc(law.title)}</h3><p class="law-text">${esc(law.text)}</p></article>`).join(''):'<div class="empty">Кодекс пока пуст. Первый закон появится после голосования Госдумы и подписи президента.</div>';
-  }
+  function renderDuma(){renderBillComposer();const bills=(state.bills||[]).filter(x=>x.bill_type!=='sanction');$('billList').innerHTML=bills.length?bills.map(billCard).join(''):'<div class="empty">Законопроектов пока нет.</div>'}
+  function renderLaws(){const laws=state.laws||[];$('lawList').innerHTML=laws.length?laws.map(law=>`<article class="law-card"><div class="card-head"><div><b>${law.emoji} Закон №${law.number}</b><small>${esc(law.type_title)} · ${date(law.enacted_at)}</small></div><span class="badge green">ДЕЙСТВУЕТ</span></div><h3>${esc(law.title)}</h3><p class="law-text">${esc(law.text)}</p></article>`).join(''):'<div class="empty">Кодекс пока пуст. Первый закон появится после голосования Госдумы и подписи президента.</div>'}
 
   function renderTreasury(){
     const tax=state.tax||{},treasury=state.treasury||{};
@@ -150,20 +193,13 @@
     $('sanctionComposer').innerHTML=`<article class="panel"><div class="panel-title"><span>🚨</span><div><b>Предложить санкции</b><small>Решение проходит голосование Госдумы и подпись президента</small></div></div><form id="sanctionForm"><div class="field"><label>УЧАСТНИК</label><select name="target_user_id">${userOptions()}</select></div><div class="check-grid">${Object.entries(types).map(([key,title])=>`<label class="check"><input type="checkbox" name="sanction_type" value="${key}"><span>${title}</span></label>`).join('')}</div><div class="field"><label>СРОК</label><select name="duration"><option value="600">10 минут</option><option value="3600">1 час</option><option value="21600">6 часов</option><option value="86400" selected>24 часа</option><option value="259200">3 дня</option><option value="604800">7 дней</option><option value="0">Бессрочно</option></select></div><div class="field"><label>ПРИЧИНА</label><textarea name="reason" maxlength="500" placeholder="В чём установлено нарушение"></textarea></div><button class="danger wide" type="submit">🚨 ВНЕСТИ САНКЦИОННОЕ ПРЕДЛОЖЕНИЕ</button></form></article>`;
   }
 
-  function renderOversight(){
-    renderSanctionComposer();const bills=(state.bills||[]).filter(x=>x.bill_type==='sanction');
-    $('sanctionBills').innerHTML=bills.length?bills.map(billCard).join(''):'<div class="empty">Санкционных предложений пока нет.</div>';
-  }
-
-  function render(){
-    if(!state)return;renderIdentity();renderHome();renderElections();renderDuma();renderLaws();renderTreasury();renderOversight();
-  }
-
+  function renderOversight(){renderSanctionComposer();const bills=(state.bills||[]).filter(x=>x.bill_type==='sanction');$('sanctionBills').innerHTML=bills.length?bills.map(billCard).join(''):'<div class="empty">Санкционных предложений пока нет.</div>'}
+  function render(){if(!state)return;renderIdentity();renderHome();renderElections();renderDuma();renderLaws();renderTreasury();renderOversight()}
   function formData(form){return Object.fromEntries(new FormData(form).entries())}
 
   document.addEventListener('click',event=>{
     const tab=event.target.closest('[data-tab]');
-    if(tab){document.querySelectorAll('.bottom-nav button').forEach(x=>x.classList.toggle('active',x===tab));document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.dataset.screen===tab.dataset.tab));window.scrollTo({top:0,behavior:'smooth'});return}
+    if(tab){captureDrafts();document.querySelectorAll('.bottom-nav button').forEach(x=>x.classList.toggle('active',x===tab));document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.dataset.screen===tab.dataset.tab));window.scrollTo({top:0,behavior:'smooth'});return}
     if(event.target.closest('#refreshButton')){load();return}
     const start=event.target.closest('[data-start-election]');if(start){action('start_election',{office_key:start.dataset.startElection},'Открыть выборы на эту должность?');return}
     const candidate=event.target.closest('[data-vote-election]');if(candidate){action('vote_election',{election_id:candidate.dataset.voteElection,candidate_id:Number(candidate.dataset.candidate)});return}
@@ -175,7 +211,11 @@
     if(event.target.closest('[data-pay-tax]')){action('pay_tax_debt',{},'Погасить налоговый долг с обычного баланса?');return}
   });
 
-  document.addEventListener('change',event=>{if(event.target.id==='billType'&&$('billExtra'))$('billExtra').innerHTML=billExtra(event.target.value)});
+  document.addEventListener('input',event=>{if(event.target.closest('form'))captureDrafts()});
+  document.addEventListener('change',event=>{
+    if(event.target.id==='billType'&&$('billExtra')){$('billExtra').innerHTML=billExtra(event.target.value);captureDrafts();restoreDrafts();return}
+    if(event.target.closest('form'))captureDrafts();
+  });
 
   document.addEventListener('submit',event=>{
     if(event.target.matches('.nominate-form')){event.preventDefault();const data=formData(event.target);action('nominate',{election_id:event.target.dataset.election,program:data.program||''},'Подтвердить выдвижение кандидатуры?');return}
@@ -192,6 +232,6 @@
     }
   });
 
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)load(true)});
-  load();clearInterval(refreshTimer);refreshTimer=setInterval(()=>{if(!document.hidden&&!busy)load(true)},30000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!isEditing())load(true)});
+  load();clearInterval(refreshTimer);refreshTimer=setInterval(()=>{if(!document.hidden&&!busy&&!isEditing())load(true)},60000);
 })();
