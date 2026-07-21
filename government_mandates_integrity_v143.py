@@ -11,6 +11,7 @@ VERSION = "Reality 143 · Мандаты и основные законы"
 
 async def _ensure_numbering(core: Any, chat_id: int) -> None:
     await mandates._ensure_schema(core)
+    await gov._ensure_state(core, chat_id)
     conn = core.db._require_connection()
     async with core.db.lock:
         await conn.execute(
