@@ -7,10 +7,11 @@ from typing import Any
 import finance_system_v112 as finance
 
 from finance_investments_v127_core import (
-    DEPOSIT_PLANS, MAX_ACTIVE_DEPOSITS, MAX_DEPOSIT_TOTAL, MAX_TRADE_VALUE,
-    STOCKS, TRADE_FEE_PERCENT, _deposit_values, _fmt, _now, _safe_int,
+    DEPOSIT_PLANS, MARKET_TICK_SECONDS, MAX_ACTIVE_DEPOSITS, MAX_DEPOSIT_TOTAL,
+    MAX_TRADE_VALUE, STOCKS, TRADE_FEE_PERCENT, _deposit_values, _fmt, _now, _safe_int,
 )
 from finance_investments_v127_market import _advance_market
+
 
 async def _create_deposit(core: Any, chat_id: int, user_id: int, data: dict[str, Any]) -> str:
     plan_key = str(data.get("plan_key") or "")
@@ -177,6 +178,7 @@ async def _trade(core: Any, chat_id: int, user_id: int, data: dict[str, Any], si
                     (quantity, total, now, chat_id, user_id, symbol),
                 )
             delta = -total
+            direction = 1
             message = f"Куплено {quantity} акц. {symbol} по {_fmt(price)}. Комиссия: {_fmt(fee)}."
         else:
             if position is None or int(position["quantity"]) < quantity:
@@ -208,6 +210,7 @@ async def _trade(core: Any, chat_id: int, user_id: int, data: dict[str, Any], si
                     (remaining_quantity, remaining_cost, realized, now, chat_id, user_id, symbol),
                 )
             delta = net
+            direction = -1
             message = (
                 f"Продано {quantity} акц. {symbol} по {_fmt(price)}. "
                 f"Получено {_fmt(net)}, результат сделки {realized:+d}."
@@ -220,9 +223,27 @@ async def _trade(core: Any, chat_id: int, user_id: int, data: dict[str, Any], si
             """,
             (trade_id, chat_id, user_id, symbol, side, quantity, price, gross, fee, now),
         )
+        impact_bp = max(2, min(40, round(gross * 40 / MAX_TRADE_VALUE)))
+        raw_price = max(5.0, price * (1 + direction * impact_bp / 10_000))
+        adjusted_price = max(5, round(raw_price))
+        bucket = now // MARKET_TICK_SECONDS
         await conn.execute(
-            "UPDATE finance_market_v127 SET volume=volume+? WHERE chat_id=? AND symbol=?",
-            (gross, chat_id, symbol),
+            """
+            UPDATE finance_market_v127
+            SET previous_price=price,price=?,high_price=MAX(high_price,?),low_price=MIN(low_price,?),
+                volume=volume+?
+            WHERE chat_id=? AND symbol=?
+            """,
+            (adjusted_price, adjusted_price, adjusted_price, gross, chat_id, symbol),
+        )
+        await conn.execute(
+            """
+            INSERT INTO finance_stock_history_v127(chat_id,symbol,bucket,price,volume)
+            VALUES(?,?,?,?,?)
+            ON CONFLICT(chat_id,symbol,bucket) DO UPDATE SET
+            price=excluded.price,volume=finance_stock_history_v127.volume+excluded.volume
+            """,
+            (chat_id, symbol, bucket, adjusted_price, gross),
         )
         await conn.execute(
             "INSERT INTO score_log(chat_id,user_id,delta,reason,created_at) VALUES(?,?,?,?,?)",
