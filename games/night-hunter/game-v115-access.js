@@ -2,9 +2,7 @@
 'use strict';
 
 const TEST_PIN='6767';
-const UNLOCK_KEY='allGamesDevUnlocked';
-const LEGACY_UNLOCK_KEY='nightHunterDevUnlocked';
-const STABLE_GAME='/games/night-hunter/game-v113.js?v=116';
+const STABLE_GAME='/games/night-hunter/game-v113.js?v=117';
 let loading=false;
 
 function loadScript(src){
@@ -28,6 +26,15 @@ function initEarlyAccess(){
   const input=document.getElementById('devPinInput');
   const button=document.getElementById('devPinButton');
   const hint=document.getElementById('devPinHint');
+  const status=document.querySelector('.developmentStatus');
+  const card=document.querySelector('#intro .introCard');
+
+  if(card){
+    card.style.maxHeight='calc(100dvh - 24px)';
+    card.style.overflowY='auto';
+    card.style.overscrollBehavior='contain';
+  }
+  if(status&&box)status.insertAdjacentElement('afterend',box);
 
   if(start){
     start.classList.remove('loading');
@@ -73,8 +80,6 @@ function initEarlyAccess(){
       if(input){input.value='';input.focus()}
       return;
     }
-    localStorage.setItem(UNLOCK_KEY,'1');
-    localStorage.removeItem(LEGACY_UNLOCK_KEY);
     launchTest();
   };
 
@@ -84,9 +89,7 @@ function initEarlyAccess(){
   });
   input?.addEventListener('keydown',event=>{if(event.key==='Enter')unlock()});
   button?.addEventListener('click',unlock);
-
-  if(localStorage.getItem(LEGACY_UNLOCK_KEY)==='1')localStorage.setItem(UNLOCK_KEY,'1');
-  if(localStorage.getItem(UNLOCK_KEY)==='1')launchTest();
+  input?.focus();
 }
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initEarlyAccess);
