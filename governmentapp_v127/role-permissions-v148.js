@@ -31,6 +31,7 @@
     oversight:['general']
   };
   let offices=[];
+  let ownerAdmin=false;
   let allowed=new Set();
   let allowedBills=new Set();
   let frame=0;
@@ -44,10 +45,10 @@
     if(!marker){
       marker=document.createElement('div');
       marker.className='role-version-v148';
-      marker.textContent='REALITY 150';
+      marker.textContent='REALITY 151';
       const legacy=brand.querySelector(':scope > small');
       if(legacy)legacy.replaceWith(marker);else brand.prepend(marker);
-    }else if(marker.textContent!=='REALITY 150')marker.textContent='REALITY 150';
+    }else if(marker.textContent!=='REALITY 151')marker.textContent='REALITY 151';
   }
 
   function toast(text){
@@ -62,6 +63,11 @@
   function rebuildAllowed(){
     allowed=new Set();
     allowedBills=new Set();
+    if(ownerAdmin){
+      Object.values(roleActions).flat().forEach(action=>allowed.add(action));
+      Object.values(roleBillTypes).flat().forEach(type=>allowedBills.add(type));
+      return;
+    }
     offices.forEach(role=>{
       (roleActions[role]||[]).forEach(action=>allowed.add(action));
       (roleBillTypes[role]||[]).forEach(type=>allowedBills.add(type));
@@ -89,8 +95,15 @@
       banner.className='role-access-banner-v148';
       host.insertAdjacentElement('beforebegin',banner);
     }
+    if(ownerAdmin){
+      banner.classList.add('creator-mode-v151');
+      const markup=`<div class="role-access-icon-v148">👑</div><div><small>СИСТЕМНЫЙ КОНТРОЛЬ</small><b>Режим создателя государства</b><div class="role-access-list-v148"><span>Создатель системы</span><span>Все государственные структуры</span></div><p>Доступен просмотр всех государственных действий, скрытых расследований и вмешательство в работу любой структуры. Каждое действие записывается в журнал за вашим аккаунтом.</p></div>`;
+      if(banner.innerHTML!==markup)banner.innerHTML=markup;
+      return;
+    }
+    banner.classList.remove('creator-mode-v151');
     const roles=offices.length?offices.map(key=>`<span>${escapeHtml(officeTitle(key))}</span>`).join(''):'<span class="none">Государственной должности нет</span>';
-    const markup=`<div class="role-access-icon-v148">🔐</div><div><small>ПЕРСОНАЛЬНЫЙ ДОСТУП</small><b>Активны только полномочия вашей должности</b><div class="role-access-list-v148">${roles}</div><p>Статус владельца бота не даёт президентские или иные государственные права. Для управления системой используется отдельный админ-центр.</p></div>`;
+    const markup=`<div class="role-access-icon-v148">🔐</div><div><small>ПЕРСОНАЛЬНЫЙ ДОСТУП</small><b>Активны только полномочия вашей должности</b><div class="role-access-list-v148">${roles}</div><p>Другие государственные полномочия недоступны без соответствующей должности или мандата.</p></div>`;
     if(banner.innerHTML!==markup)banner.innerHTML=markup;
   }
 
@@ -99,7 +112,7 @@
     if(!select)return;
     let firstAllowed=null;
     [...select.options].forEach(option=>{
-      const permitted=allowedBills.has(String(option.value||''));
+      const permitted=ownerAdmin||allowedBills.has(String(option.value||''));
       option.hidden=!permitted;
       option.disabled=!permitted;
       if(permitted&&!firstAllowed)firstAllowed=option;
@@ -118,16 +131,19 @@
     renderAccessBanner();
     filterBillTypes();
     document.querySelectorAll('.power-card').forEach(card=>{
-      card.classList.toggle('role-current-v148',Boolean(card.querySelector('.power-action')));
+      card.classList.toggle('role-current-v148',Boolean(card.querySelector('.power-action'))||ownerAdmin);
+      card.classList.toggle('creator-visible-v151',ownerAdmin);
     });
     document.querySelectorAll('[data-power-action]').forEach(button=>{
       const key=String(button.dataset.powerAction||'');
-      const available=allowed.has(key);
+      const available=ownerAdmin||allowed.has(key);
       button.classList.toggle('role-allowed-v148',available);
       button.classList.toggle('role-locked-v148',!available);
+      button.classList.toggle('creator-action-v151',ownerAdmin);
       button.disabled=!available;
       button.setAttribute('aria-disabled',available?'false':'true');
       if(!available)button.title='Недоступно для вашей государственной должности';
+      else if(ownerAdmin)button.title='Доступно в режиме создателя';
     });
   }
 
@@ -143,6 +159,7 @@
       const data=await response.json();
       if(!response.ok||!data?.ok)return;
       offices=Array.isArray(data?.role_access?.offices)?data.role_access.offices:Array.isArray(data?.user?.offices)?data.user.offices:[];
+      ownerAdmin=Boolean(data?.role_access?.owner_admin||data?.user?.owner_admin||data?.creator_control_v151?.active);
       rebuildAllowed();
       scheduleApply();
     }catch(_error){}
@@ -152,7 +169,7 @@
     const button=event.target.closest?.('[data-power-action]');
     if(!button)return;
     const key=String(button.dataset.powerAction||'');
-    if(allowed.has(key))return;
+    if(ownerAdmin||allowed.has(key))return;
     event.preventDefault();
     event.stopImmediatePropagation();
     toast('Это полномочие недоступно для вашей текущей государственной должности.');
