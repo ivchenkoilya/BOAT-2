@@ -9,6 +9,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from admin_career_v123 import install_admin_career_v123
 from admin_finance_compat_v123 import install_admin_finance_compat_v123
 from admin_full_v124 import install_admin_full_v124
+from admin_government_market_v132 import install_admin_government_market_v132
 from career_interactions_v122 import install_career_interactions_v122
 from career_system_v120 import install_career_system_v120
 from command_hub_v121 import install_command_hub_v121
@@ -33,7 +34,7 @@ from sanctions_hotfix_v126 import install_sanctions_hotfix_v126
 from sanctions_v126 import install_sanctions_v126
 
 
-VERSION = "Reality 131 · Казна, иерархия и борьба за власть"
+VERSION = "Reality 132 · Админ власти и биржи"
 FINANCE_PREFIX = "finance_"
 
 
@@ -46,7 +47,7 @@ def _finance_link(core: Any, chat_id: int) -> str:
     if core.WEBAPP_PUBLIC_URL:
         return (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/finance-v127/"
-            f"?chat_id={int(chat_id)}&build=131-{int(time.time())}"
+            f"?chat_id={int(chat_id)}&build=132-{int(time.time())}"
         )
     return ""
 
@@ -85,10 +86,10 @@ def install_finance_entry_fix_v115(core: Any) -> None:
             )
             return
         await message.answer(
-            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 131</b>\n\n"
+            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 132</b>\n\n"
             "Переводы, займы, вклады, биржа и инвестиционный портфель. "
-            "Центральный банк устанавливает лимиты, а подозрительные операции "
-            "с государственной казной теперь расследуются отдельными структурами.",
+            "Центральный банк устанавливает лимиты, а администратор управляет "
+            "курсами, рыночными событиями и остановкой торгов.",
             reply_markup=InlineKeyboardMarkup(
                 inline_keyboard=[[
                     InlineKeyboardButton(
@@ -128,3 +129,4 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_hierarchy_activity_hotfix_v130(core)
     install_government_crisis_v131(core)
     install_government_crisis_hotfix_v131(core)
+    install_admin_government_market_v132(core)
