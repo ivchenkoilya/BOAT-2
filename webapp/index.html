@@ -25,6 +25,12 @@
       var tg=window.Telegram&&window.Telegram.WebApp;
       var start=(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.start_param)||new URLSearchParams(location.search).get('tgWebAppStartParam')||'';
       var search=new URLSearchParams(location.search);
+      if(start.indexOf('hierarchy_')===0){
+        document.documentElement.style.visibility='hidden';
+        search.set('chat_id',start.slice(10));
+        location.replace('/hierarchy-v130/?'+search.toString()+location.hash);
+        return;
+      }
       if(start.indexOf('government_')===0){
         document.documentElement.style.visibility='hidden';
         search.set('chat_id',start.slice(11));
