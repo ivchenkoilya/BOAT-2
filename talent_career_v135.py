@@ -328,10 +328,11 @@ def install_talent_career_v135(core: Any) -> None:
     old_file_response = core.web.FileResponse
 
     def file_response_with_career_help(path: Any, *args: Any, **kwargs: Any):
+        result = old_file_response(path, *args, **kwargs)
         file_path = Path(path)
         if file_path.name == "index.html" and file_path.parent.name == "talent_app":
             try:
-                text = file_path.read_text(encoding="utf-8")
+                text = str(result.text)
                 old_variants = (
                     "Ты получаешь 3 стартовых очка и ещё по одному за каждые 500 очков влияния. Уже открытые очки не отнимаются при потере влияния.",
                     "Ты получаешь 5 стартовых очков и ещё по одному за каждые 500 карьерного влияния без лимита. Босс, задания, активные дни и достижения дают дополнительные очки, а от мини-игр в прогресс идёт 20% положительной награды.",
@@ -344,14 +345,11 @@ def install_talent_career_v135(core: Any) -> None:
                 )
                 for old in old_variants:
                     text = text.replace(old, new_help)
-                return core.web.Response(
-                    text=text,
-                    content_type="text/html",
-                    headers={"Cache-Control": "no-store"},
-                )
+                result.text = text
+                result.headers["Cache-Control"] = "no-store"
             except Exception:
                 LOGGER.exception("Не удалось обновить подсказку карьерного Древа")
-        return old_file_response(path, *args, **kwargs)
+        return result
 
     core.web.FileResponse = file_response_with_career_help
 
