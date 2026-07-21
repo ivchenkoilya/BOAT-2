@@ -31,6 +31,7 @@ from government_command_v129 import install_government_command_v129
 from government_crisis_hotfix_v131 import install_government_crisis_hotfix_v131
 from government_crisis_v131 import install_government_crisis_v131
 from government_economy_hotfix_v128 import install_government_economy_hotfix_v128
+from government_entry_v143 import install_government_entry_v143
 from government_institutions_v128 import install_government_institutions_v128
 from government_mandates_integrity_v143 import install_government_mandates_integrity_v143
 from government_mandates_v143 import install_government_mandates_v143
@@ -156,3 +157,4 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_admin_fresh_v142(core)
     install_government_mandates_v143(core)
     install_government_mandates_integrity_v143(core)
+    install_government_entry_v143(core)
