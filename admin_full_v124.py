@@ -36,20 +36,26 @@ def _full_html() -> str:
         '<div class="loading" id="loading"><div class="spinner"></div><b>Загрузка Reality 89</b><span>Синхронизируем участников, игры и древо</span></div>',
         '<div class="loading" id="loading"><div class="spinner"></div><b>Загрузка Reality 132</b><span>Синхронизируем карьеру, власть, санкции, игры, финансы и биржу</span></div>',
     )
+    source = source.replace(
+        '    <button data-tab="games"><span>🎮</span><small>Игры</small></button>',
+        '    <button data-tab="government132"><span>🏛</span><small>Власть</small></button>\n'
+        '    <button data-tab="market132"><span>📈</span><small>Акции</small></button>\n'
+        '    <button data-tab="games"><span>🎮</span><small>Игры</small></button>',
+    )
     old_scripts = (
         '<script src="/admin-v89/admin-v89.js?v=89"></script>\n'
         '  <script src="/admin-v76/admin.js?v=89"></script>'
     )
     new_scripts = (
-        '<script src="/admin-v89/admin-v89.js?v=132b"></script>\n'
-        '  <script src="/admin-v95/night-hunter-admin.js?v=132b"></script>\n'
-        '  <script src="/admin-v96/events-admin.js?v=132b"></script>\n'
-        '  <script src="/admin-v96/reward-editor.js?v=132b"></script>\n'
-        '  <script src="/admin-v112/finance-admin.js?v=132b"></script>\n'
-        '  <script src="/admin-v126/sanctions-admin.js?v=132b"></script>\n'
-        '  <script src="/admin-v124/full-career.js?v=132b"></script>\n'
-        '  <script src="/admin-v76/admin.js?v=132b"></script>\n'
-        '  <script src="/admin-v132/government-market.js?v=132b"></script>\n'
+        '<script src="/admin-v89/admin-v89.js?v=132c"></script>\n'
+        '  <script src="/admin-v95/night-hunter-admin.js?v=132c"></script>\n'
+        '  <script src="/admin-v96/events-admin.js?v=132c"></script>\n'
+        '  <script src="/admin-v96/reward-editor.js?v=132c"></script>\n'
+        '  <script src="/admin-v112/finance-admin.js?v=132c"></script>\n'
+        '  <script src="/admin-v126/sanctions-admin.js?v=132c"></script>\n'
+        '  <script src="/admin-v124/full-career.js?v=132c"></script>\n'
+        '  <script src="/admin-v76/admin.js?v=132c"></script>\n'
+        '  <script src="/admin-v132/government-market.js?v=132c"></script>\n'
         '  <script>setInterval(()=>{const v=document.getElementById("versionText");if(v)v.textContent="Reality 132 · Власть и биржа"},800);</script>'
     )
     source = source.replace(old_scripts, new_scripts)
@@ -72,7 +78,7 @@ def install_admin_full_v124(core: Any) -> None:
                 "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
                 "Pragma": "no-cache",
                 "Expires": "0",
-                "X-Admin-Center": "reality-132b",
+                "X-Admin-Center": "reality-132c",
             },
         )
 
@@ -81,7 +87,7 @@ def install_admin_full_v124(core: Any) -> None:
             FULL_SCRIPT,
             headers={
                 "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
-                "X-Admin-Center": "reality-132b",
+                "X-Admin-Center": "reality-132c",
             },
         )
 
@@ -152,7 +158,7 @@ def install_admin_full_v124(core: Any) -> None:
 
         url = (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/admin-v132/"
-            f"?chat_id={chat_id}&user_id={int(target.user_id)}&build=132b-{int(time.time())}"
+            f"?chat_id={chat_id}&user_id={int(target.user_id)}&build=132c-{int(time.time())}"
         )
         markup = InlineKeyboardMarkup(
             inline_keyboard=[[InlineKeyboardButton(
@@ -166,8 +172,7 @@ def install_admin_full_v124(core: Any) -> None:
                 "🛠 <b>ПОЛНЫЙ АДМИН-ЦЕНТР REALITY 132</b>\n\n"
                 f"Беседа: <code>{chat_id}</code>\n"
                 f"Участник: <b>{target.full_name}</b>\n\n"
-                "Вкладки «Власть» и «Акции» теперь подключены напрямую и находятся "
-                "сразу после раздела участника.",
+                "Кнопки «Власть» и «Акции» теперь находятся сразу после кнопки «Участник».",
                 reply_markup=markup,
             )
         except Exception:
