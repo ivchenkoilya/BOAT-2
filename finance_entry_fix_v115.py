@@ -14,8 +14,9 @@ from career_system_v120 import install_career_system_v120
 from command_hub_v121 import install_command_hub_v121
 from command_hub_compat_v121 import install_command_hub_compat_v121
 from finance_investments_v127 import install_finance_investments_v127
-from finance_route_fix_v116 import install_finance_route_fix_v116
 from finance_loan_requests_v118 import install_finance_loan_requests_v118
+from finance_products_v129 import install_finance_products_v129
+from finance_route_fix_v116 import install_finance_route_fix_v116
 from government_command_v128 import install_government_command_v128
 from government_economy_hotfix_v128 import install_government_economy_hotfix_v128
 from government_institutions_v128 import install_government_institutions_v128
@@ -24,7 +25,7 @@ from sanctions_hotfix_v126 import install_sanctions_hotfix_v126
 from sanctions_v126 import install_sanctions_v126
 
 
-VERSION = "Reality 128 · Государство, полномочия и инвестиции"
+VERSION = "Reality 129 · Портфель и быстрые вклады"
 FINANCE_PREFIX = "finance_"
 
 
@@ -37,7 +38,7 @@ def _finance_link(core: Any, chat_id: int) -> str:
     if core.WEBAPP_PUBLIC_URL:
         return (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/finance-v127/"
-            f"?chat_id={int(chat_id)}&build=128-{int(time.time())}"
+            f"?chat_id={int(chat_id)}&build=129-{int(time.time())}"
         )
     return ""
 
@@ -48,15 +49,12 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     core._finance_entry_fix_v115_installed = True
     core.FINANCE_SYSTEM_VERSION = VERSION
 
-    # Reality 117 подключает стабильные маршруты состояния, действий и истории.
     install_finance_route_fix_v116(core)
-    # Reality 118 добавляет заявки на заём и адресные кнопки решения.
     install_finance_loan_requests_v118(core)
-    # Reality 127 добавляет настоящие вклады, портфель и единый рынок беседы.
     install_finance_investments_v127(core)
+    # Reality 129 расширяет лимиты займов, сокращает вклады и мигрирует старые сроки.
+    install_finance_products_v129(core)
 
-    # Старые /finance-обработчики удаляются полностью, чтобы текстовое меню
-    # Reality 112 больше не могло перехватить команду раньше Mini App.
     handlers = core.router.message.handlers
     obsolete_names = {"cmd_finance_v112", "cmd_finance_app_v114", "cmd_finance_app_v115"}
     handlers[:] = [
@@ -80,10 +78,10 @@ def install_finance_entry_fix_v115(core: Any) -> None:
             )
             return
         await message.answer(
-            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 128</b>\n\n"
-            "Переводи обычное влияние, выдавай займы, открывай вклады под процент "
-            "и собирай игровой портфель акций с живым графиком. Центральный банк "
-            "может устанавливать комиссии и лимиты. Карьерное влияние не тратится.",
+            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 129</b>\n\n"
+            "Переводы, крупные займы до 100 000, быстрые вклады сроком до 10 дней, "
+            "живая биржа и отдельный инвестиционный портфель. Центральный банк "
+            "может устанавливать дополнительные ограничения. Карьерное влияние не тратится.",
             reply_markup=InlineKeyboardMarkup(
                 inline_keyboard=[[
                     InlineKeyboardButton(
@@ -94,7 +92,6 @@ def install_finance_entry_fix_v115(core: Any) -> None:
             ),
         )
 
-    # Только новый обработчик остаётся первым среди команд сообщений.
     handlers = core.router.message.handlers
     preferred = [
         handler
@@ -103,10 +100,6 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     ]
     handlers[:] = preferred + [handler for handler in handlers if handler not in preferred]
 
-    # Санкции подключаются до государства: закон, утверждённый Госдумой и
-    # Президентом, использует уже действующую систему Надзора. Reality 128
-    # ставится последним слоем и добавляет структуры, личные кнопки управления,
-    # судебные дела, политику ЦБ и чрезвычайные режимы Совета безопасности.
     install_career_system_v120(core)
     install_command_hub_v121(core)
     install_command_hub_compat_v121(core)
