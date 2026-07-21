@@ -28,7 +28,7 @@
 
   function ensureUi(){
     const brand=document.querySelector('.brand small');
-    if(brand)brand.textContent='REALITY 143';
+    if(brand&&brand.textContent!=='REALITY 143')brand.textContent='REALITY 143';
 
     const nav=document.getElementById('bottomNav');
     if(nav&&!nav.querySelector('[data-tab="mandates"]')){
@@ -162,10 +162,7 @@
     const foundationNode=document.getElementById('foundationLawList');
     const lawList=document.getElementById('lawList');
     if(foundationNode)foundationNode.innerHTML=foundation.map(law=>lawMiniCard(law,true)).join('');
-    if(lawList){
-      lawList.dataset.v143='1';
-      lawList.innerHTML=regular.length?regular.map(law=>lawMiniCard(law,false)).join(''):'<div class="empty">Новых законов, принятых Госдумой, пока нет.</div>';
-    }
+    if(lawList)lawList.innerHTML=regular.length?regular.map(law=>lawMiniCard(law,false)).join(''):'<div class="empty">Новых законов, принятых Госдумой, пока нет.</div>';
     queueMicrotask(()=>{lawRenderBusy=false;});
   }
 
@@ -271,7 +268,9 @@
     if(!law)return;
     const modal=document.getElementById('lawModalV143');
     const host=document.getElementById('lawDocumentV143');
+    if(!modal||!host)return;
     const votes=law.votes||{};
+    const signer=Number(law.signed_by)>0?`Telegram ID ${Number(law.signed_by)}`:'не зафиксировано для старого закона';
     host.innerHTML=`
       <article class="law-document-v143">
         <small>${foundation?'ОСНОВНОЙ СВОД ГОСУДАРСТВА':'ДЕЙСТВУЮЩИЙ ЗАКОН ГОСДУМЫ'}</small>
@@ -279,7 +278,7 @@
         <h3>«${esc(law.title)}»</h3>
         <div class="law-status-v143"><span class="badge ${foundation?'gold':'green'}">${foundation?'ОСНОВНОЙ':'ДЕЙСТВУЕТ'}</span></div>
         <div class="law-full-text-v143">${esc(law.text).replace(/\n/g,'<br>')}</div>
-        ${foundation?`<div class="law-meta-v143"><b>Основание:</b> действует с момента основания государства.<br><b>Режим:</b> защищённый основной закон.</div>`:`<div class="law-meta-v143"><b>Автор:</b> Telegram ID ${Number(law.author_id)||0}<br><b>Голосование:</b> ${Number(votes.yes)||0} за · ${Number(votes.no)||0} против · ${Number(votes.abstain)||0} воздержались<br><b>Подписал:</b> Telegram ID ${Number(law.signed_by)||0}<br><b>Вступил в силу:</b> ${date(law.enacted_at)}</div>`}
+        ${foundation?`<div class="law-meta-v143"><b>Основание:</b> действует с момента основания государства.<br><b>Режим:</b> защищённый основной закон.</div>`:`<div class="law-meta-v143"><b>Автор:</b> Telegram ID ${Number(law.author_id)||0}<br><b>Голосование:</b> ${Number(votes.yes)||0} за · ${Number(votes.no)||0} против · ${Number(votes.abstain)||0} воздержались<br><b>Подписал или утвердил:</b> ${signer}<br><b>Вступил в силу:</b> ${date(law.enacted_at)}</div>`}
       </article>`;
     modal.hidden=false;
     document.body.classList.add('v143-modal-open');
@@ -319,9 +318,8 @@
   fetchState();
   const lawList=document.getElementById('lawList');
   if(lawList)new MutationObserver(()=>{
-    if(snapshot&&!lawRenderBusy&&lawList.dataset.v143!=='1')setTimeout(renderLaws,20);
-    lawList.dataset.v143='';
+    if(snapshot&&!lawRenderBusy&&!lawList.querySelector('.law-mini-v143'))setTimeout(renderLaws,20);
   }).observe(lawList,{childList:true});
-  new MutationObserver(ensureUi).observe(document.documentElement,{childList:true,subtree:true});
+  new MutationObserver(()=>ensureUi()).observe(document.documentElement,{childList:true,subtree:true});
   setInterval(()=>{ensureUi();if(document.querySelector('[data-screen="mandates"].active'))fetchState();},30000);
 })();
