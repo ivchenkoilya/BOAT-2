@@ -16,6 +16,7 @@ from command_hub_compat_v121 import install_command_hub_compat_v121
 from finance_investments_v127 import install_finance_investments_v127
 from finance_route_fix_v116 import install_finance_route_fix_v116
 from finance_loan_requests_v118 import install_finance_loan_requests_v118
+from government_command_v128 import install_government_command_v128
 from government_institutions_v128 import install_government_institutions_v128
 from government_v127 import install_government_v127
 from sanctions_hotfix_v126 import install_sanctions_hotfix_v126
@@ -116,3 +117,4 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_sanctions_hotfix_v126(core)
     install_government_v127(core)
     install_government_institutions_v128(core)
+    install_government_command_v128(core)
