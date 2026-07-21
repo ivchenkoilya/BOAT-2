@@ -101,9 +101,7 @@ def install_admin_election_action_fix_v140(core: Any) -> None:
                 )
 
         def runner_with_election_action(app: Any, *args: Any, **kwargs: Any):
-            if not getattr(app, "_reality140_election_action", False):
-                app.middlewares.insert(0, election_action)
-                app._reality140_election_action = True
+            app.middlewares.insert(0, election_action)
             return original_runner(app, *args, **kwargs)
 
         core.web.AppRunner = runner_with_election_action
