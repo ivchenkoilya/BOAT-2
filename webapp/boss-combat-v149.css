@@ -81,23 +81,8 @@ body.raid-v149-ready .toast{display:none!important}
   box-shadow:0 0 8px #a743bc66;
 }
 
-.raid-v149-music{
-  position:absolute;
-  z-index:92;
-  right:9px;
-  bottom:166px;
-  min-width:44px;
-  height:30px;
-  padding:0 8px;
-  border:1px solid #79548f;
-  border-radius:15px;
-  background:#110a19df;
-  color:#dcc4e8;
-  font:800 8px Arial,sans-serif;
-  box-shadow:0 0 14px #7c3c9f44;
-}
-.raid-v149-music.playing{border-color:#c89d4d;color:#ffe09a;box-shadow:0 0 16px #d39b4666}
-.raid-v149-music strong{font-size:11px;margin-right:4px}
+/* Music has no separate UI: the user track starts after the first tap. */
+#raidMusicV149,.raid-v149-music{display:none!important}
 
 .raid-v149-help-card{
   display:grid;
@@ -123,12 +108,10 @@ body.raid-v149-ready .toast{display:none!important}
 
 @media(max-height:720px){
   .raid-v149-notices{bottom:84px}
-  .raid-v149-music{bottom:154px}
 }
 @media(max-width:370px){
   #bossStage .raid-v61-warning{bottom:10px!important;width:calc(100% - 18px)!important}
   .raid-v149-notices{bottom:84px;width:calc(100% - 20px)}
-  .raid-v149-music{right:6px;bottom:152px}
 }
 @media(prefers-reduced-motion:reduce){
   .raid-v149-notice{animation-duration:1.8s}

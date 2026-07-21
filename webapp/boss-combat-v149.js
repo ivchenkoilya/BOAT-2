@@ -1,17 +1,25 @@
 (()=>{
   'use strict';
 
-  const tg=window.Telegram?.WebApp;
+  const TRACK_CHUNKS=Array.from(
+    {length:5},
+    (_,index)=>`/boss-app/assets/boss-theme-loop-${String(index).padStart(2,'0')}.b64?v=151`
+  );
+
   let latest=null;
   let lastLog='';
-  let phase=1;
-  let audio=null;
   let receivedAt=performance.now();
+  let track=null;
+  let trackUrl='';
+  let trackLoading=null;
+  let musicRequested=false;
 
   function ensureUi(){
     const stage=document.getElementById('bossStage');
     if(!stage)return;
     document.body.classList.add('raid-v149-ready');
+    document.getElementById('raidMusicV149')?.remove();
+    document.querySelectorAll('.raid-v149-music').forEach(node=>node.remove());
 
     if(!document.getElementById('raidNoticesV149')){
       const lane=document.createElement('div');
@@ -19,16 +27,6 @@
       lane.className='raid-v149-notices';
       lane.setAttribute('aria-live','polite');
       stage.appendChild(lane);
-    }
-
-    if(!document.getElementById('raidMusicV149')){
-      const button=document.createElement('button');
-      button.id='raidMusicV149';
-      button.type='button';
-      button.className='raid-v149-music';
-      button.setAttribute('aria-label','Включить или выключить музыку боя');
-      button.innerHTML='<strong>♫</strong><span>МУЗЫКА</span>';
-      stage.appendChild(button);
     }
   }
 
@@ -86,8 +84,8 @@
         if(!card)return;
         const row=document.createElement('div');
         row.className='raid-v149-debuffs';
-        if(weaken)row.insertAdjacentHTML('beforeend',`<span title="Урон снижен">−30% ×${weaken}</span>`);
-        if(crit)row.insertAdjacentHTML('beforeend',`<span title="Критический урон отключён">КРИТ×${crit}</span>`);
+        if(weaken)row.insertAdjacentHTML('beforeend',`<span title="Урон снижен на 15%">−15% ×${weaken}</span>`);
+        if(crit)row.insertAdjacentHTML('beforeend',`<span title="Критический урон ослаблен на 25%">КРИТ−25% ×${crit}</span>`);
         card.appendChild(row);
       });
     });
@@ -95,21 +93,85 @@
 
   function patchHelp(){
     const scroll=document.querySelector('#raidHelpV61 .raid-v61-help-scroll');
-    if(!scroll||scroll.querySelector('.raid-v149-help-card'))return;
+    if(!scroll)return;
     const intro=scroll.querySelector('.raid-v61-help-intro');
     if(intro){
       const text=intro.querySelector('span');
-      if(text)text.textContent='У босса 100 000 HP. Следи за нижним предупреждением, защищайся вовремя и не пропускай ульту.';
+      if(text)text.textContent='У босса 100 000 HP. Обычные ответы стали мягче, а кнопки игрока перезаряжаются быстрее.';
     }
-    const card=document.createElement('div');
-    card.className='raid-v149-help-card';
+
+    scroll.querySelectorAll('small').forEach(node=>{
+      const value=node.textContent||'';
+      if(value.includes('Перезарядка — 5 секунд')){
+        node.textContent=value.replace('Перезарядка — 5 секунд','Перезарядка — 3 секунды');
+      }
+    });
+
+    let card=scroll.querySelector('.raid-v149-help-card');
+    if(!card){
+      card=document.createElement('div');
+      card.className='raid-v149-help-card';
+      intro?.insertAdjacentElement('afterend',card);
+    }
     card.innerHTML=`
-      <b>УСИЛЕННЫЙ ЦЕНТР ВСЕЛЕННОЙ</b>
-      <span>Обычные удары наносят 100–200 базового урона каждой выбранной цели. Защита, уклонение и предметы продолжают его снижать.</span>
-      <span>После 50% HP босс один раз готовит ульту «Ты здесь никто»: предупреждение длится 10 секунд, затем весь живой отряд получает 200–300 урона с игнорированием защиты.</span>
-      <span>Атаки могут на 2 обычных удара снизить урон игрока на 30% или полностью отключить критический урон.</span>
-      <span>Каждые 5 минут босс восстанавливает случайно 100–150 HP, если восстановление не заблокировано.</span>`;
-    intro?.insertAdjacentElement('afterend',card);
+      <b>АКТУАЛЬНЫЙ БАЛАНС ЦЕНТРА ВСЕЛЕННОЙ</b>
+      <span>Обычная атака босса наносит 50–100 базового урона. Защита, уклонение и предметы могут уменьшить итоговый урон.</span>
+      <span>Дебаф срабатывает реже и действует только на один удар: −15% урона или ослабление критического урона на 25%.</span>
+      <span>«Задеть эго» перезаряжается 3 секунды. Способности всех героев — не дольше 5 минут.</span>
+      <span>У босса одновременно может быть максимум 3 заряда Щита ЧСВ.</span>
+      <span>Былогерий может применять «Возвращение в сюжет» сколько угодно раз с перезарядкой 5 минут.</span>`;
+  }
+
+  function isBattleActive(){
+    const battle=latest?.battle||{};
+    return battle.status==='active'&&Number(battle.hp)>0;
+  }
+
+  function decodeBase64(value){
+    const binary=atob(value);
+    const bytes=new Uint8Array(binary.length);
+    for(let index=0;index<binary.length;index++)bytes[index]=binary.charCodeAt(index);
+    return bytes;
+  }
+
+  function ensureTrack(){
+    if(track)return Promise.resolve(track);
+    if(trackLoading)return trackLoading;
+
+    trackLoading=Promise.all(
+      TRACK_CHUNKS.map(url=>fetch(url,{cache:'force-cache'}).then(response=>{
+        if(!response.ok)throw new Error(`Не удалось загрузить музыку: ${response.status}`);
+        return response.text();
+      }))
+    ).then(parts=>{
+      const encoded=parts.join('').replace(/\s+/g,'');
+      const bytes=decodeBase64(encoded);
+      const blob=new Blob([bytes],{type:'audio/ogg'});
+      trackUrl=URL.createObjectURL(blob);
+      track=new Audio(trackUrl);
+      track.loop=true;
+      track.preload='auto';
+      track.volume=.32;
+      track.setAttribute('playsinline','');
+      return track;
+    }).catch(error=>{
+      console.warn('Не удалось загрузить присланный трек босса',error);
+      trackLoading=null;
+      return null;
+    });
+
+    return trackLoading;
+  }
+
+  async function playTrack(){
+    if(!musicRequested||!isBattleActive()||document.hidden)return;
+    const player=await ensureTrack();
+    if(!player)return;
+    try{await player.play();}catch(_error){}
+  }
+
+  function stopTrack(){
+    if(track&&!track.paused)track.pause();
   }
 
   function applyState(data){
@@ -117,16 +179,15 @@
     latest=data;
     receivedAt=performance.now();
     const battle=data.battle||{};
-    phase=Number(battle.hp)<=0?4:Math.max(1,Math.min(4,Number(battle.phase)||1));
     patchWarning(battle);
     patchFighters(data);
     patchHelp();
-    audio?.setPhase(phase);
+
+    if(!isBattleActive())stopTrack();
+    else playTrack();
 
     const current=String((data.logs||[])[0]||'').trim();
-    if(lastLog&&current&&current!==lastLog){
-      notice(current,kindFor(current));
-    }
+    if(lastLog&&current&&current!==lastLog)notice(current,kindFor(current));
     if(current)lastLog=current;
   }
 
@@ -146,112 +207,28 @@
     new MutationObserver(mirror).observe(toast,{attributes:true,childList:true,subtree:true});
   }
 
-  function createAudioEngine(){
-    const AudioContext=window.AudioContext||window.webkitAudioContext;
-    if(!AudioContext)return null;
-    let context=null;
-    let master=null;
-    let timer=null;
-    let currentPhase=1;
-    let playing=false;
-    let step=0;
-    const button=()=>document.getElementById('raidMusicV149');
-    const patterns={
-      1:{bpm:68,notes:[43,null,38,null],wave:'triangle',gain:.055},
-      2:{bpm:88,notes:[43,50,38,50],wave:'sawtooth',gain:.05},
-      3:{bpm:112,notes:[36,43,48,46,36,50,43,53],wave:'sawtooth',gain:.047},
-      4:{bpm:142,notes:[31,38,43,31,46,38,50,41],wave:'square',gain:.038}
-    };
-    const names=['','ПРОБУЖДЕНИЕ','ТРЕВОГА','ЯРОСТЬ','ФИНАЛ'];
-
-    function frequency(midi){return 440*Math.pow(2,(midi-69)/12)}
-    function pulse(note,config,when){
-      if(note==null||!context||!master)return;
-      const osc=context.createOscillator();
-      const gain=context.createGain();
-      const filter=context.createBiquadFilter();
-      osc.type=config.wave;
-      osc.frequency.setValueAtTime(frequency(note),when);
-      if(currentPhase>=3)osc.frequency.exponentialRampToValueAtTime(frequency(note+7),when+.09);
-      filter.type='lowpass';
-      filter.frequency.setValueAtTime(currentPhase===4?950:650,when);
-      gain.gain.setValueAtTime(.0001,when);
-      gain.gain.exponentialRampToValueAtTime(config.gain,when+.018);
-      gain.gain.exponentialRampToValueAtTime(.0001,when+.22);
-      osc.connect(filter);filter.connect(gain);gain.connect(master);
-      osc.start(when);osc.stop(when+.25);
-
-      if(currentPhase===4&&step%2===0){
-        const kick=context.createOscillator();
-        const kg=context.createGain();
-        kick.type='sine';
-        kick.frequency.setValueAtTime(85,when);
-        kick.frequency.exponentialRampToValueAtTime(35,when+.12);
-        kg.gain.setValueAtTime(.08,when);
-        kg.gain.exponentialRampToValueAtTime(.0001,when+.16);
-        kick.connect(kg);kg.connect(master);kick.start(when);kick.stop(when+.18);
-      }
-    }
-    function schedule(){
-      if(!playing||!context)return;
-      const config=patterns[currentPhase];
-      pulse(config.notes[step%config.notes.length],config,context.currentTime+.02);
-      step++;
-      const delay=Math.max(95,60000/config.bpm/2);
-      timer=setTimeout(schedule,delay);
-    }
-    async function start(){
-      if(!context){
-        context=new AudioContext();
-        master=context.createGain();
-        master.gain.value=.75;
-        master.connect(context.destination);
-      }
-      await context.resume();
-      if(playing)return;
-      playing=true;step=0;schedule();render();
-    }
-    function stop(){
-      playing=false;
-      clearTimeout(timer);timer=null;
-      render();
-    }
-    function render(){
-      const node=button();
-      if(!node)return;
-      node.classList.toggle('playing',playing);
-      const label=node.querySelector('span');
-      if(label)label.textContent=playing?names[currentPhase]:'МУЗЫКА';
-    }
-    function setPhase(value){
-      currentPhase=Math.max(1,Math.min(4,Number(value)||1));
-      step=0;render();
-    }
-    function toggle(){playing?stop():start().catch(()=>{});}
-    return {toggle,setPhase,start,stop,get playing(){return playing;}};
-  }
-
-  let autoMusicStarted=false;
-  document.addEventListener('pointerdown',event=>{
-    if(autoMusicStarted||event.target.closest('#raidMusicV149'))return;
-    autoMusicStarted=true;
-    audio?.start().catch(()=>{});
-  },{capture:true,once:true});
-
-  document.addEventListener('click',event=>{
-    if(event.target.closest('#raidMusicV149')){
-      event.preventDefault();
-      audio?.toggle();
-      tg?.HapticFeedback?.impactOccurred?.('light');
-    }
-  },true);
+  // Telegram разрешает звук только после действия игрока. Отдельной кнопки нет:
+  // облегчённый цикл из присланного трека включается после первого касания.
+  const requestMusic=()=>{
+    musicRequested=true;
+    playTrack();
+  };
+  document.addEventListener('pointerdown',requestMusic,{capture:true});
+  document.addEventListener('click',requestMusic,{capture:true});
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden)stopTrack();
+    else playTrack();
+  });
+  window.addEventListener('beforeunload',()=>{
+    stopTrack();
+    if(trackUrl)URL.revokeObjectURL(trackUrl);
+  });
 
   window.addEventListener('raid-state-updated',event=>applyState(event.detail));
   document.addEventListener('click',()=>setTimeout(patchHelp,0),true);
 
   ensureUi();
   installToastMirror();
-  audio=createAudioEngine();
   if(window.__raidBossState)applyState(window.__raidBossState);
   setInterval(()=>{
     ensureUi();
