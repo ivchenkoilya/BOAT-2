@@ -8,7 +8,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 import government_v127 as gov
 
 
-VERSION = "Reality 148 · Строгие полномочия должностей"
+VERSION = "Reality 149 · Теневая казна"
 
 
 def install_government_entry_v143(core: Any) -> None:
@@ -41,16 +41,15 @@ def install_government_entry_v143(core: Any) -> None:
             await message.answer("⚠️ Адрес государственного Mini App не настроен.")
             return
         await message.answer(
-            "🏛 <b>ГОСУДАРСТВО РЕАЛЬНОСТИ · REALITY 148</b>\n\n"
+            "🏛 <b>ГОСУДАРСТВО РЕАЛЬНОСТИ · REALITY 149</b>\n\n"
             "Выборы, Госдума, президент, казна, налоги, мандаты и государственные структуры.\n\n"
-            "🔐 Каждая должность видит только собственные полномочия. Чужие действия "
-            "скрыты в интерфейсе и дополнительно запрещены сервером.\n\n"
-            "📜 Мандаты содержат электронную подпись, владельца, срок полномочий и код проверки. "
-            "В Кодексе действуют десять основных законов государства.",
+            "🕶 В раздел полномочий возвращена теневая операция с попыткой кражи казны. "
+            "При пустой казне варианты видны, но заблокированы с объяснением причины.\n\n"
+            "🔐 Каждая должность по-прежнему видит только собственные государственные полномочия.",
             reply_markup=InlineKeyboardMarkup(
                 inline_keyboard=[[
                     InlineKeyboardButton(
-                        text="🏛 ОТКРЫТЬ ГОСУДАРСТВО REALITY 148",
+                        text="🏛 ОТКРЫТЬ ГОСУДАРСТВО REALITY 149",
                         url=link,
                     )
                 ]]
