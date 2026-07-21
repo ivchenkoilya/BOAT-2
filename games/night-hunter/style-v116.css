@@ -1,0 +1,46 @@
+/* Reality 116 · mobile controls and interaction polish */
+body.reality115 .joystick,
+body.reality116 .joystick{
+  left:16px!important;
+  bottom:18px!important;
+  width:176px!important;
+  height:176px!important;
+  opacity:.98!important;
+  box-shadow:0 0 0 10px rgba(5,17,19,.38),0 18px 42px rgba(0,0,0,.76),inset 0 0 28px rgba(113,226,210,.15)!important;
+}
+body.reality115 .joystickRing,
+body.reality116 .joystickRing{inset:14px!important}
+body.reality115 .joystickKnob,
+body.reality116 .joystickKnob{
+  width:78px!important;
+  height:78px!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.62),inset 0 0 20px rgba(170,255,239,.17)!important;
+}
+body.reality115 .toolButtons,
+body.reality116 .toolButtons{
+  top:66px!important;
+  right:12px!important;
+  gap:10px!important;
+  z-index:32!important;
+}
+body.reality115 #notes,body.reality116 #notes,
+body.reality115 #flashlight,body.reality116 #flashlight{
+  width:102px!important;
+  min-width:102px!important;
+  min-height:62px!important;
+}
+body.reality115 #notes,body.reality116 #notes{
+  border-color:rgba(235,205,126,.42)!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.56),0 0 22px rgba(235,205,126,.08)!important;
+}
+body.reality115 .action:not(.hidden),body.reality116 .action:not(.hidden){
+  animation:v116ActionPulse 1.35s ease-in-out infinite;
+}
+@keyframes v116ActionPulse{
+  50%{transform:translateY(-2px) scale(1.025);box-shadow:0 14px 36px rgba(0,0,0,.62),0 0 25px rgba(242,211,133,.16)}
+}
+@media(max-height:720px){
+  body.reality115 .joystick,body.reality116 .joystick{width:150px!important;height:150px!important}
+  body.reality115 .joystickKnob,body.reality116 .joystickKnob{width:68px!important;height:68px!important}
+  body.reality115 .toolButtons,body.reality116 .toolButtons{top:58px!important}
+}
