@@ -8,7 +8,7 @@ from aiohttp import web
 import game_center_v75 as base
 
 
-VERSION = "Reality 117 · Horror Cut"
+VERSION = "Reality 118 · Escape Cut"
 GAME_KEY = "night-hunter"
 GAME_PATH = Path(__file__).resolve().parent / "games" / GAME_KEY
 STYLE_FILENAMES = (
@@ -17,6 +17,7 @@ STYLE_FILENAMES = (
     "style-v115.css",
     "style-v116.css",
     "style-v117.css",
+    "style-v118.css",
 )
 SCRIPT_FILENAMES = (
     "game-v108.js",
@@ -29,6 +30,7 @@ SCRIPT_FILENAMES = (
     "game-v115-ui.js",
     "game-v115-access.js",
     "horror-v117.js",
+    "escape-v118.js",
 )
 ASSET_FILENAMES = (
     "assets/machine-cnc-blue-v114.svg",
@@ -41,14 +43,14 @@ ASSET_FILENAMES = (
 
 
 def install_night_hunter_v93(core: Any) -> None:
-    """Подключает закрытый ранний доступ Night Hunter Reality 117 Horror Cut."""
+    """Подключает закрытый ранний доступ Night Hunter Reality 118 Escape Cut."""
     if getattr(core, "_night_hunter_v93_installed", False):
         return
     core._night_hunter_v93_installed = True
 
     base.GAME_INFO[GAME_KEY] = {
-        "title": "Ночной охотник: Последняя смена",
-        "emoji": "🔦",
+        "title": "Сбежать с завода: 50 заказов до свободы",
+        "emoji": "🏭",
         "duration": 1200,
         "max_reward": 180,
     }
@@ -88,6 +90,37 @@ def install_night_hunter_v93(core: Any) -> None:
 
     async def night_index(_: web.Request) -> web.StreamResponse:
         html = (GAME_PATH / "index.html").read_text(encoding="utf-8")
+        html = html.replace("Ночной охотник: Последняя смена", "Сбежать с завода: 50 заказов до свободы")
+        html = html.replace("ALIVSPORT", "ALIV GYM")
+        html = html.replace(
+            "REALITY 117 · HORROR CUT · В РАЗРАБОТКЕ",
+            "REALITY 118 · ESCAPE CUT · В РАЗРАБОТКЕ",
+        )
+        html = html.replace(
+            "На заводе уже началась твоя смена. Камеры показывают, что ты внутри, хотя ты всё ещё стоишь у проходной.",
+            "Полный рабочий день оператора ЧПУ. Закрой 50 заказов, дождись 16:35 и решись уйти с завода самостоятельно.",
+        )
+        html = html.replace(
+            "Все рабочие выходят с территории, но один человек стоит против потока и смотрит только на тебя.",
+            "Сегодня нужно закрыть 50 заказов. Отец сказал, что потом постарается отпустить тебя в выходной.",
+        )
+        html = html.replace(
+            "На территории уже зарегистрирован сотрудник с твоим именем.",
+            "8:00. Рабочий день начался. Друзья уже обсуждают поездку с палатками.",
+        )
+        html = html.replace(
+            '<span class="clock" id="clock">17:42</span>',
+            '<span class="clock" id="clock">08:00</span>',
+        )
+        html = html.replace(
+            "/games/night-hunter/game-v115-access.js?v=1173",
+            "/games/night-hunter/game-v115-access.js?v=1184",
+        )
+        if "style-v118.css" not in html:
+            html = html.replace(
+                "</head>",
+                '  <link rel="stylesheet" href="/games/night-hunter/style-v118.css?v=118">\n</head>',
+            )
         return core.web.Response(
             text=html,
             content_type="text/html",
