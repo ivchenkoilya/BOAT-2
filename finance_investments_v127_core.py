@@ -8,10 +8,9 @@ from pathlib import Path
 from typing import Any
 
 
-
-VERSION = "Reality 127 · Вклады и биржа"
+VERSION = "Reality 128 · Живая биржа"
 APP_DIR = Path(__file__).resolve().parent / "financeapp_v127"
-MARKET_TICK_SECONDS = 5 * 60
+MARKET_TICK_SECONDS = 60
 MARKET_HISTORY_SECONDS = 30 * 24 * 60 * 60
 TRADE_FEE_PERCENT = 1
 MAX_ACTIVE_DEPOSITS = 5
@@ -55,59 +54,59 @@ STOCKS: dict[str, dict[str, Any]] = {
         "name": "EGO Corp",
         "icon": "👑",
         "base_price": 120,
-        "volatility_bp": 25,
-        "drift_bp": 1,
+        "volatility_bp": 12,
+        "drift_bp": 0.35,
         "risk": "Низкий",
-        "description": "Стабильная корпорация влияния и репутации.",
+        "description": "Стабильная корпорация влияния, статуса и репутации.",
     },
     "HERO": {
         "name": "Hero Energy",
         "icon": "⚡",
         "base_price": 86,
-        "volatility_bp": 42,
-        "drift_bp": 2,
+        "volatility_bp": 18,
+        "drift_bp": 0.45,
         "risk": "Средний",
-        "description": "Энергетика Главных героев. Умеренный риск.",
+        "description": "Энергетическая и инфраструктурная компания Главных героев.",
     },
     "NPC": {
         "name": "NPC Industries",
         "icon": "🎭",
         "base_price": 34,
-        "volatility_bp": 58,
-        "drift_bp": 0,
+        "volatility_bp": 28,
+        "drift_bp": 0.1,
         "risk": "Высокий",
-        "description": "Дешёвая акция массовки с резкими движениями.",
+        "description": "Массовый рынок и доступная продукция для широкой аудитории.",
     },
     "CORV": {
-        "name": "Corvus Technologies",
+        "name": "CORVUS",
         "icon": "🐦‍⬛",
         "base_price": 210,
-        "volatility_bp": 74,
-        "drift_bp": 3,
+        "volatility_bp": 38,
+        "drift_bp": 0.25,
         "risk": "Высокий",
-        "description": "Игровые технологии и рискованные разработки.",
+        "description": "Производитель снюса и никотиновой продукции.",
     },
     "CENTER": {
         "name": "Центр Вселенной",
         "icon": "🌌",
         "base_price": 305,
-        "volatility_bp": 95,
-        "drift_bp": -1,
+        "volatility_bp": 52,
+        "drift_bp": -0.15,
         "risk": "Экстремальный",
-        "description": "Самая непредсказуемая акция рынка.",
+        "description": "Самый спекулятивный и непредсказуемый актив рынка.",
     },
 }
 
 EVENTS_UP = (
     "Компания объявила рекордный сезон",
     "Инвесторы поддержали новую стратегию",
-    "Проект выиграл битву за внимание",
+    "Компания представила новую линейку",
     "Спрос на акции резко вырос",
 )
 EVENTS_DOWN = (
     "Рынок усомнился в громком обещании",
     "Компания потеряла часть аудитории",
-    "Неудачное событие ударило по репутации",
+    "Проверка качества ударила по продажам",
     "Крупный инвестор сократил позицию",
 )
 
@@ -154,7 +153,7 @@ def _route_keys(app: Any) -> set[tuple[str, str]]:
 
 
 def _hash_numbers(chat_id: int, symbol: str, bucket: int) -> tuple[float, float, int]:
-    digest = hashlib.sha256(f"{chat_id}:{symbol}:{bucket}:reality127".encode()).digest()
+    digest = hashlib.sha256(f"{chat_id}:{symbol}:{bucket}:reality128".encode()).digest()
     first = int.from_bytes(digest[:8], "big") / (2**64 - 1)
     second = int.from_bytes(digest[8:16], "big") / (2**64 - 1)
     selector = int.from_bytes(digest[16:20], "big")
@@ -220,6 +219,7 @@ async def _ensure_schema(core: Any) -> None:
                 symbol TEXT NOT NULL,
                 bucket INTEGER NOT NULL,
                 price INTEGER NOT NULL,
+                volume INTEGER NOT NULL DEFAULT 0,
                 PRIMARY KEY(chat_id,symbol,bucket)
             );
             CREATE INDEX IF NOT EXISTS idx_finance_stock_history_v127
@@ -249,7 +249,32 @@ async def _ensure_schema(core: Any) -> None:
             );
             CREATE INDEX IF NOT EXISTS idx_finance_stock_trades_user_v127
             ON finance_stock_trades_v127(chat_id,user_id,created_at);
+
+            CREATE TABLE IF NOT EXISTS finance_market_news_v128(
+                news_id TEXT PRIMARY KEY,
+                chat_id INTEGER NOT NULL,
+                symbol TEXT NOT NULL,
+                source_key TEXT NOT NULL,
+                source_type TEXT NOT NULL,
+                category TEXT NOT NULL,
+                title TEXT NOT NULL,
+                summary TEXT NOT NULL,
+                body TEXT NOT NULL,
+                effect_bp INTEGER NOT NULL,
+                event_at INTEGER NOT NULL,
+                source_at INTEGER NOT NULL,
+                created_at INTEGER NOT NULL,
+                UNIQUE(chat_id,source_key,symbol)
+            );
+            CREATE INDEX IF NOT EXISTS idx_finance_market_news_v128
+            ON finance_market_news_v128(chat_id,symbol,event_at DESC);
             """
         )
+        cursor = await conn.execute("PRAGMA table_info(finance_stock_history_v127)")
+        columns = {str(row["name"]) for row in await cursor.fetchall()}
+        if "volume" not in columns:
+            await conn.execute(
+                "ALTER TABLE finance_stock_history_v127 ADD COLUMN volume INTEGER NOT NULL DEFAULT 0"
+            )
         await conn.commit()
     core._finance_investments_schema_v127_ready = True
