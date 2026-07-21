@@ -8,16 +8,18 @@ from aiogram.filters import Command
 from aiogram.types import BotCommand, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 
-VERSION = "Reality 145 · Bunker Stable Route"
+VERSION = "Reality 146 · Bunker Inside Game Center"
 GAME_PATH = Path(__file__).resolve().parent / "games" / "bunker"
 ADMIN_PIN = "6767"
 
 
 def _bunker_link(core: Any, chat_id: int) -> str:
+    # Бункер встроен в уже работающий игровой центр. Новый HTTP-маршрут
+    # не нужен, поэтому Amvera больше не может вернуть 404 на /games/bunker/.
     if core.WEBAPP_PUBLIC_URL:
         return (
-            f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/games/bunker/"
-            f"?chat_id={int(chat_id)}&build=145-{int(time.time())}"
+            f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/games/"
+            f"?mode=bunker&chat_id={int(chat_id)}&build=146-{int(time.time())}"
         )
     if core.WEBAPP_SHORT_NAME and core.BOT_PUBLIC_USERNAME:
         return (
@@ -28,12 +30,7 @@ def _bunker_link(core: Any, chat_id: int) -> str:
 
 
 def install_bunker_game_v144(core: Any) -> None:
-    """Подключает команду и карточку тестовой игры «Бункер».
-
-    HTTP-маршруты регистрирует отдельный финальный слой
-    ``bunker_route_fix_v145``. Это исключает потерю маршрута в длинной
-    цепочке серверных расширений.
-    """
+    """Подключает команду и карточку тестовой игры «Бункер»."""
     if getattr(core, "_bunker_game_v144_installed", False):
         return
     core._bunker_game_v144_installed = True
@@ -63,10 +60,11 @@ def install_bunker_game_v144(core: Any) -> None:
             return
         await message.answer(
             "☢️ <b>БУНКЕР · ТЕСТОВЫЙ СТОЛ</b>\n\n"
-            "Отдельная визуальная Mini App: игроки сидят вокруг стола, "
-            "раскрытые характеристики остаются лежать перед ними, доступны "
-            "чат, голосование и проверка микрофона.\n\n"
-            "🔐 Доступ к текущей сборке закрыт админ-PIN <b>6767</b>.",
+            "Игра теперь открывается внутри стабильного Игрового центра, "
+            "без отдельного адреса: персонажи сидят вокруг стола, раскрытые "
+            "характеристики остаются перед ними, доступны чат, голосование "
+            "и проверка микрофона.\n\n"
+            "🔐 Админ-PIN: <b>6767</b>.",
             reply_markup=InlineKeyboardMarkup(
                 inline_keyboard=[[
                     InlineKeyboardButton(text="☢️ ВОЙТИ В БУНКЕР", url=link)
