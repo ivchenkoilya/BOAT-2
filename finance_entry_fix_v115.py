@@ -18,6 +18,7 @@ from finance_loan_requests_v118 import install_finance_loan_requests_v118
 from finance_products_v129 import install_finance_products_v129
 from finance_route_fix_v116 import install_finance_route_fix_v116
 from government_command_v129 import install_government_command_v129
+from government_crisis_v131 import install_government_crisis_v131
 from government_economy_hotfix_v128 import install_government_economy_hotfix_v128
 from government_institutions_v128 import install_government_institutions_v128
 from government_reform_assets_v129 import install_government_reform_assets_v129
@@ -31,7 +32,7 @@ from sanctions_hotfix_v126 import install_sanctions_hotfix_v126
 from sanctions_v126 import install_sanctions_v126
 
 
-VERSION = "Reality 130 · Иерархия и компактное государство"
+VERSION = "Reality 131 · Казна, иерархия и борьба за власть"
 FINANCE_PREFIX = "finance_"
 
 
@@ -44,7 +45,7 @@ def _finance_link(core: Any, chat_id: int) -> str:
     if core.WEBAPP_PUBLIC_URL:
         return (
             f"{core.WEBAPP_PUBLIC_URL.rstrip('/')}/finance-v127/"
-            f"?chat_id={int(chat_id)}&build=130-{int(time.time())}"
+            f"?chat_id={int(chat_id)}&build=131-{int(time.time())}"
         )
     return ""
 
@@ -83,10 +84,10 @@ def install_finance_entry_fix_v115(core: Any) -> None:
             )
             return
         await message.answer(
-            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 130</b>\n\n"
-            "Переводы, крупные займы до 100 000, быстрые вклады сроком до 10 дней, "
-            "живая биржа и отдельный инвестиционный портфель. Центральный банк "
-            "может устанавливать дополнительные ограничения. Карьерное влияние не тратится.",
+            "💸 <b>ФИНАНСОВЫЙ ЦЕНТР · REALITY 131</b>\n\n"
+            "Переводы, займы, вклады, биржа и инвестиционный портфель. "
+            "Центральный банк устанавливает лимиты, а подозрительные операции "
+            "с государственной казной теперь расследуются отдельными структурами.",
             reply_markup=InlineKeyboardMarkup(
                 inline_keyboard=[[
                     InlineKeyboardButton(
@@ -124,3 +125,4 @@ def install_finance_entry_fix_v115(core: Any) -> None:
     install_government_command_v129(core)
     install_hierarchy_v130(core)
     install_hierarchy_activity_hotfix_v130(core)
+    install_government_crisis_v131(core)
