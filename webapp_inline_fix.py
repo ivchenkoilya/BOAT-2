@@ -14,10 +14,10 @@ def install_inline_webapp_fix(core: Any) -> None:
     Каждый JS-файл помещается в отдельный script-блок. Ошибка в новом слое
     больше не может остановить магазин, инвентарь и карточки героев целиком.
     """
-    if getattr(core, "_inline_webapp_fix_v65_installed", False):
+    if getattr(core, "_inline_webapp_fix_v149_installed", False):
         return
 
-    core._inline_webapp_fix_v65_installed = True
+    core._inline_webapp_fix_v149_installed = True
     original_index = core.webapp_index
     index_path = core.WEBAPP_DIR / "index.html"
     css_paths = [
@@ -40,6 +40,7 @@ def install_inline_webapp_fix(core: Any) -> None:
         core.WEBAPP_DIR / "hero-loadouts-v103.css",
         core.WEBAPP_DIR / "hero-preview-v104.css",
         core.WEBAPP_DIR / "hero-content-v105.css",
+        core.WEBAPP_DIR / "boss-combat-v149.css",
     ]
     js_paths = [
         core.WEBAPP_DIR / "fixed-combat-v18.js",
@@ -56,6 +57,7 @@ def install_inline_webapp_fix(core: Any) -> None:
         core.WEBAPP_DIR / "hero-loadouts-v103.js",
         core.WEBAPP_DIR / "hero-preview-v104.js",
         core.WEBAPP_DIR / "hero-content-v105.js",
+        core.WEBAPP_DIR / "boss-combat-v149.js",
     ]
 
     async def webapp_index_with_inline_combat(request: Any):
@@ -64,20 +66,20 @@ def install_inline_webapp_fix(core: Any) -> None:
             css = "\n\n".join(path.read_text(encoding="utf-8") for path in css_paths)
 
             page = re.sub(
-                r"\s*<link[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|action-card-ego-v21|action-card-defense-v21|action-card-heal-v21|action-cards-layout-v21|raid-hotfix-v22|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v65-balance-layout|hero-skins-sync-v100|action-card-defense-cutout-v102|hero-loadouts-v103|hero-preview-v104|hero-content-v105)\.css[^>]*>",
+                r"\s*<link[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|action-card-ego-v21|action-card-defense-v21|action-card-heal-v21|action-cards-layout-v21|raid-hotfix-v22|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v65-balance-layout|hero-skins-sync-v100|action-card-defense-cutout-v102|hero-loadouts-v103|hero-preview-v104|hero-content-v105|boss-combat-v149)\.css[^>]*>",
                 "",
                 page,
                 flags=re.IGNORECASE,
             )
             page = re.sub(
-                r"\s*<script[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v64-direct-tree|raid-v65-balance-layout|hero-skins-sync-v100|hero-loadouts-v103|hero-preview-v104|hero-content-v105)\.js[^>]*></script>",
+                r"\s*<script[^>]+(?:fixed-combat-v18|raid-ux-v19|raid-pages-v20|raid-hotfix-v23|raid-stability-v24|raid-final-v25|raid-victory-v59|raid-v60|raid-v60-stability|raid-v61|raid-v64-direct-tree|raid-v65-balance-layout|hero-skins-sync-v100|hero-loadouts-v103|hero-preview-v104|hero-content-v105|boss-combat-v149)\.js[^>]*></script>",
                 "",
                 page,
                 flags=re.IGNORECASE,
             )
 
             prelude = """
-<script id="raid-ui-v107-prelude">
+<script id="raid-ui-v149-prelude">
 (function(){
   var nativeSetInterval=window.setInterval.bind(window);
   window.setInterval=function(callback,delay){
@@ -130,7 +132,7 @@ def install_inline_webapp_fix(core: Any) -> None:
 </script>
 """
             inline_style = (
-                "\n<style id=\"raid-ui-v107-inline\">\n"
+                "\n<style id=\"raid-ui-v149-inline\">\n"
                 + css
                 + "\n</style>\n"
             )
@@ -139,7 +141,7 @@ def install_inline_webapp_fix(core: Any) -> None:
                 source = path.read_text(encoding="utf-8")
                 safe_name = re.sub(r"[^a-zA-Z0-9_-]+", "-", path.stem)
                 script_blocks.append(
-                    f'\n<script id="raid-ui-v107-{index}-{safe_name}">\n{source}\n</script>\n'
+                    f'\n<script id="raid-ui-v149-{index}-{safe_name}">\n{source}\n</script>\n'
                 )
             inline_scripts = "".join(script_blocks)
 
@@ -154,7 +156,7 @@ def install_inline_webapp_fix(core: Any) -> None:
                     "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
                     "Pragma": "no-cache",
                     "Expires": "0",
-                    "X-Mini-App-UI": "raid-ui-v107-shared-state",
+                    "X-Mini-App-UI": "raid-ui-v149-boss-combat",
                 },
             )
         except Exception:
