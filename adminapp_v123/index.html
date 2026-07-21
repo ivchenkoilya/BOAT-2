@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#08060f">
+  <title>Админ-центр Reality 123</title>
+  <link rel="stylesheet" href="/admin-v123/admin.css?v=123">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <div class="aurora a"></div><div class="aurora b"></div>
+  <main class="app">
+    <header class="head">
+      <div class="brand"><span>👁</span><div><small>ГЛАВНЫЙ ГЕРОЙ</small><h1>Админ-центр</h1></div></div>
+      <button class="icon" id="refresh">↻</button>
+      <div class="context">
+        <label>Беседа<select id="chatSelect"></select></label>
+        <button class="target" id="targetButton"><b id="targetEmoji">?</b><span><small>Участник</small><strong id="targetName">Не выбран</strong><em id="targetMeta">Нажми для выбора</em></span><i>›</i></button>
+        <div class="connection"><span id="connection">Подключение…</span><b id="version">Reality 123</b></div>
+      </div>
+    </header>
+
+    <section class="screen active" data-screen="home">
+      <div class="section-title"><small>ОБЗОР</small><h2>Экономика беседы</h2></div>
+      <div class="metrics" id="overviewMetrics"></div>
+      <article class="panel">
+        <div class="panel-head"><span>👥</span><div><b>Быстрый выбор</b><small>Участники отсортированы по карьере</small></div></div>
+        <div class="users" id="quickUsers"></div>
+      </article>
+      <article class="panel">
+        <div class="panel-head"><span>⚡</span><div><b>Быстрые действия</b><small>Для выбранной беседы</small></div></div>
+        <div class="grid two">
+          <button data-action="chat_cooldowns_reset">⏱ Сбросить все КД</button>
+          <button id="openLegacy">🧰 Старые инструменты</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="screen" data-screen="participant">
+      <div class="section-title"><small>УЧАСТНИК</small><h2>Две независимые шкалы</h2></div>
+      <article class="panel search">
+        <label>Имя, username или Telegram ID</label>
+        <div><input id="searchInput" placeholder="Начни вводить…"><button id="searchButton">Найти</button></div>
+        <div class="users" id="searchResults"></div>
+      </article>
+      <div class="metrics" id="participantMetrics"></div>
+
+      <article class="panel requires-user">
+        <div class="panel-head"><span>💰</span><div><b>Обычное влияние</b><small id="walletSubtitle">Баланс для ставок, переводов и займов</small></div></div>
+        <div class="steps">
+          <button data-action="wallet_delta" data-value="-10000">−10 000</button>
+          <button data-action="wallet_delta" data-value="-1000">−1 000</button>
+          <button data-action="wallet_delta" data-value="1000">+1 000</button>
+          <button data-action="wallet_delta" data-value="10000">+10 000</button>
+        </div>
+        <div class="exact"><input id="walletExact" inputmode="numeric" placeholder="Точное значение"><button data-exact="wallet">Установить</button></div>
+      </article>
+
+      <article class="panel requires-user career-panel">
+        <div class="panel-head"><span>⭐</span><div><b>Карьерное влияние</b><small id="careerSubtitle">Определяет постоянную роль</small></div></div>
+        <div class="career-progress"><div><span id="careerBar"></span></div><small id="careerProgressText">—</small></div>
+        <div class="steps">
+          <button data-action="career_delta" data-value="-50000">−50 000</button>
+          <button data-action="career_delta" data-value="-5000">−5 000</button>
+          <button data-action="career_delta" data-value="5000">+5 000</button>
+          <button data-action="career_delta" data-value="50000">+50 000</button>
+        </div>
+        <div class="exact"><input id="careerExact" inputmode="numeric" placeholder="Точное значение"><button data-exact="career">Установить</button></div>
+      </article>
+
+      <article class="panel requires-user">
+        <div class="panel-head"><span>🎭</span><div><b>Назначить постоянную роль</b><small>Меняется только карьерное влияние</small></div></div>
+        <div class="roles" id="roleGrid"></div>
+      </article>
+
+      <article class="panel requires-user">
+        <div class="panel-head"><span>🧰</span><div><b>Обслуживание участника</b><small>Не затрагивает балансы</small></div></div>
+        <div class="grid three"><button data-action="mute" data-value="5">🔇 5 мин</button><button data-action="mute" data-value="10">🔇 10 мин</button><button data-action="mute" data-value="15">🔇 15 мин</button></div>
+        <div class="grid two"><button data-action="unmute">🔊 Снять мут</button><button data-action="cooldown_user_chat">⏱ Сбросить КД</button><button data-action="cooldown_user_global">🌐 Глобальные КД</button><button class="danger" data-confirm="stats_user_reset">🧹 Сбросить статистику</button></div>
+      </article>
+    </section>
+
+    <section class="screen" data-screen="career">
+      <div class="section-title"><small>КАРЬЕРА</small><h2>История и состояние</h2></div>
+      <div class="metrics" id="careerMetrics"></div>
+      <article class="panel">
+        <div class="panel-head"><span>⭐</span><div><b>История карьерного влияния</b><small>Задания, события, босс и ручные изменения</small></div></div>
+        <div class="history" id="careerHistory"></div>
+      </article>
+      <article class="panel">
+        <div class="panel-head"><span>💰</span><div><b>История обычного влияния</b><small>Ставки, начисления и финансовые операции</small></div></div>
+        <div class="history" id="walletHistory"></div>
+      </article>
+    </section>
+
+    <section class="screen" data-screen="system">
+      <div class="section-title"><small>СИСТЕМА</small><h2>Контроль и журнал</h2></div>
+      <article class="panel">
+        <div class="panel-head"><span>📋</span><div><b>Последние действия администратора</b><small>Изменения обеих шкал и обслуживание</small></div></div>
+        <div class="history" id="adminHistory"></div>
+      </article>
+      <article class="panel warning">
+        <div class="panel-head"><span>🧰</span><div><b>Расширенные инструменты</b><small>Рейд, игры, таланты и диагностика базы</small></div></div>
+        <button class="wide" id="openLegacyBottom">Открыть старый полный админ-центр</button>
+      </article>
+    </section>
+  </main>
+
+  <nav class="nav">
+    <button class="active" data-tab="home"><span>⌂</span>Обзор</button>
+    <button data-tab="participant"><span>👤</span>Участник</button>
+    <button data-tab="career"><span>⭐</span>Карьера</button>
+    <button data-tab="system"><span>⚙</span>Система</button>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+  <div class="loading" id="loading"><div></div><span>Загрузка данных…</span></div>
+  <div class="modal hidden" id="confirmModal"><div><h3>Подтвердить действие?</h3><p id="confirmText"></p><section><button id="cancelConfirm">Отмена</button><button class="danger" id="acceptConfirm">Подтвердить</button></section></div></div>
+  <script src="/admin-v123/admin.js?v=123"></script>
+</body>
+</html>
