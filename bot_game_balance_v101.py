@@ -4,8 +4,8 @@ import random
 from typing import Any
 
 
-VERSION = "Reality 101 · Дружелюбные игры с ботом"
-PLAYER_WIN_CHANCE = 0.60
+VERSION = "Reality 125 · Баланс игр с ботом 55 на 45"
+PLAYER_WIN_CHANCE = 0.55
 
 
 def _coin_result() -> tuple[bool, str]:
@@ -106,7 +106,7 @@ def install_bot_game_balance_v101(core: Any) -> None:
                 )
             else:
                 outcome = (
-                    "💀 Сегодня бот удержал ставку, но преимущество всё равно на стороне игрока."
+                    "💀 Сегодня бот удержал ставку, но небольшое преимущество всё ещё на стороне игрока."
                 )
 
             title = (
@@ -120,7 +120,8 @@ def install_bot_game_balance_v101(core: Any) -> None:
                 f"{core.player_link(after)}\n"
                 f"{detail}\n\n"
                 f"{outcome}\n\n"
-                f"🍀 Шанс победы игрока: <b>60%</b>.\n"
+                f"🍀 Шанс победы игрока: <b>55%</b>.\n"
+                f"🤖 Шанс победы бота: <b>45%</b>.\n"
                 f"Ставка: <b>{stake}</b>.\n"
                 f"Изменение: <b>{signed}</b>.\n"
                 f"Баланс: <b>{before} → {after.points}</b>."
@@ -142,7 +143,7 @@ def install_bot_game_balance_v101(core: Any) -> None:
         await callback.answer("Игра завершена!")
 
     # Старый обработчик с шансом 50/50 уже зарегистрирован в main.py.
-    # Reality 101 должен обрабатывать кнопку первым, иначе изменения не применятся.
+    # Этот слой должен обрабатывать кнопку первым, иначе изменения не применятся.
     handlers = core.router.callback_query.handlers
     preferred = [
         handler
