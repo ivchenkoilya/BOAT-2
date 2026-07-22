@@ -57,6 +57,7 @@ def install_economy_rewards_v164(core: Any) -> None:
         rarity: str,
         delta: int,
         prophecy: str,
+        *,
         challenged: bool,
     ) -> str:
         return original_fate_vision_text(
@@ -65,7 +66,7 @@ def install_economy_rewards_v164(core: Any) -> None:
             rarity,
             _scaled_positive(int(delta)),
             prophecy,
-            challenged,
+            challenged=challenged,
         )
 
     core.fate_vision_text = fate_vision_text_v164
