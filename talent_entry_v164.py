@@ -7,6 +7,8 @@ from boss_rules_v163 import install_boss_rules_v163
 from boss_web_v163 import install_boss_web_v163
 from economy_rewards_v164 import install_economy_rewards_v164
 from finance_fund_link_v167 import install_finance_fund_link_v167
+from godot_rooftop_test_button_v155 import install_godot_test_button
+from godot_rooftop_test_v155 import start_godot_rooftop_test_install
 from government_android_webview_hotfix_v166 import install_government_android_webview_hotfix_v166
 from government_creator_sanctions_v164 import install_government_creator_sanctions_v164
 from government_official_voting_v168 import install_government_official_voting_v168
@@ -36,6 +38,11 @@ install_boss_web_v163(core)
 # Экономический баланс должен стоять последним, чтобы старые слои не вернули
 # прежние награды Шара и «Увеличить влияние».
 install_economy_rewards_v164(core)
+
+# Godot-тест добавляется после всех слоёв, которые могут перезаписать
+# страницу игрового центра. Стабильная HTML-игра при этом не заменяется.
+install_godot_test_button()
+start_godot_rooftop_test_install()
 
 
 if __name__ == "__main__":
