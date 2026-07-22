@@ -9,7 +9,7 @@ LOGGER = logging.getLogger(__name__)
 VERSION = "Boss audio v154 · stable user-track loop"
 BASE_DIR = Path(__file__).resolve().parent
 ASSET_DIR = BASE_DIR / "webapp" / "assets"
-OUTPUT_PATH = ASSET_DIR / "main-hero-theme-stable-v154.ogg"
+OUTPUT_PATH = ASSET_DIR / "main-hero-theme-full-v154.ogg"
 EXPECTED_CHUNKS = 5
 
 
