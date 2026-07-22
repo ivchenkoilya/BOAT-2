@@ -11,15 +11,29 @@ BASE_DIR = Path(__file__).resolve().parent
 ASSET_DIR = BASE_DIR / "webapp" / "assets"
 OUTPUT_PATH = ASSET_DIR / "main-hero-theme-full-v154.ogg"
 EXPECTED_CHUNKS = 5
+FULL_TRACK_MIN_SIZE = 150_000
+
+
+def _has_full_uploaded_track() -> bool:
+    if not OUTPUT_PATH.is_file() or OUTPUT_PATH.stat().st_size < FULL_TRACK_MIN_SIZE:
+        return False
+    try:
+        return OUTPUT_PATH.read_bytes()[:4] == b"OggS"
+    except OSError:
+        return False
 
 
 def install_boss_audio_v154() -> None:
-    """Assemble the verified user-track loop into one browser-friendly OGG.
+    """Provide one stable browser-friendly OGG for the boss raid.
 
-    Previous code fetched and decoded fragments in the Telegram WebView. Building
-    one static asset at server start removes playback gaps, repeated downloads and
-    fragile Blob URLs. The audio element then loops continuously for the whole raid.
+    A manually uploaded full-quality track has priority and is never overwritten.
+    Until it is present, the verified user-track fragment is assembled into one
+    static OGG and loops continuously for the whole raid.
     """
+    if _has_full_uploaded_track():
+        LOGGER.info("%s: full uploaded soundtrack detected", VERSION)
+        return
+
     try:
         paths = sorted(ASSET_DIR.glob("boss-theme-loop-*.b64"))
         if len(paths) != EXPECTED_CHUNKS:
