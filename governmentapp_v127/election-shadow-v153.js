@@ -20,10 +20,10 @@
     clearTimeout(node.__v153Timer);node.__v153Timer=setTimeout(()=>node.className='toast',3900);
   }
 
-  async function api(action,payload={}){
+  async function api(action,payload={},endpoint='/government-v153/api/action'){
     if(busy)return null;busy=true;
     try{
-      const response=await fetch('/government-v153/api/action',{method:'POST',cache:'no-store',headers,body:JSON.stringify({action,chat_id:chatId,...payload})});
+      const response=await fetch(endpoint,{method:'POST',cache:'no-store',headers,body:JSON.stringify({action,chat_id:chatId,...payload})});
       const data=await response.json().catch(()=>({ok:false,reason:'Сервер вернул непонятный ответ.'}));
       if(!response.ok||!data.ok)throw new Error(data.reason||'Действие не выполнено.');
       toast(data.message||'Готово.');tg?.HapticFeedback?.notificationOccurred?.('success');await load();return data;
@@ -34,7 +34,7 @@
   function setHtml(node,html){if(node&&node.innerHTML!==html)node.innerHTML=html}
 
   function ensureUi(){
-    const brand=document.querySelector('.brand small');if(brand&&brand.textContent!=='REALITY 153')brand.textContent='REALITY 153';
+    const brand=document.querySelector('.brand small');if(brand&&brand.textContent!=='REALITY 157')brand.textContent='REALITY 157';
     const list=document.getElementById('electionList');
     if(list&&!document.getElementById('shadowElectionToolsV153'))list.insertAdjacentHTML('beforebegin','<div id="shadowElectionToolsV153"></div><div id="shadowOffersV153"></div><div id="shadowInvestigationsV153"></div>');
     const controls=document.getElementById('electionControls');
@@ -65,7 +65,7 @@
     const node=document.getElementById('shadowOffersV153');if(!node||!state)return;
     const offers=(state.election_shadow_v153?.incoming_offers||[]).filter(item=>['pending','accepted','reported'].includes(item.status));
     if(!offers.length){setHtml(node,'');return}
-    const html=`<div class="section-head v153-section-head"><div><small>ТЕНЕВАЯ КАМПАНИЯ</small><h2>Тайные предложения</h2></div><div class="v153-mask">🕴</div></div><div class="v153-offer-list">${offers.map(item=>{const buttons=item.can_accept?`<div class="v153-offer-actions"><button class="positive" data-bribe-accept="${esc(item.offer_id)}">✅ ПРИНЯТЬ И ОТДАТЬ ГОЛОС</button><button class="secondary" data-bribe-decline="${esc(item.offer_id)}">ОТКЛОНИТЬ</button><button class="danger" data-bribe-report="${esc(item.offer_id)}">🚨 ПЕРЕДАТЬ В ЦИК</button></div>`:'';const reveal=item.buyer_revealed?`<p class="v153-reveal">После завершения раскрыт кандидат: Telegram ID ${Number(item.buyer_revealed)}</p>`:'';return `<article class="panel v153-offer ${esc(item.status)}"><div class="panel-title"><span>💵</span><div><b>Неизвестный кандидат предлагает ${fmt(item.amount)}</b><small>Выборы: ${esc(item.office_title)} · ${esc(item.status_title)}</small></div></div><p>При принятии голос автоматически уйдёт скрытому кандидату и будет заблокирован до конца выборов.</p><div class="v153-offer-meta"><span>Истекает: ${date(item.expires_at)}</span><b>${esc(item.remaining)}</b></div>${buttons}${reveal}</article>`}).join('')}</div>`;
+    const html=`<div class="section-head v153-section-head"><div><small>ТЕНЕВАЯ КАМПАНИЯ</small><h2>Тайные предложения</h2></div><div class="v153-mask">😈</div></div><div class="v153-offer-list">${offers.map(item=>{const buttons=item.can_accept?`<div class="v153-offer-actions"><button class="positive" data-bribe-accept="${esc(item.offer_id)}">✅ ПРИНЯТЬ И ОТДАТЬ ГОЛОС</button><button class="secondary" data-bribe-decline="${esc(item.offer_id)}">ОТКЛОНИТЬ</button><button class="danger" data-bribe-report="${esc(item.offer_id)}">🚨 ПЕРЕДАТЬ В ЦИК</button></div>`:'';const reveal=item.buyer_revealed?`<p class="v153-reveal">После завершения раскрыт кандидат: Telegram ID ${Number(item.buyer_revealed)}</p>`:'';const secret=String(item.secret_message||'').trim()?`<div class="v156-secret-message"><small>😈 СКРЫТОЕ СООБЩЕНИЕ КАНДИДАТА</small><p>${esc(item.secret_message)}</p></div>`:'';return `<article class="panel v153-offer ${esc(item.status)}"><div class="panel-title"><span>💵</span><div><b>Неизвестный кандидат предлагает ${fmt(item.amount)}</b><small>Выборы: ${esc(item.office_title)} · ${esc(item.status_title)}</small></div></div><p>При принятии голос автоматически уйдёт скрытому кандидату и будет заблокирован до конца выборов.</p>${secret}<div class="v153-offer-meta"><span>Действует до: ${date(item.expires_at)}</span><b>${esc(item.remaining)}</b></div>${buttons}${reveal}</article>`}).join('')}</div>`;
     setHtml(node,html);
   }
 
@@ -79,7 +79,7 @@
       if(election.secret_vote_locked)card.insertAdjacentHTML('beforeend','<div class="v153-secret-lock">🔒 Твой голос передан тайному кандидату. Личность заказчика скрыта до завершения выборов.</div>');
       if(election.phase!=='voting'||!mine)return;
       const campaign=campaignFor(election.election_id);
-      card.insertAdjacentHTML('beforeend',`<div class="v153-campaign-box"><div><small>ТЕНЕВАЯ КАМПАНИЯ КАНДИДАТА</small><b>${campaign?`Принято ${fmt(campaign.accepted)} · потрачено ${fmt(campaign.spent)}`:'Предложений пока нет'}</b></div><button class="v153-buy-vote" data-buy-vote="${esc(election.election_id)}">🕴 КУПИТЬ ГОЛОС</button></div>`);
+      card.insertAdjacentHTML('beforeend',`<div class="v153-campaign-box"><div><small>ТЕНЕВАЯ КАМПАНИЯ КАНДИДАТА</small><b>${campaign?`Принято ${fmt(campaign.accepted)} · потрачено ${fmt(campaign.spent)}`:'Предложений пока нет'}</b></div><button class="v153-buy-vote" data-buy-vote="${esc(election.election_id)}">😈 ПОДКУПИТЬ ГОЛОСА</button></div>`);
     });
   }
 
@@ -104,7 +104,7 @@
   function openBuyModal(electionId){
     const election=(state?.elections||[]).find(item=>String(item.election_id)===String(electionId));if(!election)return;
     activeElection=String(electionId);const modal=document.getElementById('shadowModalV153'),host=document.getElementById('shadowModalContentV153');if(!modal||!host)return;
-    host.innerHTML=`<div class="v153-modal-icon">🕴</div><small>ТЕНЕВАЯ ИЗБИРАТЕЛЬНАЯ КАМПАНИЯ</small><h2>Купить голос</h2><p>Получатель увидит только сумму и название выборов. Имя кандидата останется скрытым.</p><form id="buyVoteFormV153"><div class="field"><label>ПОЛУЧАТЕЛЬ ПРЕДЛОЖЕНИЯ</label><select name="target_user_id">${userOptions()}</select></div><div class="field"><label>СУММА · 1 000–500 000</label><input name="amount" type="number" min="1000" max="500000" step="1000" value="10000"></div><button class="v153-buy-confirm wide" type="submit">💵 ОТПРАВИТЬ ТАЙНОЕ ПРЕДЛОЖЕНИЕ</button></form><div class="v153-warning">Предложение действует один час. При принятии голос будет автоматически отдан тебе и заблокирован.</div>`;
+    host.innerHTML=`<div class="v153-modal-icon">😈</div><small>ТЕНЕВАЯ ИЗБИРАТЕЛЬНАЯ КАМПАНИЯ</small><h2>Подкупить голоса</h2><p>Получатель увидит сумму, название выборов и твоё скрытое сообщение. Имя кандидата останется скрытым.</p><form id="buyVoteFormV153"><div class="field"><label>ПОЛУЧАТЕЛЬ ПРЕДЛОЖЕНИЯ</label><select name="target_user_id">${userOptions()}</select></div><div class="field"><label>СУММА · 1 000–500 000</label><input name="amount" type="number" min="1000" max="500000" step="1000" value="10000"></div><div class="field v156-message-field"><label>СКРЫТОЕ СООБЩЕНИЕ · ДО 300 СИМВОЛОВ</label><textarea name="secret_message" maxlength="300" placeholder="Например: Поддержи меня — о нашей сделке никто не узнает"></textarea><small class="hint">Сообщение увидит только получатель. Имя кандидата останется скрытым.</small></div><button class="v153-buy-confirm wide" type="submit">😈 ОТПРАВИТЬ ТАЙНОЕ ПРЕДЛОЖЕНИЕ</button></form><div class="v153-warning">Предложение действует до завершения выборов. При принятии голос будет автоматически отдан тебе и заблокирован.</div>`;
     modal.hidden=false;document.body.classList.add('v153-modal-open');
   }
   function closeModal(){const modal=document.getElementById('shadowModalV153');if(modal)modal.hidden=true;document.body.classList.remove('v153-modal-open');activeElection=''}
@@ -131,7 +131,12 @@
   },true);
   document.addEventListener('change',event=>{if(event.target.id==='appointmentOfficeV153')updateSeatLimit()},true);
   document.addEventListener('submit',event=>{
-    if(event.target.id==='buyVoteFormV153'){event.preventDefault();const data=Object.fromEntries(new FormData(event.target).entries());api('bribe_create',{election_id:activeElection,target_user_id:Number(data.target_user_id),amount:Number(data.amount)}).then(result=>{if(result)closeModal()});return}
+    if(event.target.id==='buyVoteFormV153'){
+      event.preventDefault();
+      const data=Object.fromEntries(new FormData(event.target).entries());
+      api('bribe_create_message',{election_id:activeElection,target_user_id:Number(data.target_user_id),amount:Number(data.amount),secret_message:String(data.secret_message||'')},'/government-v156/api/action').then(result=>{if(result)closeModal()});
+      return;
+    }
     if(event.target.id==='presidentialAppointmentV153'){event.preventDefault();const data=Object.fromEntries(new FormData(event.target).entries());if(confirm('Назначить выбранного участника на государственную должность напрямую?'))api('presidential_appoint',{target_user_id:Number(data.target_user_id),office_key:data.office_key,seat_no:Number(data.seat_no)||1,reason:data.reason||''});return}
     if(event.target.id==='startAnyElectionV153'){event.preventDefault();const data=Object.fromEntries(new FormData(event.target).entries());if(confirm('Открыть выборы на выбранную должность?'))api('start_any_election',{office_key:data.office_key})}
   },true);
