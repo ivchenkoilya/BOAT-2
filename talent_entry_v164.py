@@ -18,6 +18,7 @@ from government_president_direct_deputy_v173 import install_government_president
 from government_release_v165 import install_government_release_v165
 from government_reliability_laws_v167 import install_government_reliability_laws_v167
 from government_ui_hotfix_v169 import install_government_ui_hotfix_v169
+from government_universal_voting_v174 import install_government_universal_voting_v174
 
 
 # Финальный государственный слой включает запросы госструктур в казну Reality 165.
@@ -38,6 +39,8 @@ install_finance_fund_link_v167(core)
 install_government_ui_hotfix_v169(core)
 # Президент назначает заместителя главы Надзора напрямую, без Госдумы и карьерного порога.
 install_government_president_direct_deputy_v173(core)
+# Снимает старый депутатский фильтр middleware: любая действующая должность голосует по любому проекту.
+install_government_universal_voting_v174(core)
 # Финальные правила рейда ставятся после всех старых обёрток боя и героев.
 install_boss_rules_v163(core)
 install_boss_audio_v154()
