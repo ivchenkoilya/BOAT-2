@@ -6,7 +6,6 @@ from typing import Any
 import finance_investments_v127_core as finance
 import government_crisis_v131 as crisis
 import government_mandate_luxury_v147 as luxury
-import government_v127 as gov
 
 
 VERSION = "Reality 161 · Защита казны и живое обновление"
@@ -53,8 +52,7 @@ def install_government_realtime_guard_v161(core: Any) -> None:
         percent: int,
     ) -> str:
         offices = await crisis._offices(core_arg, int(chat_id), int(user_id))
-        is_creator = int(user_id) == int(core_arg.DEVELOPER_ID)
-        if not offices and not is_creator:
+        if not offices:
             raise PermissionError(
                 "Операции с государственной казной доступны только действующим чиновникам. "
                 "Статус кандидата не является государственной должностью."
@@ -78,8 +76,7 @@ def install_government_realtime_guard_v161(core: Any) -> None:
     ) -> dict[str, Any]:
         payload = await previous_serialize_crisis(core_arg, int(chat_id), int(user_id))
         offices = list(payload.get("offices") or [])
-        is_creator = int(user_id) == int(core_arg.DEVELOPER_ID)
-        official = bool(offices) or is_creator
+        official = bool(offices)
         theft = payload.setdefault("theft", {})
         theft["requires_active_office"] = True
         theft["can_attempt"] = bool(official and theft.get("can_attempt"))
