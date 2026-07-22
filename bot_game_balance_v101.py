@@ -127,7 +127,13 @@ def install_bot_game_balance_v101(core: Any) -> None:
                 if game_type == "coin"
                 else "🎲 КУБИК ПРОТИВ БОТА 🎲"
             )
-            signed = f"+{applied}" if applied > 0 else f"−{abs(applied)}"
+            signed = (
+                f"+{applied}"
+                if applied > 0
+                else "0"
+                if applied == 0
+                else f"−{abs(applied)}"
+            )
             result_text = (
                 f"<b>{title}</b>\n\n"
                 f"{core.player_link(after)}\n"
