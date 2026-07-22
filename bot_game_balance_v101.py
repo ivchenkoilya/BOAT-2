@@ -4,8 +4,9 @@ import random
 from typing import Any
 
 
-VERSION = "Reality 125 · Баланс игр с ботом 55 на 45"
-PLAYER_WIN_CHANCE = 0.55
+VERSION = "Reality 164 · Игрок 45 против бота 55"
+PLAYER_WIN_CHANCE = 0.45
+BOT_WIN_CHANCE = 0.55
 
 
 def _coin_result() -> tuple[bool, str]:
@@ -99,6 +100,17 @@ def install_bot_game_balance_v101(core: Any) -> None:
             )
             applied = after.points - before
 
+            # Защитные таланты могут уменьшать проигрыш, но не могут полностью
+            # отменить его. Если Древо вернуло −0, принудительно снимаем 1 очко.
+            if not won and applied >= 0:
+                _, after = await core.db.set_player_points(
+                    chat_id,
+                    owner_id,
+                    before - 1,
+                    f"bot_game_{game_type}_minimum_loss",
+                )
+                applied = after.points - before
+
             if won:
                 outcome = (
                     "👑 Бот официально унижен. "
@@ -106,7 +118,8 @@ def install_bot_game_balance_v101(core: Any) -> None:
                 )
             else:
                 outcome = (
-                    "💀 Сегодня бот удержал ставку, но небольшое преимущество всё ещё на стороне игрока."
+                    "💀 Сегодня бот удержал ставку. "
+                    "Даже Древо знаний не может полностью отменить проигрыш."
                 )
 
             title = (
@@ -120,8 +133,8 @@ def install_bot_game_balance_v101(core: Any) -> None:
                 f"{core.player_link(after)}\n"
                 f"{detail}\n\n"
                 f"{outcome}\n\n"
-                f"🍀 Шанс победы игрока: <b>55%</b>.\n"
-                f"🤖 Шанс победы бота: <b>45%</b>.\n"
+                f"🍀 Шанс победы игрока: <b>45%</b>.\n"
+                f"🤖 Шанс победы бота: <b>55%</b>.\n"
                 f"Ставка: <b>{stake}</b>.\n"
                 f"Изменение: <b>{signed}</b>.\n"
                 f"Баланс: <b>{before} → {after.points}</b>."
