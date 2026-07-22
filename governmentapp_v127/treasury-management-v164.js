@@ -16,9 +16,8 @@
   let loading=false;
   let formDraft=null;
 
-  function markVersion(){
-    const brand=document.querySelector('.brand small');
-    if(brand&&brand.textContent!=='REALITY 164')brand.textContent='REALITY 164';
+  function treasuryActive(){
+    return Boolean(document.querySelector('.screen[data-screen="treasury"]')?.classList.contains('active'));
   }
 
   function toast(text,type='success'){
@@ -44,8 +43,7 @@
 
   function captureDraft(){
     const form=document.getElementById('treasuryManagementFormV164');
-    if(!form)return;
-    formDraft=Object.fromEntries(new FormData(form).entries());
+    if(form)formDraft=Object.fromEntries(new FormData(form).entries());
   }
 
   function restoreDraft(){
@@ -72,6 +70,25 @@
       if(error.name==='AbortError')throw new Error('Сервер долго не отвечает.');
       throw error;
     }finally{clearTimeout(timeout)}
+  }
+
+  async function sharedState(force=false){
+    const now=Date.now();
+    if(!force&&window.__governmentTreasuryState&&now-Number(window.__governmentTreasuryStateAt||0)<3000){
+      return window.__governmentTreasuryState;
+    }
+    if(window.__governmentTreasuryStatePromise)return window.__governmentTreasuryStatePromise;
+    const promise=api(`/government-v127/api/state?chat_id=${encodeURIComponent(chatId)}&_treasury=${now}`)
+      .then(data=>{
+        window.__governmentTreasuryState=data;
+        window.__governmentTreasuryStateAt=Date.now();
+        return data;
+      })
+      .finally(()=>{
+        if(window.__governmentTreasuryStatePromise===promise)window.__governmentTreasuryStatePromise=null;
+      });
+    window.__governmentTreasuryStatePromise=promise;
+    return promise;
   }
 
   function userOptions(){
@@ -103,11 +120,9 @@
     const recent=Array.isArray(tm.recent)?tm.recent:[];
     const sanctioned=Boolean(tm.sanctioned);
     const canPropose=Boolean(tm.can_propose);
-
     const warning=sanctioned&&canPropose
       ?'<div class="treasury-warning-v164"><b>🚫 На президенте есть санкции</b><span>Прямые расходы заблокированы, но бюджетные проекты можно передавать в Госдуму.</span></div>'
       :'';
-
     const form=canPropose?`
       <article class="panel treasury-control-v164">
         <div class="panel-title"><span>💸</span><div><b>Выдать деньги из казны</b><small>Мелкие расходы исполняются сразу, крупные автоматически уходят в Госдуму</small></div></div>
@@ -121,9 +136,7 @@
           <div class="treasury-mode-v164" id="treasuryModeV164"></div>
           <button class="positive wide" id="treasurySubmitV164" type="submit">💸 ВЫПЛАТИТЬ ИЗ КАЗНЫ</button>
         </form>
-      </article>`:`
-      <div class="empty treasury-readonly-v164">Управление расходами доступно действующему Президенту реальности. Балансы государственных структур открыты для всех.</div>`;
-
+      </article>`:`<div class="empty treasury-readonly-v164">Управление расходами доступно действующему Президенту реальности. Балансы государственных структур открыты для всех.</div>`;
     mount.innerHTML=`
       <article class="panel treasury-president-v164">
         <div class="panel-title"><span>🏛</span><div><b>Президентское управление казной</b><small>Отдельные фонды, лимиты и публичная история решений</small></div></div>
@@ -142,11 +155,9 @@
       </article>
       <article class="panel">
         <div class="panel-title"><span>📋</span><div><b>Президентские решения</b><small>Последние прямые выплаты и финансирование структур</small></div></div>
-        <div class="log-list">${recent.length?recent.map(item=>`<div class="log-item"><span><b>${item.target_type==='structure'?'🏛':'👤'} ${esc(item.target_title)}</b><small>${esc(item.reason)} · ${operationLabel(item)}</small></span><strong class="minus">−${fmt(item.amount)}</strong></div>`).join(''):'<div class="empty">Президентских расходов Reality 164 пока нет.</div>'}</div>
+        <div class="log-list">${recent.length?recent.map(item=>`<div class="log-item"><span><b>${item.target_type==='structure'?'🏛':'👤'} ${esc(item.target_title)}</b><small>${esc(item.reason)} · ${operationLabel(item)}</small></span><strong class="minus">−${fmt(item.amount)}</strong></div>`).join(''):'<div class="empty">Президентских расходов пока нет.</div>'}</div>
       </article>`;
-
     restoreDraft();
-    markVersion();
   }
 
   function syncTargetFields(){
@@ -167,11 +178,7 @@
     const type=String(form.elements.target_type?.value||'user');
     const targetId=Number(form.elements.target_user_id?.value)||0;
     const selfId=Number(state?.user?.user_id)||0;
-    const direct=Boolean(tm.can_direct)
-      && amount>0
-      && amount<=Number(tm.direct_limit||0)
-      && amount<=Number(tm.daily_remaining||0)
-      && !(type==='user'&&targetId===selfId);
+    const direct=Boolean(tm.can_direct)&&amount>0&&amount<=Number(tm.direct_limit||0)&&amount<=Number(tm.daily_remaining||0)&&!(type==='user'&&targetId===selfId);
     const mode=document.getElementById('treasuryModeV164');
     const button=document.getElementById('treasurySubmitV164');
     if(mode)mode.innerHTML=direct
@@ -183,14 +190,14 @@
     }
   }
 
-  async function load(){
-    if(!chatId||loading)return;
+  async function load(force=false){
+    if(!chatId||loading||!treasuryActive())return;
     loading=true;
     try{
-      state=await api(`/government-v127/api/state?chat_id=${encodeURIComponent(chatId)}&_tm164=${Date.now()}`);
+      state=await sharedState(force);
       render();
     }catch(error){toast(error.message||'Не удалось загрузить управление казной.','error')}
-    finally{loading=false;markVersion()}
+    finally{loading=false}
   }
 
   async function submit(form){
@@ -198,23 +205,18 @@
     const button=document.getElementById('treasurySubmitV164');
     if(button)button.disabled=true;
     try{
-      const result=await api('/government-v164/api/action',{
-        method:'POST',
-        body:JSON.stringify({
-          action:'treasury_disburse',
-          chat_id:chatId,
-          target_type:String(data.target_type||'user'),
-          target_user_id:Number(data.target_user_id)||0,
-          structure_key:String(data.structure_key||''),
-          amount:Number(data.amount)||0,
-          reason:String(data.reason||'')
-        })
-      });
+      const result=await api('/government-v164/api/action',{method:'POST',body:JSON.stringify({
+        action:'treasury_disburse',chat_id:chatId,target_type:String(data.target_type||'user'),
+        target_user_id:Number(data.target_user_id)||0,structure_key:String(data.structure_key||''),
+        amount:Number(data.amount)||0,reason:String(data.reason||'')
+      })});
       formDraft=null;
+      window.__governmentTreasuryState=null;
+      window.__governmentTreasuryStateAt=0;
       toast(result.message||'Решение казны исполнено.');
       tg?.HapticFeedback?.notificationOccurred?.('success');
       document.getElementById('refreshButton')?.click();
-      setTimeout(load,220);
+      setTimeout(()=>load(true),240);
     }catch(error){
       toast(error.message||'Решение казны не выполнено.','error');
       tg?.HapticFeedback?.notificationOccurred?.('error');
@@ -222,34 +224,19 @@
   }
 
   document.addEventListener('click',event=>{
-    if(event.target.closest?.('[data-tab="treasury"]'))setTimeout(load,80);
-    if(event.target.closest?.('#refreshButton'))setTimeout(load,180);
+    if(event.target.closest?.('[data-tab="treasury"]'))setTimeout(()=>load(false),120);
+    if(event.target.closest?.('#refreshButton')&&treasuryActive())setTimeout(()=>load(true),220);
   },true);
-
   document.addEventListener('input',event=>{
     if(event.target.closest?.('#treasuryManagementFormV164')){captureDraft();syncMode()}
   });
-
   document.addEventListener('change',event=>{
-    if(event.target.closest?.('#treasuryManagementFormV164')){
-      captureDraft();
-      syncTargetFields();
-      syncMode();
-    }
+    if(event.target.closest?.('#treasuryManagementFormV164')){captureDraft();syncTargetFields();syncMode()}
   });
-
   document.addEventListener('submit',event=>{
     if(event.target.id!=='treasuryManagementFormV164')return;
-    event.preventDefault();
-    captureDraft();
-    submit(event.target);
+    event.preventDefault();captureDraft();submit(event.target);
   });
-
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()});
-  window.addEventListener('focus',load);
-
-  ensureMount();
-  markVersion();
-  load();
-  setInterval(markVersion,900);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&treasuryActive())load(false)});
+  window.addEventListener('focus',()=>{if(treasuryActive())load(false)});
 })();
