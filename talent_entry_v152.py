@@ -2,10 +2,12 @@ import asyncio
 
 import main as core
 import talent_entry  # noqa: F401
+from godot_rooftop_test_button_v155 import install_godot_test_button
 from godot_rooftop_test_v155 import start_godot_rooftop_test_install
 from government_release_v152 import install_government_release_v152
 
 
+install_godot_test_button()
 start_godot_rooftop_test_install()
 install_government_release_v152(core)
 
