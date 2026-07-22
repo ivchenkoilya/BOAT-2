@@ -21,6 +21,11 @@ def _replace_first_number(text: str, before: int, after: int) -> str:
     )
 
 
+def _scaled_positive(value: int) -> int:
+    number = int(value)
+    return number * REWARD_MULTIPLIER if number > 0 else number
+
+
 def install_economy_rewards_v164(core: Any) -> None:
     """Умножает положительные награды Шара и увеличения влияния в десять раз."""
     if getattr(core, "_economy_rewards_v164_installed", False):
@@ -36,14 +41,38 @@ def install_economy_rewards_v164(core: Any) -> None:
         delta, event_text = original_roll_score_action(action_key)
         value = int(delta)
         if str(action_key) == "influence" and value > 0:
-            scaled = value * REWARD_MULTIPLIER
+            scaled = _scaled_positive(value)
             return scaled, _replace_first_number(str(event_text), value, scaled)
         return value, str(event_text)
 
     core.roll_score_action = roll_score_action_v164
 
-    # Шар судьбы начисляет очки через add_points_with_balance с причиной
-    # fate_orb_result. Отрицательные исходы не усиливаем — только награды.
+    # До принятия судьбы карточка показывает тот же десятикратный положительный
+    # результат, который затем реально будет начислен. Отрицательные исходы не меняем.
+    original_fate_vision_text = core.fate_vision_text
+
+    def fate_vision_text_v164(
+        player: Any,
+        session_id: str,
+        rarity: str,
+        delta: int,
+        prophecy: str,
+        challenged: bool,
+    ) -> str:
+        return original_fate_vision_text(
+            player,
+            session_id,
+            rarity,
+            _scaled_positive(int(delta)),
+            prophecy,
+            challenged,
+        )
+
+    core.fate_vision_text = fate_vision_text_v164
+
+    # Шар судьбы хранит базовый исход в сессии. При окончательном принятии
+    # увеличиваем только положительное начисление. Это также работает со старыми
+    # сессиями, созданными до обновления.
     original_add_points = core.Database.add_points_with_balance
 
     async def add_points_with_rewards_v164(self: Any, *args: Any, **kwargs: Any):
@@ -54,7 +83,7 @@ def install_economy_rewards_v164(core: Any) -> None:
                 args, kwargs = talents._replace_delta(
                     args,
                     kwargs,
-                    int(delta) * REWARD_MULTIPLIER,
+                    _scaled_positive(int(delta)),
                 )
         return await original_add_points(self, *args, **kwargs)
 
