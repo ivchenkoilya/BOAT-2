@@ -1,0 +1,34 @@
+.v156-message-field textarea{
+  min-height:96px;
+  resize:vertical;
+}
+
+.v156-secret-message{
+  margin:14px 0;
+  padding:14px 16px;
+  border:1px solid rgba(189,92,255,.32);
+  border-radius:16px;
+  background:linear-gradient(135deg,rgba(93,27,119,.26),rgba(27,13,35,.72));
+  box-shadow:inset 0 0 24px rgba(171,63,255,.06);
+}
+
+.v156-secret-message small{
+  display:block;
+  margin-bottom:7px;
+  color:#dba9ff;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.08em;
+}
+
+.v156-secret-message p{
+  margin:0;
+  color:#fff;
+  font-size:14px;
+  line-height:1.45;
+  white-space:pre-wrap;
+}
+
+[data-buy-vote]{
+  letter-spacing:.01em;
+}
