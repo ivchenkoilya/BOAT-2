@@ -36,6 +36,19 @@
     },420);
   }
 
+  function quickDeputyCard(){
+    const hero=document.getElementById('powerHero');
+    if(!hero||!state)return;
+    document.getElementById('oversightDeputyQuickV169')?.remove();
+    const spec=state.office_specs?.oversight_deputy||{emoji:'🕵️',title:'Заместитель главы Надзора за гондонами',threshold:200000};
+    const holder=(state.offices||[]).find(item=>item.office_key==='oversight_deputy');
+    const card=document.createElement('article');
+    card.id='oversightDeputyQuickV169';
+    card.className='panel oversight-deputy-quick-v169';
+    card.innerHTML=`<div class="panel-title"><span>${esc(spec.emoji||'🕵️')}</span><div><b>${esc(spec.title)}</b><small>${holder?`Должность занимает ${esc(holder.name)} · осталось ${esc(holder.remaining||'действует')}`:`Новая должность свободна · назначение проходит через голосование Госдумы`}</small></div></div><button class="action wide" type="button" data-open-oversight-deputy>🕵️ ОТКРЫТЬ ПАНЕЛЬ ЗАМЕСТИТЕЛЯ</button>`;
+    hero.insertAdjacentElement('afterend',card);
+  }
+
   function deputyCard(){
     const grid=document.getElementById('institutionGrid');
     if(!grid||!state)return;
@@ -82,7 +95,7 @@
         headers:{'X-Telegram-Init-Data':tg?.initData||''},
       });
       const data=await response.json();
-      if(response.ok&&data?.ok){state=data;deputyCard()}
+      if(response.ok&&data?.ok){state=data;quickDeputyCard();deputyCard()}
     }catch(_error){}
     finally{loading=false}
   }
@@ -92,12 +105,14 @@
   load();
 
   document.addEventListener('click',event=>{
-    if(event.target.closest?.('[data-tab="powers"]'))setTimeout(()=>{repairCrisisDom();deputyCard();load()},180);
+    if(event.target.closest?.('[data-tab="powers"]'))setTimeout(()=>{repairCrisisDom();quickDeputyCard();deputyCard();load()},180);
+    if(event.target.closest?.('[data-open-oversight-deputy]')){openOversight();return;}
     if(event.target.closest?.('#refreshButton'))setTimeout(()=>{repairCrisisDom();load()},260);
   },true);
 
   const observer=new MutationObserver(()=>{
     repairCrisisDom();
+    if(state&&document.getElementById('powerHero')&&!document.getElementById('oversightDeputyQuickV169'))quickDeputyCard();
     if(state&&document.getElementById('institutionGrid')&&!document.getElementById('oversightDeputyInstitutionV169'))deputyCard();
   });
   observer.observe(document.documentElement,{childList:true,subtree:true});
