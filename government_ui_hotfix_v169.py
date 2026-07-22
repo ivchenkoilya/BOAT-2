@@ -6,7 +6,7 @@ from typing import Any
 import government_mandate_luxury_v147 as luxury
 
 
-VERSION = "Reality 171 · Рабочая панель заместителя Надзора"
+VERSION = "Reality 172 · Компактные полномочия заместителя Надзора"
 APP_DIR = Path(__file__).resolve().parent / "governmentapp_v127"
 ASSET_JS = APP_DIR / "government-ui-hotfix-v169.js"
 ASSET_CSS = APP_DIR / "government-ui-hotfix-v169.css"
@@ -38,12 +38,12 @@ def install_government_ui_hotfix_v169(core: Any) -> None:
         if ASSET_CSS.name not in source:
             source = source.replace(
                 "</head>",
-                f'  <link rel="stylesheet" href="/government-v169/{ASSET_CSS.name}?v=171">\n</head>',
+                f'  <link rel="stylesheet" href="/government-v169/{ASSET_CSS.name}?v=172">\n</head>',
             )
         if ASSET_JS.name not in source:
             source = source.replace(
                 "</body>",
-                f'  <script src="/government-v169/{ASSET_JS.name}?v=171"></script>\n</body>',
+                f'  <script src="/government-v169/{ASSET_JS.name}?v=172"></script>\n</body>',
             )
         return source
 
@@ -53,7 +53,7 @@ def install_government_ui_hotfix_v169(core: Any) -> None:
 
     async def start_with_ui_hotfix(bot: Any):
         if not ASSET_JS.is_file() or not ASSET_CSS.is_file():
-            raise RuntimeError("Не найдены ассеты исправления интерфейса Reality 171")
+            raise RuntimeError("Не найдены ассеты исправления интерфейса Reality 172")
 
         original_runner = core.web.AppRunner
 
@@ -76,7 +76,7 @@ def install_government_ui_hotfix_v169(core: Any) -> None:
                     "Pragma": "no-cache",
                     "Expires": "0",
                     "Content-Type": f"{content_type}; charset=utf-8",
-                    "X-Government-UI-Hotfix": "171",
+                    "X-Government-UI-Hotfix": "172",
                 },
             )
 
