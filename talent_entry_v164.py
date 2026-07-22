@@ -8,6 +8,7 @@ from boss_web_v163 import install_boss_web_v163
 from economy_rewards_v164 import install_economy_rewards_v164
 from government_android_webview_hotfix_v166 import install_government_android_webview_hotfix_v166
 from government_creator_sanctions_v164 import install_government_creator_sanctions_v164
+from government_official_voting_v168 import install_government_official_voting_v168
 from government_release_v165 import install_government_release_v165
 from government_reliability_laws_v167 import install_government_reliability_laws_v167
 
@@ -20,6 +21,8 @@ install_government_android_webview_hotfix_v166(core)
 install_government_creator_sanctions_v164(core)
 # Объединяет все запросы состояния, чинит обновление и добавляет президентские редакции законов.
 install_government_reliability_laws_v167(core)
+# Даёт право голоса всем действующим должностным лицам, включая президента.
+install_government_official_voting_v168(core)
 # Финальные правила рейда ставятся после всех старых обёрток боя и героев.
 install_boss_rules_v163(core)
 install_boss_audio_v154()
