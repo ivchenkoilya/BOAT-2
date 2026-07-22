@@ -14,6 +14,7 @@ from government_android_webview_hotfix_v166 import install_government_android_we
 from government_creator_sanctions_v164 import install_government_creator_sanctions_v164
 from government_official_voting_v168 import install_government_official_voting_v168
 from government_oversight_deputy_v167 import install_government_oversight_deputy_v167
+from government_president_direct_deputy_v173 import install_government_president_direct_deputy_v173
 from government_release_v165 import install_government_release_v165
 from government_reliability_laws_v167 import install_government_reliability_laws_v167
 from government_ui_hotfix_v169 import install_government_ui_hotfix_v169
@@ -35,6 +36,8 @@ install_government_official_voting_v168(core)
 install_finance_fund_link_v167(core)
 # Исправляет мобильную вёрстку ополчения и выводит новую должность во вкладке «Полномочия».
 install_government_ui_hotfix_v169(core)
+# Президент назначает заместителя главы Надзора напрямую, без Госдумы и карьерного порога.
+install_government_president_direct_deputy_v173(core)
 # Финальные правила рейда ставятся после всех старых обёрток боя и героев.
 install_boss_rules_v163(core)
 install_boss_audio_v154()
