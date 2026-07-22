@@ -1,0 +1,24 @@
+.oversight-deputy-v167{display:grid;gap:14px;margin-bottom:18px}
+.oversight-deputy-v167 .od-hero-v167{border-color:#8b4f9f;background:linear-gradient(155deg,#26122f,#100b16 70%)}
+.od-duty-grid-v167{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0}
+.od-duty-grid-v167>div{padding:11px;border:1px solid #5d3768;border-radius:14px;background:#160d1d}
+.od-duty-grid-v167 b,.od-duty-grid-v167 small{display:block}
+.od-duty-grid-v167 b{font-size:11px;color:#f1d5ff}.od-duty-grid-v167 small{margin-top:4px;color:#bca8c5;font-size:8px;line-height:1.35}
+.od-tabs-v167{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.od-tabs-v167 form,.od-sanction-form-v167{padding:12px;border:1px solid #3e3048;border-radius:16px;background:#0e0a13}
+.od-tabs-v167 h3,.od-sanction-form-v167 h3{margin:0 0 10px;font-size:12px;color:#ecd3f5}
+.od-sanction-form-v167{margin-top:10px}
+.od-list-v167{display:grid;gap:10px}
+.od-card-v167{padding:13px;border:1px solid #392d40;border-radius:17px;background:linear-gradient(145deg,#15101a,#0b0910);box-shadow:0 10px 25px #0005}
+.od-card-v167 p{margin:10px 0;color:#dacfe0;font-size:10px;line-height:1.55;white-space:pre-wrap}
+.od-evidence-v167{padding:9px 10px;border-left:3px solid #a866bd;border-radius:8px;background:#201327;color:#cdbbd4;font-size:9px;line-height:1.45}
+.od-actions-v167{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.od-card-v167>.action{width:100%;margin-top:10px}
+.od-warning-v167{display:flex;align-items:center;padding:12px;border:1px solid #3b313f;border-radius:15px;background:#100d13}
+.od-warning-v167.active{border-color:#9f4f65;background:linear-gradient(145deg,#281019,#110b10);box-shadow:0 0 22px #d54b6c22}
+.od-warning-v167 b,.od-warning-v167 small{display:block}.od-warning-v167 b{font-size:10px;color:#f5dce4}.od-warning-v167 small{margin-top:4px;color:#b9aebd;font-size:8px;line-height:1.4}
+.od-bill-v167{display:block;margin-top:8px;color:#c99ee0;font-size:8px;word-break:break-all}
+.oversight-deputy-v167 .section-head{margin-top:5px}
+.oversight-deputy-v167 .check-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:620px){.od-tabs-v167{grid-template-columns:1fr}.od-duty-grid-v167{grid-template-columns:1fr 1fr}}
+@media(max-width:380px){.od-duty-grid-v167,.oversight-deputy-v167 .check-grid{grid-template-columns:1fr}}
