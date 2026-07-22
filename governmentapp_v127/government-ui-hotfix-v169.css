@@ -1,193 +1,49 @@
-/* Reality 171: mobile layout repair and independent Oversight deputy powers. */
-#crisisV131 .crisis-grid{
-  align-items:start!important;
-  grid-auto-rows:auto!important;
-}
-#crisisV131 .crisis-grid>div{
-  min-width:0!important;
-  min-height:0!important;
-  height:auto!important;
-  align-self:start!important;
-}
-#crisisV131 .crisis-panel,
-#crisisV131 #crisisConflict>article,
-#crisisV131 #crisisTheft>article{
-  height:auto!important;
-  min-height:0!important;
-  align-self:start!important;
-}
-#crisisV131 #crisisConflict{
-  display:grid!important;
-  gap:10px!important;
-  align-content:start!important;
-}
-#crisisV131>.section-head:not(.crisis-heading){
-  position:relative!important;
-  z-index:2!important;
-  clear:both!important;
-  margin-top:22px!important;
-  padding-top:2px!important;
-}
+/* Reality 172: compact Oversight deputy powers and mobile crisis repair. */
+#crisisV131 .crisis-grid{align-items:start!important;grid-auto-rows:auto!important}
+#crisisV131 .crisis-grid>div{min-width:0!important;min-height:0!important;height:auto!important;align-self:start!important}
+#crisisV131 .crisis-panel,#crisisV131 #crisisConflict>article,#crisisV131 #crisisTheft>article{height:auto!important;min-height:0!important;align-self:start!important}
+#crisisV131 #crisisConflict{display:grid!important;gap:10px!important;align-content:start!important}
+#crisisV131>.section-head:not(.crisis-heading){position:relative!important;z-index:2!important;clear:both!important;margin-top:22px!important;padding-top:2px!important}
 #crisisV131 #crisisTheftLog{position:relative;z-index:1}
 
-#oversightDeputyInstitutionV169{
-  position:relative;
-  cursor:pointer;
-  border-color:#86509a;
-  background:radial-gradient(circle at 100% 0,rgba(194,104,255,.22),transparent 46%),linear-gradient(145deg,#25142f,#110c17);
-  box-shadow:0 12px 30px rgba(0,0,0,.28),0 0 22px rgba(175,91,222,.13);
-}
-#oversightDeputyInstitutionV169::after{
-  content:"НОВОЕ";
-  position:absolute;
-  top:8px;
-  right:9px;
-  padding:4px 6px;
-  border:1px solid #9b63ae;
-  border-radius:999px;
-  background:#31163d;
-  color:#edc9ff;
-  font-size:6px;
-  font-weight:900;
-  letter-spacing:.11em;
-}
+#oversightDeputyInstitutionV169{position:relative;cursor:pointer;border-color:#86509a;background:radial-gradient(circle at 100% 0,rgba(194,104,255,.22),transparent 46%),linear-gradient(145deg,#25142f,#110c17);box-shadow:0 12px 30px rgba(0,0,0,.28),0 0 22px rgba(175,91,222,.13)}
+#oversightDeputyInstitutionV169::after{content:"НОВОЕ";position:absolute;top:8px;right:9px;padding:4px 6px;border:1px solid #9b63ae;border-radius:999px;background:#31163d;color:#edc9ff;font-size:6px;font-weight:900;letter-spacing:.11em}
 #oversightDeputyInstitutionV169:active{transform:scale(.985)}
 #oversightDeputyInstitutionV169 small{padding-right:38px}
 
-#oversightDeputyPowersV171{
-  display:block;
-  margin:14px 0 18px;
-  scroll-margin-top:18px;
-}
-#oversightDeputyPowersV171 .od171-hero{
-  border-color:#8b4f9f;
-  background:
-    radial-gradient(circle at 100% 0,rgba(198,104,255,.24),transparent 45%),
-    linear-gradient(150deg,#26132f,#100b16 72%);
-  box-shadow:0 14px 34px rgba(0,0,0,.3),0 0 25px rgba(187,88,231,.12);
-}
-.od171-duty-grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:8px;
-  margin:14px 0;
-}
-.od171-duty-grid>div{
-  padding:11px;
-  border:1px solid #5d3768;
-  border-radius:14px;
-  background:#160d1d;
-}
-.od171-duty-grid b,.od171-duty-grid small{display:block}
-.od171-duty-grid b{font-size:11px;color:#f1d5ff}
-.od171-duty-grid small{margin-top:4px;color:#bca8c5;font-size:8px;line-height:1.35}
+#oversightDeputyPowersV172{display:block;margin:14px 0 18px;scroll-margin-top:18px}
+#oversightDeputyPowersV172 .od172-power-card{border-color:#704184;background:radial-gradient(circle at 100% 0,rgba(190,101,237,.18),transparent 45%),linear-gradient(150deg,#211229,#0e0a13 72%)}
+#oversightDeputyPowersV172 .od172-power-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+#oversightDeputyPowersV172 .od172-action{min-height:86px;text-align:left}
+#oversightDeputyPowersV172 .od172-action:disabled{opacity:.42;filter:saturate(.45);cursor:not-allowed}
 
-.od171-section{
-  margin-top:10px;
-  padding:0;
-  border:1px solid #493453;
-  border-radius:16px;
-  background:#0e0a13;
-  overflow:hidden;
-}
-.od171-section>summary{
-  cursor:pointer;
-  list-style:none;
-  padding:13px 14px;
-  color:#f0d8fb;
-  font-size:11px;
-  font-weight:900;
-  background:linear-gradient(145deg,#1e1325,#110c16);
-}
-.od171-section>summary::-webkit-details-marker{display:none}
-.od171-section[open]>summary{border-bottom:1px solid #493453}
-.od171-section>form,
-.od171-section>.od171-grid,
-.od171-section>.od171-list,
-.od171-section>.od171-sanction,
-.od171-section>#od171WeeklyReport{
-  margin:12px;
-}
-.od171-grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:10px;
-}
-.od171-grid form,.od171-sanction{
-  padding:12px;
-  border:1px solid #3e3048;
-  border-radius:15px;
-  background:#0b0810;
-}
-.od171-grid h3,.od171-sanction h3{
-  margin:0 0 10px;
-  font-size:12px;
-  color:#ecd3f5;
-}
-.od171-sanction{margin-top:10px!important}
-.od171-list{display:grid;gap:10px}
-.od171-item{
-  padding:13px;
-  border:1px solid #392d40;
-  border-radius:17px;
-  background:linear-gradient(145deg,#15101a,#0b0910);
-}
-.od171-item p{
-  margin:10px 0;
-  color:#dacfe0;
-  font-size:10px;
-  line-height:1.55;
-  white-space:pre-wrap;
-}
-.od171-item>.action{width:100%;margin-top:10px}
-.od171-evidence{
-  padding:9px 10px;
-  border-left:3px solid #a866bd;
-  border-radius:8px;
-  background:#201327;
-  color:#cdbbd4;
-  font-size:9px;
-  line-height:1.45;
-}
-.od171-actions{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:8px;
-  margin-top:10px;
-}
-.od171-warning{
-  padding:12px;
-  border:1px solid #3b313f;
-  border-radius:15px;
-  background:#100d13;
-}
-.od171-warning.active{
-  border-color:#9f4f65;
-  background:linear-gradient(145deg,#281019,#110b10);
-}
-.od171-warning b,.od171-warning small{display:block}
-.od171-warning b{font-size:10px;color:#f5dce4}
-.od171-warning small{margin-top:4px;color:#b9aebd;font-size:8px;line-height:1.4}
-#oversightDeputyPowersV171 .check-grid{
-  grid-template-columns:repeat(2,minmax(0,1fr));
-}
-#oversightDeputyPowersV171 #od171WeeklyReport{
-  width:calc(100% - 24px);
-}
-.screen[data-screen="powers"] #oversightDeputyV167{
-  display:none!important;
-}
+.od172-registers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.od172-registers details{min-width:0;border:1px solid #403047;border-radius:14px;background:#0f0b13;overflow:hidden}
+.od172-registers summary{cursor:pointer;list-style:none;padding:11px 12px;color:#e9d3f3;font-size:10px;font-weight:900;white-space:nowrap}
+.od172-registers summary::-webkit-details-marker{display:none}
+.od172-registers details[open]{grid-column:1/-1}
+.od172-registers details[open] summary{border-bottom:1px solid #403047;background:#17101c}
+.od172-list{display:grid;gap:9px;padding:10px}
+.od172-item{padding:12px;border:1px solid #392d40;border-radius:15px;background:linear-gradient(145deg,#15101a,#0b0910)}
+.od172-item p{margin:9px 0;color:#dacfe0;font-size:10px;line-height:1.5;white-space:pre-wrap}
+.od172-item>.action{width:100%;margin-top:9px}
+.od172-evidence{padding:8px 9px;border-left:3px solid #a866bd;border-radius:8px;background:#201327;color:#cdbbd4;font-size:9px;line-height:1.45}
+.od172-row-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:9px}
+.od172-warning{padding:11px;border:1px solid #3b313f;border-radius:14px;background:#100d13}
+.od172-warning.active{border-color:#9f4f65;background:linear-gradient(145deg,#281019,#110b10)}
+.od172-warning b,.od172-warning small{display:block}
+.od172-warning b{font-size:10px;color:#f5dce4}
+.od172-warning small{margin-top:4px;color:#b9aebd;font-size:8px;line-height:1.4}
+.od172-check-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+.screen[data-screen="powers"] #oversightDeputyV167,#oversightDeputyPowersV171{display:none!important}
 
 @media(max-width:620px){
-  #crisisV131 .crisis-grid{
-    grid-template-columns:minmax(0,1fr)!important;
-    gap:12px!important;
-  }
+  #crisisV131 .crisis-grid{grid-template-columns:minmax(0,1fr)!important;gap:12px!important}
   #crisisV131>.section-head:not(.crisis-heading){margin-top:18px!important}
-  .od171-grid{grid-template-columns:1fr}
+  #oversightDeputyPowersV172 .od172-power-actions{grid-template-columns:1fr}
+  #oversightDeputyPowersV172 .od172-action{min-height:72px}
+  .od172-registers{grid-template-columns:1fr}
+  .od172-registers details[open]{grid-column:auto}
 }
-@media(max-width:380px){
-  .od171-duty-grid,
-  #oversightDeputyPowersV171 .check-grid,
-  .od171-actions{grid-template-columns:1fr}
-}
+@media(max-width:380px){.od172-check-grid,.od172-row-actions{grid-template-columns:1fr}}
