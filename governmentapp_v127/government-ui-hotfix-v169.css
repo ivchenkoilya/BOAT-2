@@ -65,3 +65,13 @@
   }
   #crisisV131>.section-head:not(.crisis-heading){margin-top:18px!important}
 }
+
+#oversightDeputyQuickV169{
+  margin:14px 0 4px;
+  border-color:#8b4f9f;
+  background:radial-gradient(circle at 100% 0,rgba(198,104,255,.24),transparent 45%),linear-gradient(150deg,#26132f,#100b16 72%);
+  box-shadow:0 14px 34px rgba(0,0,0,.3),0 0 25px rgba(187,88,231,.12);
+}
+#oversightDeputyQuickV169 .panel-title{margin-bottom:11px}
+#oversightDeputyQuickV169 .panel-title>span{filter:drop-shadow(0 0 9px rgba(210,133,255,.55))}
+#oversightDeputyQuickV169 button{margin-top:0}
