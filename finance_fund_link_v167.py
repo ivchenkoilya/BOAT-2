@@ -22,6 +22,7 @@ def install_finance_fund_link_v167(core: Any) -> None:
 
     async def connect_with_fund_link(self: Any) -> None:
         await original_connect(self)
+        core._finance_fund_link_schema_v167_ready = False
         await _ensure_schema(core)
 
     core.Database.connect = connect_with_fund_link
