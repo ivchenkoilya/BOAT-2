@@ -1,7 +1,7 @@
 (()=>{
   'use strict';
-  if(window.__governmentUiHotfixV169)return;
-  window.__governmentUiHotfixV169=true;
+  if(window.__governmentUiHotfixV170)return;
+  window.__governmentUiHotfixV170=true;
 
   const tg=window.Telegram?.WebApp;
   const params=new URLSearchParams(location.search);
@@ -13,40 +13,54 @@
   let loading=false;
 
   function ensureOversightAssets(){
-    if(!document.querySelector('link[href*="oversight-deputy-v167.css"]')){
-      const link=document.createElement('link');
+    let link=document.querySelector('link[href*="oversight-deputy-v167.css"]');
+    if(!link){
+      link=document.createElement('link');
       link.rel='stylesheet';
-      link.href='/government-v167/oversight-deputy-v167.css?v=169';
       document.head.appendChild(link);
     }
+    link.href='/government-v167/oversight-deputy-v167.css?v=170';
+
     if(!window.__oversightDeputyV167&&!document.querySelector('script[src*="oversight-deputy-v167.js"]')){
       const script=document.createElement('script');
-      script.src='/government-v167/oversight-deputy-v167.js?v=169';
+      script.src='/government-v167/oversight-deputy-v167.js?v=170';
       script.defer=true;
       document.body.appendChild(script);
     }
   }
 
-  function openOversight(){
-    const tab=document.querySelector('[data-tab="oversight"]');
-    tab?.click();
+  function openDeputyPanel(){
+    document.querySelector('[data-tab="powers"]')?.click();
     setTimeout(()=>{
-      const target=document.getElementById('oversightDeputyV167')||document.querySelector('.screen[data-screen="oversight"]');
-      target?.scrollIntoView({behavior:'smooth',block:'start'});
-    },420);
+      placeDeputyPanel();
+      document.getElementById('oversightDeputyV167')?.scrollIntoView({behavior:'smooth',block:'start'});
+    },260);
   }
 
-  function quickDeputyCard(){
-    const hero=document.getElementById('powerHero');
-    if(!hero||!state)return;
+  function placeDeputyPanel(){
+    const panel=document.getElementById('oversightDeputyV167');
+    const powers=document.querySelector('.screen[data-screen="powers"]');
+    const cards=document.getElementById('myPowerCards');
+    if(!panel||!powers||!cards)return false;
+    if(panel.previousElementSibling!==cards)cards.insertAdjacentElement('afterend',panel);
+    panel.classList.add('od-mounted-powers-v170');
     document.getElementById('oversightDeputyQuickV169')?.remove();
-    const spec=state.office_specs?.oversight_deputy||{emoji:'🕵️',title:'Заместитель главы Надзора за гондонами',threshold:200000};
-    const holder=(state.offices||[]).find(item=>item.office_key==='oversight_deputy');
-    const card=document.createElement('article');
-    card.id='oversightDeputyQuickV169';
-    card.className='panel oversight-deputy-quick-v169';
-    card.innerHTML=`<div class="panel-title"><span>${esc(spec.emoji||'🕵️')}</span><div><b>${esc(spec.title)}</b><small>${holder?`Должность занимает ${esc(holder.name)} · осталось ${esc(holder.remaining||'действует')}`:`Новая должность свободна · назначение проходит через голосование Госдумы`}</small></div></div><button class="action wide" type="button" data-open-oversight-deputy>🕵️ ОТКРЫТЬ ПАНЕЛЬ ЗАМЕСТИТЕЛЯ</button>`;
-    hero.insertAdjacentElement('afterend',card);
+    return true;
+  }
+
+  function patchAppointmentSelect(){
+    const select=document.querySelector('#powerFormFields select[name="office_key"]');
+    if(!select||select.querySelector('option[value="oversight_deputy"]'))return;
+    const spec=state?.office_specs?.oversight_deputy||{
+      emoji:'🕵️',
+      title:'Заместитель главы Надзора за гондонами',
+    };
+    const option=document.createElement('option');
+    option.value='oversight_deputy';
+    option.textContent=`${spec.emoji||'🕵️'} ${spec.title}`;
+    const oversight=select.querySelector('option[value="oversight"]');
+    if(oversight)oversight.insertAdjacentElement('afterend',option);
+    else select.appendChild(option);
   }
 
   function deputyCard(){
@@ -64,10 +78,12 @@
     card.className=`institution-card ${holder?'active':''}`;
     card.tabIndex=0;
     card.setAttribute('role','button');
-    card.setAttribute('aria-label','Открыть управление заместителя главы Надзора');
-    card.innerHTML=`<span>${esc(spec.emoji||'🕵️')}</span><b>${esc(spec.title)}</b><small>${holder?`${esc(holder.name)} · ещё ${esc(holder.remaining||'действует')}`:`Свободно · порог ${fmt(spec.threshold)} карьеры · назначение через Госдуму`}</small>`;
-    card.addEventListener('click',openOversight);
-    card.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openOversight()}});
+    card.setAttribute('aria-label','Открыть полномочия заместителя главы Надзора');
+    card.innerHTML=`<span>${esc(spec.emoji||'🕵️')}</span><b>${esc(spec.title)}</b><small>${holder?`${esc(holder.name)} · ещё ${esc(holder.remaining||'действует')}`:`Свободно · порог ${fmt(spec.threshold)} карьеры · назначает Президент или глава Надзора через Госдуму`}</small>`;
+    card.addEventListener('click',openDeputyPanel);
+    card.addEventListener('keydown',event=>{
+      if(event.key==='Enter'||event.key===' '){event.preventDefault();openDeputyPanel()}
+    });
     grid.prepend(card);
   }
 
@@ -90,12 +106,17 @@
     if(!chatId||loading)return;
     loading=true;
     try{
-      const response=await fetch(`/government-v127/api/state?chat_id=${encodeURIComponent(chatId)}&_ui169=${Date.now()}`,{
+      const response=await fetch(`/government-v127/api/state?chat_id=${encodeURIComponent(chatId)}&_ui170=${Date.now()}`,{
         cache:'no-store',
         headers:{'X-Telegram-Init-Data':tg?.initData||''},
       });
       const data=await response.json();
-      if(response.ok&&data?.ok){state=data;quickDeputyCard();deputyCard()}
+      if(response.ok&&data?.ok){
+        state=data;
+        deputyCard();
+        placeDeputyPanel();
+        patchAppointmentSelect();
+      }
     }catch(_error){}
     finally{loading=false}
   }
@@ -105,15 +126,27 @@
   load();
 
   document.addEventListener('click',event=>{
-    if(event.target.closest?.('[data-tab="powers"]'))setTimeout(()=>{repairCrisisDom();quickDeputyCard();deputyCard();load()},180);
-    if(event.target.closest?.('[data-open-oversight-deputy]')){openOversight();return;}
-    if(event.target.closest?.('#refreshButton'))setTimeout(()=>{repairCrisisDom();load()},260);
+    if(event.target.closest?.('[data-tab="powers"]')){
+      setTimeout(()=>{repairCrisisDom();deputyCard();placeDeputyPanel();load()},180);
+    }
+    if(event.target.closest?.('[data-power-action="appointment"]')){
+      setTimeout(patchAppointmentSelect,30);
+      setTimeout(patchAppointmentSelect,180);
+    }
+    if(event.target.closest?.('[data-open-oversight-deputy]')){
+      openDeputyPanel();
+      return;
+    }
+    if(event.target.closest?.('#refreshButton')){
+      setTimeout(()=>{repairCrisisDom();placeDeputyPanel();load()},260);
+    }
   },true);
 
   const observer=new MutationObserver(()=>{
     repairCrisisDom();
-    if(state&&document.getElementById('powerHero')&&!document.getElementById('oversightDeputyQuickV169'))quickDeputyCard();
     if(state&&document.getElementById('institutionGrid')&&!document.getElementById('oversightDeputyInstitutionV169'))deputyCard();
+    placeDeputyPanel();
+    patchAppointmentSelect();
   });
   observer.observe(document.documentElement,{childList:true,subtree:true});
 })();
