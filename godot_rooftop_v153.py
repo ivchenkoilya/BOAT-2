@@ -16,7 +16,7 @@ PUBLIC_BUILD_URL = os.getenv(
     "GODOT_ROOFTOP_BUILD_URL",
     "https://disk.yandex.ru/d/eAlpDbXh9AfiRg",
 ).strip()
-BUILD_VERSION = "godot-rooftop-2026-07-22-v1"
+BUILD_VERSION = "godot-rooftop-2026-07-22-v2"
 BASE_DIR = Path(__file__).resolve().parent
 TARGET_DIR = BASE_DIR / "games" / "rooftop"
 PERSIST_ROOT = (
@@ -171,22 +171,29 @@ def _prepare_cache() -> None:
 
 
 def _activate_build() -> None:
+    """Copy the cached build into the served directory.
+
+    aiohttp static routes may reject files reached through a symlink outside the
+    configured web root. That allowed index.html to open while index.js, WASM
+    and PCK stayed unavailable, producing a completely black Telegram screen.
+    A normal directory copy avoids that restriction.
+    """
     TARGET_DIR.parent.mkdir(parents=True, exist_ok=True)
+    staging_dir = TARGET_DIR.with_name(f"{TARGET_DIR.name}.new")
+
+    if staging_dir.is_symlink():
+        staging_dir.unlink(missing_ok=True)
+    elif staging_dir.exists():
+        shutil.rmtree(staging_dir)
+
+    shutil.copytree(CACHE_BUILD_DIR, staging_dir)
 
     if TARGET_DIR.is_symlink():
-        try:
-            if TARGET_DIR.resolve() == CACHE_BUILD_DIR.resolve():
-                return
-        except OSError:
-            pass
         TARGET_DIR.unlink(missing_ok=True)
     elif TARGET_DIR.exists():
         shutil.rmtree(TARGET_DIR)
 
-    try:
-        TARGET_DIR.symlink_to(CACHE_BUILD_DIR, target_is_directory=True)
-    except OSError:
-        shutil.copytree(CACHE_BUILD_DIR, TARGET_DIR)
+    staging_dir.replace(TARGET_DIR)
 
 
 def install_godot_rooftop() -> None:
@@ -197,7 +204,7 @@ def install_godot_rooftop() -> None:
         LOGGER.info(
             "Godot rooftop build activated: %s (%s)",
             BUILD_VERSION,
-            CACHE_BUILD_DIR,
+            TARGET_DIR,
         )
     except Exception:
         # The old HTML game remains available when an external download fails.
