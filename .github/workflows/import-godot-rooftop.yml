@@ -6,22 +6,38 @@ on:
       - agent/add-godot-roof-runner-v2
     paths:
       - tools/import-roof-runner.trigger
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
   import-build:
-    if: github.event.head_commit.message == 'Запустить импорт Godot Бег по крышам'
+    if: >-
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
+      github.event.head_commit.message == 'Запустить импорт Godot Бег по крышам'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout branch
+      - name: Checkout target branch
         uses: actions/checkout@v4
         with:
-          ref: agent/add-godot-roof-runner-v2
+          ref: ${{ github.event_name == 'push' && 'agent/add-godot-roof-runner-v2' || 'main' }}
+
+      - name: Stop when import is already complete
+        id: trigger
+        run: |
+          if [ -f tools/import-roof-runner.trigger ]; then
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Download public Yandex Disk archive
+        if: steps.trigger.outputs.needed == 'true'
         env:
           PUBLIC_URL: https://disk.yandex.ru/d/eAlpDbXh9AfiRg
         run: |
@@ -46,6 +62,7 @@ jobs:
           PY
 
       - name: Replace rooftop game with Godot build
+        if: steps.trigger.outputs.needed == 'true'
         run: |
           rm -rf imported_web_build games/rooftop
           mkdir -p imported_web_build games/rooftop
@@ -99,6 +116,7 @@ window.addEventListener("load", function () {
           rm -f tools/import-roof-runner.trigger web_build.zip
 
       - name: Verify exported files
+        if: steps.trigger.outputs.needed == 'true'
         run: |
           test -s games/rooftop/index.html
           test -s games/rooftop/index.js
@@ -109,9 +127,10 @@ window.addEventListener("load", function () {
           ! find games/rooftop -name '*.import' | grep -q .
 
       - name: Commit imported game
+        if: steps.trigger.outputs.needed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add games/rooftop tools/import-roof-runner.trigger
           git commit -m "Заменить Бег по крышам на Godot-версию"
-          git push origin HEAD:agent/add-godot-roof-runner-v2
+          git push origin HEAD:${GITHUB_REF_NAME}
