@@ -8,6 +8,7 @@ from boss_web_v163 import install_boss_web_v163
 from economy_rewards_v164 import install_economy_rewards_v164
 from finance_fund_link_v167 import install_finance_fund_link_v167
 from godot_rooftop_test_button_v155 import install_godot_test_button
+from godot_rooftop_test_routes_v170 import install_godot_rooftop_test_routes
 from godot_rooftop_test_v155 import start_godot_rooftop_test_install
 from government_android_webview_hotfix_v166 import install_government_android_webview_hotfix_v166
 from government_creator_sanctions_v164 import install_government_creator_sanctions_v164
@@ -42,8 +43,10 @@ install_boss_web_v163(core)
 # прежние награды Шара и «Увеличить влияние».
 install_economy_rewards_v164(core)
 
-# Godot-тест добавляется после всех слоёв, которые могут перезаписать
-# страницу игрового центра. Стабильная HTML-игра при этом не заменяется.
+# Godot-тест получает собственные aiohttp-маршруты. Это нужно, потому что
+# создание новой папки во время запуска само по себе не расширяет старый
+# список обслуживаемых игровых адресов.
+install_godot_rooftop_test_routes(core)
 install_godot_test_button()
 start_godot_rooftop_test_install()
 
