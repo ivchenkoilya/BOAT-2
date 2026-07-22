@@ -11,9 +11,9 @@ VERSION = "Boss audio v154 · full user track"
 BASE_DIR = Path(__file__).resolve().parent
 CHUNK_DIR = BASE_DIR / "webapp" / "assets" / "boss-theme-full-v154"
 OUTPUT_PATH = BASE_DIR / "webapp" / "assets" / "main-hero-theme-full-v154.ogg"
-EXPECTED_CHUNKS = 111
-EXPECTED_SIZE = 1_245_580
-EXPECTED_SHA256 = "bab720f36967b2f96b00701d7d670694e0a3162ad0dcc6727323f677c4e89c0a"
+EXPECTED_CHUNKS = 75
+EXPECTED_SIZE = 832_904
+EXPECTED_SHA256 = "c7501b92fe0f1544453558268c2db3ce57742337515a7e4d465c2f2b77c2f1ea"
 
 
 def _is_valid_audio(path: Path) -> bool:
