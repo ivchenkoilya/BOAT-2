@@ -1,0 +1,13 @@
+.treasury-management-v164{display:grid;gap:14px;margin:14px 0}
+.treasury-president-v164{border-color:#806329;background:linear-gradient(145deg,#2b2110,#130f0a)}
+.treasury-metrics-v164{margin-top:12px}
+.treasury-control-v164{border-color:#65447e;background:linear-gradient(145deg,#271833,#120d18)}
+.treasury-warning-v164{display:grid;gap:4px;margin:0 0 12px;padding:11px 12px;border:1px solid #8d552b;border-radius:14px;background:#3a1f12;color:#ffd8ad}
+.treasury-warning-v164 b{font-size:11px}.treasury-warning-v164 span{font-size:9px;line-height:1.45;color:#d9b895}
+.treasury-mode-v164{display:grid;gap:4px;margin:10px 0 12px;padding:10px 12px;border:1px solid #493859;border-radius:13px;background:#0d0a12}
+.treasury-mode-v164 b{font-size:10px;color:#f0d8ff}.treasury-mode-v164 span{font-size:8px;line-height:1.4;color:#b7a8c1}
+.treasury-structure-grid-v164{display:grid;gap:8px}
+.treasury-structure-v164{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 11px;border:1px solid #32293a;border-radius:13px;background:#0e0b12}
+.treasury-structure-v164>span{font-size:22px}.treasury-structure-v164 div{min-width:0}.treasury-structure-v164 b,.treasury-structure-v164 small{display:block}.treasury-structure-v164 b{font-size:10px;color:#f2eaf6}.treasury-structure-v164 small{margin-top:3px;font-size:8px;color:#95899d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.treasury-structure-v164 strong{font-size:12px;color:#f1ce72}
+.treasury-readonly-v164{margin:0}
+@media (min-width:560px){.treasury-structure-grid-v164{grid-template-columns:1fr 1fr}}
