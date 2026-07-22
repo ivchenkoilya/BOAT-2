@@ -1,0 +1,10 @@
+#refreshButton.refreshing-v167{animation:governmentRefreshSpinV167 .85s linear infinite;opacity:.8}
+@keyframes governmentRefreshSpinV167{to{transform:rotate(360deg)}}
+.law-amend-actions-v167{display:grid;gap:7px;margin-top:13px}
+.law-amend-actions-v167 small{text-align:center;color:#a99bb0;font-size:8px}
+.law-amendment-modal-v167{position:fixed;z-index:80;inset:0;display:grid;align-items:end;padding:18px 14px calc(18px + env(safe-area-inset-bottom));background:#050409c9;backdrop-filter:blur(8px);opacity:0;transition:opacity .18s ease}
+.law-amendment-modal-v167[hidden]{display:none!important}.law-amendment-modal-v167.open{opacity:1}
+.law-amendment-sheet-v167{max-height:88vh;overflow:auto;padding:18px;border:1px solid #70518b;border-radius:24px;background:linear-gradient(155deg,#281735,#0f0b14 58%);box-shadow:0 24px 70px #000c;transform:translateY(18px);transition:transform .18s ease}
+.law-amendment-modal-v167.open .law-amendment-sheet-v167{transform:none}
+.law-amendment-head-v167{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}.law-amendment-head-v167 small,.law-amendment-head-v167 h3{display:block}.law-amendment-head-v167 small{color:#c8a4dc;font-size:8px;letter-spacing:.14em}.law-amendment-head-v167 h3{margin:5px 0 0;font-size:17px}.law-amendment-head-v167 button{width:38px;height:38px;border:1px solid #5d466c;border-radius:13px;background:#100b15;color:#fff;font-size:24px}
+@media (min-width:620px){.law-amendment-modal-v167{align-items:center;justify-items:center}.law-amendment-sheet-v167{width:min(620px,92vw)}}
