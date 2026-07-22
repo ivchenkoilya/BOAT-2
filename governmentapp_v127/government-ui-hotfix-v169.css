@@ -1,4 +1,4 @@
-/* Reality 170: Android layout and deputy powers repair. */
+/* Reality 171: mobile layout repair and independent Oversight deputy powers. */
 #crisisV131 .crisis-grid{
   align-items:start!important;
   grid-auto-rows:auto!important;
@@ -54,19 +54,128 @@
 #oversightDeputyInstitutionV169:active{transform:scale(.985)}
 #oversightDeputyInstitutionV169 small{padding-right:38px}
 
-#oversightDeputyQuickV169{display:none!important}
-#oversightDeputyV167.od-mounted-powers-v170{
-  display:grid!important;
-  gap:14px!important;
-  margin:14px 0 22px!important;
-  padding-top:2px;
+#oversightDeputyPowersV171{
+  display:block;
+  margin:14px 0 18px;
+  scroll-margin-top:18px;
 }
-#oversightDeputyV167.od-mounted-powers-v170>.panel:first-child{
-  border-color:#8f53a5;
-  box-shadow:0 14px 36px rgba(0,0,0,.28),0 0 28px rgba(183,88,226,.12);
+#oversightDeputyPowersV171 .od171-hero{
+  border-color:#8b4f9f;
+  background:
+    radial-gradient(circle at 100% 0,rgba(198,104,255,.24),transparent 45%),
+    linear-gradient(150deg,#26132f,#100b16 72%);
+  box-shadow:0 14px 34px rgba(0,0,0,.3),0 0 25px rgba(187,88,231,.12);
 }
-#oversightDeputyV167.od-mounted-powers-v170 .section-head{
-  margin-top:8px!important;
+.od171-duty-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin:14px 0;
+}
+.od171-duty-grid>div{
+  padding:11px;
+  border:1px solid #5d3768;
+  border-radius:14px;
+  background:#160d1d;
+}
+.od171-duty-grid b,.od171-duty-grid small{display:block}
+.od171-duty-grid b{font-size:11px;color:#f1d5ff}
+.od171-duty-grid small{margin-top:4px;color:#bca8c5;font-size:8px;line-height:1.35}
+
+.od171-section{
+  margin-top:10px;
+  padding:0;
+  border:1px solid #493453;
+  border-radius:16px;
+  background:#0e0a13;
+  overflow:hidden;
+}
+.od171-section>summary{
+  cursor:pointer;
+  list-style:none;
+  padding:13px 14px;
+  color:#f0d8fb;
+  font-size:11px;
+  font-weight:900;
+  background:linear-gradient(145deg,#1e1325,#110c16);
+}
+.od171-section>summary::-webkit-details-marker{display:none}
+.od171-section[open]>summary{border-bottom:1px solid #493453}
+.od171-section>form,
+.od171-section>.od171-grid,
+.od171-section>.od171-list,
+.od171-section>.od171-sanction,
+.od171-section>#od171WeeklyReport{
+  margin:12px;
+}
+.od171-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.od171-grid form,.od171-sanction{
+  padding:12px;
+  border:1px solid #3e3048;
+  border-radius:15px;
+  background:#0b0810;
+}
+.od171-grid h3,.od171-sanction h3{
+  margin:0 0 10px;
+  font-size:12px;
+  color:#ecd3f5;
+}
+.od171-sanction{margin-top:10px!important}
+.od171-list{display:grid;gap:10px}
+.od171-item{
+  padding:13px;
+  border:1px solid #392d40;
+  border-radius:17px;
+  background:linear-gradient(145deg,#15101a,#0b0910);
+}
+.od171-item p{
+  margin:10px 0;
+  color:#dacfe0;
+  font-size:10px;
+  line-height:1.55;
+  white-space:pre-wrap;
+}
+.od171-item>.action{width:100%;margin-top:10px}
+.od171-evidence{
+  padding:9px 10px;
+  border-left:3px solid #a866bd;
+  border-radius:8px;
+  background:#201327;
+  color:#cdbbd4;
+  font-size:9px;
+  line-height:1.45;
+}
+.od171-actions{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin-top:10px;
+}
+.od171-warning{
+  padding:12px;
+  border:1px solid #3b313f;
+  border-radius:15px;
+  background:#100d13;
+}
+.od171-warning.active{
+  border-color:#9f4f65;
+  background:linear-gradient(145deg,#281019,#110b10);
+}
+.od171-warning b,.od171-warning small{display:block}
+.od171-warning b{font-size:10px;color:#f5dce4}
+.od171-warning small{margin-top:4px;color:#b9aebd;font-size:8px;line-height:1.4}
+#oversightDeputyPowersV171 .check-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+#oversightDeputyPowersV171 #od171WeeklyReport{
+  width:calc(100% - 24px);
+}
+.screen[data-screen="powers"] #oversightDeputyV167{
+  display:none!important;
 }
 
 @media(max-width:620px){
@@ -75,5 +184,10 @@
     gap:12px!important;
   }
   #crisisV131>.section-head:not(.crisis-heading){margin-top:18px!important}
-  #oversightDeputyV167.od-mounted-powers-v170{margin-top:12px!important}
+  .od171-grid{grid-template-columns:1fr}
+}
+@media(max-width:380px){
+  .od171-duty-grid,
+  #oversightDeputyPowersV171 .check-grid,
+  .od171-actions{grid-template-columns:1fr}
 }
