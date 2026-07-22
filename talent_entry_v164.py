@@ -12,6 +12,7 @@ from godot_rooftop_test_routes_v170 import install_godot_rooftop_test_routes
 from godot_rooftop_test_v155 import start_godot_rooftop_test_install
 from government_android_webview_hotfix_v166 import install_government_android_webview_hotfix_v166
 from government_creator_sanctions_v164 import install_government_creator_sanctions_v164
+from government_home_oversight_deputy_v175 import install_government_home_oversight_deputy_v175
 from government_official_voting_v168 import install_government_official_voting_v168
 from government_oversight_deputy_v167 import install_government_oversight_deputy_v167
 from government_president_direct_deputy_v173 import install_government_president_direct_deputy_v173
@@ -41,6 +42,8 @@ install_government_ui_hotfix_v169(core)
 install_government_president_direct_deputy_v173(core)
 # Снимает старый депутатский фильтр middleware: любая действующая должность голосует по любому проекту.
 install_government_universal_voting_v174(core)
+# Показывает назначенного заместителя главы Надзора в основном составе власти.
+install_government_home_oversight_deputy_v175(core)
 # Финальные правила рейда ставятся после всех старых обёрток боя и героев.
 install_boss_rules_v163(core)
 install_boss_audio_v154()
