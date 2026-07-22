@@ -39,10 +39,10 @@
 
   function placeDeputyPanel(){
     const panel=document.getElementById('oversightDeputyV167');
-    const powers=document.querySelector('.screen[data-screen="powers"]');
-    const cards=document.getElementById('myPowerCards');
-    if(!panel||!powers||!cards)return false;
-    if(panel.previousElementSibling!==cards)cards.insertAdjacentElement('afterend',panel);
+    const hero=document.getElementById('powerHero');
+    const access=state?.oversight_deputy_v167||{};
+    if(!panel||!hero||!(access.can_manage||access.can_propose_appointment))return false;
+    if(panel.previousElementSibling!==hero)hero.insertAdjacentElement('afterend',panel);
     panel.classList.add('od-mounted-powers-v170');
     document.getElementById('oversightDeputyQuickV169')?.remove();
     return true;
