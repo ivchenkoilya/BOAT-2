@@ -44,14 +44,16 @@
     }
   }
 
-  function patchBylogeriy(){
+  function patchHeroPreview(){
     const overlay=document.getElementById('heroPreviewOverlay');
-    if(!overlay||Number(overlay.dataset.heroId)!==7)return;
+    if(!overlay)return;
 
+    const heroId=Number(overlay.dataset.heroId)||0;
     const title=overlay.querySelector('.hero-preview-ability-title');
     const cooldown=title?.querySelector('em');
-    if(cooldown)cooldown.textContent='5 минут';
+    if(heroId>=1&&heroId<=7&&cooldown)cooldown.textContent='5 минут';
 
+    if(heroId!==7)return;
     const abilityName=title?.querySelector('strong');
     if(abilityName)abilityName.textContent='Возвращение в сюжет';
 
@@ -71,7 +73,7 @@
 
   function patch(){
     patchShield();
-    patchBylogeriy();
+    patchHeroPreview();
     patchAbilityCard();
   }
 
