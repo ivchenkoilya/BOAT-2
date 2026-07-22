@@ -11,8 +11,8 @@ import government_v127 as gov
 from government_oversight_deputy_v167_data import OFFICE_KEY, OFFICE_SPEC, _access, _person, _routes
 
 
-VERSION = "Reality 173 · Прямое назначение заместителя Президентом"
-ASSET_JS = Path(__file__).resolve().parent / "governmentapp_v127" / "president-direct-deputy-v173.js"
+VERSION = "Reality 174 · Стабильное прямое назначение Президентом"
+ASSET_JS = Path(__file__).resolve().parent / "governmentapp_v127" / "president-direct-deputy-v174.js"
 
 
 async def _direct_appointment(
@@ -97,7 +97,7 @@ def install_government_president_direct_deputy_v173(core: Any) -> None:
         if ASSET_JS.name not in source:
             source = source.replace(
                 "</body>",
-                f'  <script src="/government-v173/{ASSET_JS.name}?v=173"></script>\n</body>',
+                f'  <script src="/government-v174/{ASSET_JS.name}?v=174"></script>\n</body>',
             )
         return source
 
@@ -143,7 +143,7 @@ def install_government_president_direct_deputy_v173(core: Any) -> None:
 
     async def start(bot: Any):
         if not ASSET_JS.is_file():
-            raise RuntimeError("Не найден интерфейс прямого президентского назначения Reality 173")
+            raise RuntimeError("Не найден стабильный интерфейс прямого назначения Reality 174")
         original_runner = core.web.AppRunner
 
         async def asset(request: Any):
@@ -157,17 +157,17 @@ def install_government_president_direct_deputy_v173(core: Any) -> None:
                     "Pragma": "no-cache",
                     "Expires": "0",
                     "Content-Type": "application/javascript; charset=utf-8",
-                    "X-Government-President-Appointment": "173",
+                    "X-Government-President-Appointment": "174",
                 },
             )
 
         def runner(app: Any, *args: Any, **kwargs: Any):
             keys = _routes(app)
-            if ("GET", "/government-v173/{name}") not in keys:
-                app.router.add_get("/government-v173/{name}", asset)
-            if ("POST", "/government-v173/api/direct-appointment") not in keys:
+            if ("GET", "/government-v174/{name}") not in keys:
+                app.router.add_get("/government-v174/{name}", asset)
+            if ("POST", "/government-v174/api/direct-appointment") not in keys:
                 app.router.add_post(
-                    "/government-v173/api/direct-appointment",
+                    "/government-v174/api/direct-appointment",
                     direct_appointment_api,
                 )
             return original_runner(app, *args, **kwargs)
