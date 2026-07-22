@@ -17,6 +17,21 @@
   let demoMode = false;
   let refreshTimer = null;
   let toastTimer = null;
+  // Фоновая музыка битвы
+const bossMusic = new Audio('/boss-app/assets/boss_music.mp3');
+
+bossMusic.loop = true;
+bossMusic.volume = 0.35;
+bossMusic.preload = 'auto';
+
+// Браузер разрешает запуск музыки только после нажатия пользователя
+function startBossMusic() {
+  bossMusic.play().catch(() => {});
+}
+
+document.addEventListener('pointerdown', startBossMusic, {
+  once: true
+});
 
   const API_ROOT = '/boss-app/api/boss/';
   const ICONS = '/boss-app/assets/icons.svg';
