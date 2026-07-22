@@ -3,6 +3,7 @@ name: Import Godot rooftop build
 on:
   push:
     branches:
+      - main
       - agent/add-godot-roof-runner-v2
     paths:
       - tools/import-roof-runner.trigger
@@ -25,7 +26,7 @@ jobs:
       - name: Checkout target branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'push' && 'agent/add-godot-roof-runner-v2' || 'main' }}
+          ref: ${{ github.event_name == 'push' && github.ref_name || 'main' }}
 
       - name: Stop when import is already complete
         id: trigger
