@@ -23,10 +23,10 @@ install_government_android_webview_hotfix_v166(core)
 install_government_creator_sanctions_v164(core)
 # Объединяет все запросы состояния, чинит обновление и добавляет президентские редакции законов.
 install_government_reliability_laws_v167(core)
-# Даёт право голоса всем действующим должностным лицам, включая президента.
-install_government_official_voting_v168(core)
 # Добавляет заместителя главы Надзора, жалобы, проверки, реестр и отчёты.
 install_government_oversight_deputy_v167(core)
+# Даёт право голоса всем действующим должностным лицам, включая новую должность Надзора.
+install_government_official_voting_v168(core)
 # Связывает акции и ставки вкладов с государственными и частными фондами беседы.
 install_finance_fund_link_v167(core)
 # Финальные правила рейда ставятся после всех старых обёрток боя и героев.
