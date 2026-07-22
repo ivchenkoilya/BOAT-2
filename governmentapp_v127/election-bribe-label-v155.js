@@ -6,6 +6,9 @@
   let frame=0;
 
   function apply(){
+    const brand=document.querySelector('.brand small');
+    if(brand&&brand.textContent!=='REALITY 155')brand.textContent='REALITY 155';
+
     document.querySelectorAll('[data-buy-vote]').forEach(button=>{
       const text='😈 ПОДКУПИТЬ ГОЛОСА';
       if(button.textContent!==text)button.textContent=text;
