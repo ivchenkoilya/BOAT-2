@@ -1,0 +1,117 @@
+name: Import Godot rooftop build
+
+on:
+  push:
+    branches:
+      - agent/add-godot-roof-runner-v2
+    paths:
+      - tools/import-roof-runner.trigger
+
+permissions:
+  contents: write
+
+jobs:
+  import-build:
+    if: github.event.head_commit.message == 'Запустить импорт Godot Бег по крышам'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/add-godot-roof-runner-v2
+
+      - name: Download public Yandex Disk archive
+        env:
+          PUBLIC_URL: https://disk.yandex.ru/d/eAlpDbXh9AfiRg
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import urllib.parse
+          import urllib.request
+
+          public_url = os.environ['PUBLIC_URL']
+          api_url = 'https://cloud-api.yandex.net/v1/disk/public/resources/download?' + urllib.parse.urlencode({'public_key': public_url})
+          request = urllib.request.Request(api_url, headers={'User-Agent': 'Mozilla/5.0'})
+          with urllib.request.urlopen(request, timeout=60) as response:
+              download_url = json.load(response)['href']
+          request = urllib.request.Request(download_url, headers={'User-Agent': 'Mozilla/5.0'})
+          with urllib.request.urlopen(request, timeout=180) as response, open('web_build.zip', 'wb') as output:
+              while True:
+                  chunk = response.read(1024 * 1024)
+                  if not chunk:
+                      break
+                  output.write(chunk)
+          PY
+
+      - name: Replace rooftop game with Godot build
+        run: |
+          rm -rf imported_web_build games/rooftop
+          mkdir -p imported_web_build games/rooftop
+          unzip -q web_build.zip -d imported_web_build
+
+          if [ -d imported_web_build/web_build ]; then
+            SOURCE_DIR=imported_web_build/web_build
+          else
+            SOURCE_DIR=imported_web_build
+          fi
+
+          find "$SOURCE_DIR" -maxdepth 1 -type f ! -name '*.import' -exec cp {} games/rooftop/ \;
+
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('games/rooftop/index.html')
+          html = path.read_text(encoding='utf-8')
+          html = html.replace('<html lang="en">', '<html lang="ru">', 1)
+          html = html.replace('<title>hero runner</title>', '<title>Главный герой — Бег по крышам</title>', 1)
+
+          telegram_code = '''
+<script src="https://telegram.org/js/telegram-web-app.js?63"></script>
+<script>
+window.addEventListener("load", function () {
+  const tg = window.Telegram && window.Telegram.WebApp;
+  if (!tg) return;
+
+  tg.expand();
+  if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
+  tg.setHeaderColor?.("#070511");
+  tg.setBackgroundColor?.("#070511");
+
+  if (tg.BackButton) {
+    tg.BackButton.show();
+    tg.BackButton.onClick(function () {
+      window.location.href = "/games/";
+    });
+  }
+
+  tg.ready();
+});
+</script>
+'''
+          if 'telegram-web-app.js' not in html:
+              html = html.replace('\n\t</head>', telegram_code + '\n\t</head>', 1)
+
+          path.write_text(html, encoding='utf-8')
+          PY
+
+          rm -f tools/import-roof-runner.trigger web_build.zip
+
+      - name: Verify exported files
+        run: |
+          test -s games/rooftop/index.html
+          test -s games/rooftop/index.js
+          test -s games/rooftop/index.wasm
+          test -s games/rooftop/index.pck
+          test $(stat -c%s games/rooftop/index.wasm) -gt 30000000
+          test $(stat -c%s games/rooftop/index.pck) -gt 10000000
+          ! find games/rooftop -name '*.import' | grep -q .
+
+      - name: Commit imported game
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add games/rooftop tools/import-roof-runner.trigger
+          git commit -m "Заменить Бег по крышам на Godot-версию"
+          git push origin HEAD:agent/add-godot-roof-runner-v2
