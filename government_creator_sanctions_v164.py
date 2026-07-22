@@ -57,10 +57,8 @@ def install_government_creator_sanctions_v164(core: Any) -> None:
         name = str(request.match_info.get("name") or "")
         if name == "creator-sanctions-v164.js":
             path = ASSET_JS
-            content_type = "application/javascript"
         elif name == "creator-sanctions-v164.css":
             path = ASSET_CSS
-            content_type = "text/css"
         else:
             raise core.web.HTTPNotFound()
         return core.web.FileResponse(
@@ -69,7 +67,6 @@ def install_government_creator_sanctions_v164(core: Any) -> None:
                 "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
                 "Pragma": "no-cache",
                 "Expires": "0",
-                "Content-Type": f"{content_type}; charset=utf-8",
                 "X-Government-Creator-Sanctions": "164",
             },
         )
