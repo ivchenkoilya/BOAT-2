@@ -13,6 +13,7 @@ from government_official_voting_v168 import install_government_official_voting_v
 from government_oversight_deputy_v167 import install_government_oversight_deputy_v167
 from government_release_v165 import install_government_release_v165
 from government_reliability_laws_v167 import install_government_reliability_laws_v167
+from government_ui_hotfix_v169 import install_government_ui_hotfix_v169
 
 
 # Финальный государственный слой включает запросы госструктур в казну Reality 165.
@@ -29,6 +30,8 @@ install_government_oversight_deputy_v167(core)
 install_government_official_voting_v168(core)
 # Связывает акции и ставки вкладов с государственными и частными фондами беседы.
 install_finance_fund_link_v167(core)
+# Исправляет мобильную вёрстку ополчения и выводит новую должность во вкладке «Полномочия».
+install_government_ui_hotfix_v169(core)
 # Финальные правила рейда ставятся после всех старых обёрток боя и героев.
 install_boss_rules_v163(core)
 install_boss_audio_v154()
