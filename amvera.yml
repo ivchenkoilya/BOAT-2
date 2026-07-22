@@ -9,6 +9,6 @@ build:
   useCache: true
 
 run:
-  scriptName: talent_entry_v152.py
+  scriptName: talent_entry_v153.py
   persistenceMount: /data
   containerPort: "80"
