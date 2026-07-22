@@ -1,0 +1,67 @@
+/* Reality 169: Android layout repair for political crisis cards. */
+#crisisV131 .crisis-grid{
+  align-items:start!important;
+  grid-auto-rows:auto!important;
+}
+#crisisV131 .crisis-grid>div{
+  min-width:0!important;
+  min-height:0!important;
+  height:auto!important;
+  align-self:start!important;
+}
+#crisisV131 .crisis-panel,
+#crisisV131 #crisisConflict>article,
+#crisisV131 #crisisTheft>article{
+  height:auto!important;
+  min-height:0!important;
+  align-self:start!important;
+}
+#crisisV131 #crisisConflict{
+  display:grid!important;
+  gap:10px!important;
+  align-content:start!important;
+}
+#crisisV131>.section-head:not(.crisis-heading){
+  position:relative!important;
+  z-index:2!important;
+  clear:both!important;
+  margin-top:22px!important;
+  padding-top:2px!important;
+}
+#crisisV131 #crisisTheftLog{
+  position:relative;
+  z-index:1;
+}
+
+/* Make the newly introduced office visible in the Powers screen. */
+#oversightDeputyInstitutionV169{
+  position:relative;
+  cursor:pointer;
+  border-color:#86509a;
+  background:radial-gradient(circle at 100% 0,rgba(194,104,255,.22),transparent 46%),linear-gradient(145deg,#25142f,#110c17);
+  box-shadow:0 12px 30px rgba(0,0,0,.28),0 0 22px rgba(175,91,222,.13);
+}
+#oversightDeputyInstitutionV169::after{
+  content:"НОВОЕ";
+  position:absolute;
+  top:8px;
+  right:9px;
+  padding:4px 6px;
+  border:1px solid #9b63ae;
+  border-radius:999px;
+  background:#31163d;
+  color:#edc9ff;
+  font-size:6px;
+  font-weight:900;
+  letter-spacing:.11em;
+}
+#oversightDeputyInstitutionV169:active{transform:scale(.985)}
+#oversightDeputyInstitutionV169 small{padding-right:38px}
+
+@media(max-width:620px){
+  #crisisV131 .crisis-grid{
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:12px!important;
+  }
+  #crisisV131>.section-head:not(.crisis-heading){margin-top:18px!important}
+}
