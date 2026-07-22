@@ -1,4 +1,4 @@
-/* Reality 169: Android layout repair for political crisis cards. */
+/* Reality 170: Android layout and deputy powers repair. */
 #crisisV131 .crisis-grid{
   align-items:start!important;
   grid-auto-rows:auto!important;
@@ -28,12 +28,8 @@
   margin-top:22px!important;
   padding-top:2px!important;
 }
-#crisisV131 #crisisTheftLog{
-  position:relative;
-  z-index:1;
-}
+#crisisV131 #crisisTheftLog{position:relative;z-index:1}
 
-/* Make the newly introduced office visible in the Powers screen. */
 #oversightDeputyInstitutionV169{
   position:relative;
   cursor:pointer;
@@ -58,20 +54,26 @@
 #oversightDeputyInstitutionV169:active{transform:scale(.985)}
 #oversightDeputyInstitutionV169 small{padding-right:38px}
 
+#oversightDeputyQuickV169{display:none!important}
+#oversightDeputyV167.od-mounted-powers-v170{
+  display:grid!important;
+  gap:14px!important;
+  margin:14px 0 22px!important;
+  padding-top:2px;
+}
+#oversightDeputyV167.od-mounted-powers-v170>.panel:first-child{
+  border-color:#8f53a5;
+  box-shadow:0 14px 36px rgba(0,0,0,.28),0 0 28px rgba(183,88,226,.12);
+}
+#oversightDeputyV167.od-mounted-powers-v170 .section-head{
+  margin-top:8px!important;
+}
+
 @media(max-width:620px){
   #crisisV131 .crisis-grid{
     grid-template-columns:minmax(0,1fr)!important;
     gap:12px!important;
   }
   #crisisV131>.section-head:not(.crisis-heading){margin-top:18px!important}
+  #oversightDeputyV167.od-mounted-powers-v170{margin-top:12px!important}
 }
-
-#oversightDeputyQuickV169{
-  margin:14px 0 4px;
-  border-color:#8b4f9f;
-  background:radial-gradient(circle at 100% 0,rgba(198,104,255,.24),transparent 45%),linear-gradient(150deg,#26132f,#100b16 72%);
-  box-shadow:0 14px 34px rgba(0,0,0,.3),0 0 25px rgba(187,88,231,.12);
-}
-#oversightDeputyQuickV169 .panel-title{margin-bottom:11px}
-#oversightDeputyQuickV169 .panel-title>span{filter:drop-shadow(0 0 9px rgba(210,133,255,.55))}
-#oversightDeputyQuickV169 button{margin-top:0}
