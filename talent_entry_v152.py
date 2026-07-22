@@ -1,13 +1,14 @@
 import asyncio
 
 import main as core
-import talent_entry  # noqa: F401  # Устанавливает все предыдущие слои проекта.
+import talent_entry  # noqa: F401
+from godot_rooftop_test_button_v155 import install_godot_test_button
+from godot_rooftop_test_v155 import start_godot_rooftop_test_install
 from government_release_v152 import install_government_release_v152
 
 
-# Godot Web-сборка временно отключена: в Telegram Android она открывается
-# чёрным экраном и блокирует игровой центр. До отдельной проверки Web-экспорта
-# используется стабильная HTML-версия из games/rooftop.
+install_godot_test_button()
+start_godot_rooftop_test_install()
 install_government_release_v152(core)
 
 
