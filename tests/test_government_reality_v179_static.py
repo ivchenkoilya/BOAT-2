@@ -23,6 +23,7 @@ class Reality179StaticTests(unittest.TestCase):
             for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
         }
         expected = {
+            "government_contribution_requests_v179",
             "government_construction_projects_v179",
             "government_construction_funding_v179",
             "government_construction_contributions_v179",
@@ -47,6 +48,7 @@ class Reality179StaticTests(unittest.TestCase):
         self.assertTrue(all(item["maintenance_bp"] > 0 for item in BUILDINGS.values()))
 
     def test_idempotency_constraints_exist(self) -> None:
+        self.assertIn("request_id TEXT PRIMARY KEY", SCHEMA_SQL)
         self.assertIn("request_id TEXT NOT NULL UNIQUE", SCHEMA_SQL)
         self.assertIn("PRIMARY KEY(building_id,period_at)", SCHEMA_SQL)
         self.assertIn("event_key TEXT PRIMARY KEY", SCHEMA_SQL)
@@ -67,11 +69,20 @@ class Reality179StaticTests(unittest.TestCase):
 
     def test_contributions_have_no_fixed_one_million_cap(self) -> None:
         treasury = read("government_reality_v179_treasury.py")
-        integration = read("government_reality_v179.py")
+        safety = read("government_reality_v179_safety.py")
         self.assertIn("MAX_SQLITE_INTEGER", treasury)
         self.assertIn("points>=?", treasury)
         self.assertIn("Недостаточно влияния. Твой баланс", treasury)
-        self.assertNotIn("Размер вклада должен быть от 100 до 1 000 000", treasury + integration)
+        self.assertIn("Number(data.available_balance)", safety)
+        self.assertNotIn("Размер вклада должен быть от 100 до 1 000 000", treasury)
+
+    def test_treasury_contribution_uses_request_id(self) -> None:
+        treasury = read("government_reality_v179_treasury.py")
+        safety = read("government_reality_v179_safety.py")
+        self.assertIn("government_contribution_requests_v179 WHERE request_id=?", treasury)
+        self.assertIn("request_id:contributionRequestId()", safety)
+        self.assertIn("crypto?.randomUUID", safety)
+        self.assertNotIn("new MutationObserver", safety)
 
     def test_construction_funding_is_bound_to_project(self) -> None:
         source = read("government_reality_v179_construction_actions.py")
@@ -120,10 +131,11 @@ class Reality179StaticTests(unittest.TestCase):
 
     def test_reality179_is_installed_after_reality178(self) -> None:
         source = read("talent_entry_v164.py")
-        self.assertLess(
-            source.index("install_unlimited_transfers_v178(core)"),
-            source.index("install_government_reality_v179(core)"),
-        )
+        reality178 = source.index("install_unlimited_transfers_v178(core)")
+        reality179 = source.index("install_government_reality_v179(core)")
+        safety179 = source.index("install_government_reality_v179_safety(core)")
+        self.assertLess(reality178, reality179)
+        self.assertLess(reality179, safety179)
 
 
 if __name__ == "__main__":
