@@ -208,10 +208,15 @@ def role_label(offices: list[str]) -> str:
 
 
 async def ensure_schema(core: Any) -> None:
+    if getattr(core, "_government_reality_v177_schema_ready", False):
+        return
     conn = core.db._require_connection()
     async with core.db.lock:
+        if getattr(core, "_government_reality_v177_schema_ready", False):
+            return
         await conn.executescript(SCHEMA_SQL)
         await conn.commit()
+        core._government_reality_v177_schema_ready = True
 
 
 async def operation(core: Any, chat_id: int, actor_id: int, action: str, detail: str, *, amount: int = 0, property_id: str = "", run_id: str = "", target_user_id: int = 0, payload: dict[str, Any] | None = None) -> str:
