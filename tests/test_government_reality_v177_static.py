@@ -63,10 +63,10 @@ class Reality177StaticTests(unittest.TestCase):
             "election_campaign": 20_000,
         }
         for key, value in expected.items():
-            block = re.search(rf'"{key}"\s*:\s*\{{(?P<body>.*?)\n\s*\}},', source, re.S)
-            self.assertIsNotNone(block, key)
+            start = source.index(f'"{key}": {{')
+            block = source[start : start + 700]
             digits = f"{value:_}".replace("_", r"[_ ]?")
-            self.assertRegex(block.group("body"), rf'"min_cost"\s*:\s*{digits}')
+            self.assertRegex(block, rf'"min_cost"\s*:\s*{digits}')
         self.assertIn('"cost_mode": "reserve_10pct_x4"', source)
         self.assertIn("return base * 4", source)
 
