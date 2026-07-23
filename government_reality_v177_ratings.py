@@ -111,9 +111,32 @@ async def ratings_state(core: Any, chat_id: int, viewer_id: int) -> dict[str, An
         (int(chat_id), now),
     )
     officials = []
+    rating_dirty = False
     for row in await cursor.fetchall():
         starts_at = int(row["starts_at"])
         user_id = int(row["user_id"])
+        rating_value = clamp(int(row["trust"] or 50))
+        if await gov._has_active_sanctions(core, int(chat_id), user_id):
+            cursor2 = await conn.execute(
+                """SELECT 1 FROM government_official_rating_log_v177
+                WHERE chat_id=? AND user_id=? AND office_key=? AND seat_no=?
+                  AND office_starts_at=? AND source='sanction' LIMIT 1""",
+                (int(chat_id), user_id, str(row["office_key"]), int(row["seat_no"]), starts_at),
+            )
+            if await cursor2.fetchone() is None:
+                rating_value = clamp(rating_value - 8)
+                await conn.execute(
+                    "UPDATE government_offices_v127 SET trust=? WHERE chat_id=? AND office_key=? AND seat_no=? AND starts_at=?",
+                    (rating_value, int(chat_id), str(row["office_key"]), int(row["seat_no"]), starts_at),
+                )
+                await conn.execute(
+                    """INSERT INTO government_official_rating_log_v177(
+                    log_id,chat_id,user_id,office_key,seat_no,office_starts_at,delta,rating_after,
+                    reason,source,actor_id,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)""",
+                    (secrets.token_urlsafe(12), int(chat_id), user_id, str(row["office_key"]), int(row["seat_no"]),
+                     starts_at, -8, rating_value, "Активные государственные санкции", "sanction", 0, now),
+                )
+                rating_dirty = True
         cursor2 = await conn.execute(
             """SELECT COALESCE(SUM(CASE WHEN value=1 THEN 1 ELSE 0 END),0) approvals,
             COALESCE(SUM(CASE WHEN value=-1 THEN 1 ELSE 0 END),0) disapprovals
@@ -144,7 +167,7 @@ async def ratings_state(core: Any, chat_id: int, viewer_id: int) -> dict[str, An
             "name": str(row["full_name"] or (f"@{row['username']}" if row["username"] else f"ID {user_id}")),
             "office_key": str(row["office_key"]), "seat_no": int(row["seat_no"]),
             "office_title": ROLE_NAMES.get(str(row["office_key"]), str(row["office_key"])),
-            "rating": clamp(int(row["trust"] or 50)), "delta_7d": int(week["delta"] if week else 0),
+            "rating": rating_value, "delta_7d": int(week["delta"] if week else 0),
             "approvals": int(votes["approvals"] if votes else 0), "disapprovals": int(votes["disapprovals"] if votes else 0),
             "history": history, "can_rate": bool(user_id != int(viewer_id) and (mine is None or int(mine["created_at"]) + DAY <= now)),
             "next_vote_at": int(mine["created_at"] + DAY if mine else 0), "starts_at": starts_at, "ends_at": int(row["ends_at"]),
@@ -156,4 +179,6 @@ async def ratings_state(core: Any, chat_id: int, viewer_id: int) -> dict[str, An
         (int(chat_id),),
     )
     archive = [{**dict(row), "name": str(row["full_name"] or f"ID {row['user_id']}"), "office_title": ROLE_NAMES.get(str(row["office_key"]), str(row["office_key"]))} for row in await cursor.fetchall()]
+    if rating_dirty:
+        await conn.commit()
     return {"officials": officials, "archive": archive}
