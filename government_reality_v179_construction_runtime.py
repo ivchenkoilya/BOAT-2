@@ -6,7 +6,7 @@ from typing import Any
 
 import government_v127 as gov
 
-from government_reality_v179_common import BUILDINGS, DAY, MAX_BUILDINGS_PER_TYPE, WEEK, ensure_schema, score_title
+from government_reality_v179_common import BUILDINGS, DAY, MAX_BUILDINGS_PER_TYPE, SOURCE_TITLES, WEEK, ensure_schema, score_title
 from government_reality_v179_construction_core import (
     BASE_PROPOSERS, PROFILE_SOURCES, _log, debit_source_locked, effects_snapshot, source_balance,
 )
