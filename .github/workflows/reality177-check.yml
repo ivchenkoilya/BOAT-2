@@ -1,11 +1,13 @@
-name: Reality 177 checks
+name: Reality 177-178 checks
 
 on:
   push:
     paths:
       - "government_reality_v177*.py"
       - "governmentapp_v127/reality-v177.*"
+      - "unlimited_transfers_v178.py"
       - "tests/test_government_reality_v177_static.py"
+      - "tests/test_unlimited_transfers_v178_static.py"
       - "talent_entry_v164.py"
       - ".github/workflows/reality177-check.yml"
   workflow_dispatch:
@@ -38,9 +40,14 @@ jobs:
             government_reality_v177_property_state.py \
             government_reality_v177_ratings.py \
             government_reality_v177_safety.py \
+            unlimited_transfers_v178.py \
             talent_entry_v164.py \
-            tests/test_government_reality_v177_static.py
+            tests/test_government_reality_v177_static.py \
+            tests/test_unlimited_transfers_v178_static.py
       - name: Check JavaScript syntax
         run: node --check governmentapp_v127/reality-v177.js
-      - name: Run Reality 177 static and SQLite tests
-        run: python -m unittest tests.test_government_reality_v177_static -v
+      - name: Run Reality 177-178 static and SQLite tests
+        run: |
+          python -m unittest \
+            tests.test_government_reality_v177_static \
+            tests.test_unlimited_transfers_v178_static -v
