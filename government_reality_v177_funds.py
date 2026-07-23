@@ -45,9 +45,10 @@ async def migrate_funds(core: Any) -> None:
             await gov._ensure_state(core, chat_id)
             cursor3 = await conn.execute("SELECT treasury FROM government_state_v127 WHERE chat_id=?", (chat_id,))
             treasury_row = await cursor3.fetchone()
-            if treasury_row is None or int(treasury_row["treasury"] or 0) < amount:
-                raise RuntimeError(f"Фонд {legacy_key} содержит неподтверждённый остаток {amount}: в казне недостаточно средств для безопасной миграции.")
-            await conn.execute("UPDATE government_state_v127 SET treasury=treasury-?,updated_at=? WHERE chat_id=?", (amount, now, chat_id))
+            current_treasury = max(0, int(treasury_row["treasury"] if treasury_row else 0))
+            treasury_deduction = min(current_treasury, amount)
+            if treasury_deduction:
+                await conn.execute("UPDATE government_state_v127 SET treasury=treasury-?,updated_at=? WHERE chat_id=?", (treasury_deduction, now, chat_id))
             await conn.execute(
                 """INSERT INTO government_structure_funds_v164(chat_id,structure_key,balance,updated_at)
                 VALUES(?,?,?,?) ON CONFLICT(chat_id,structure_key) DO UPDATE SET
@@ -136,6 +137,7 @@ def install_fund_bridge(core: Any) -> None:
     original_connect = core.Database.connect
     async def connect_v177(self: Any) -> None:
         await original_connect(self)
+        core._government_reality_v177_schema_ready = False
         await migrate_funds(core)
     core.Database.connect = connect_v177
 
