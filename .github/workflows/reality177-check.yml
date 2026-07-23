@@ -1,0 +1,45 @@
+name: Reality 177 checks
+
+on:
+  push:
+    paths:
+      - "government_reality_v177*.py"
+      - "governmentapp_v127/reality-v177.*"
+      - "tests/test_government_reality_v177_static.py"
+      - "talent_entry_v164.py"
+      - ".github/workflows/reality177-check.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check Python syntax
+        run: |
+          python -m py_compile \
+            government_reality_v177.py \
+            government_reality_v177_api.py \
+            government_reality_v177_common.py \
+            government_reality_v177_funds.py \
+            government_reality_v177_programs.py \
+            government_reality_v177_property.py \
+            government_reality_v177_property_actions.py \
+            government_reality_v177_property_auctions.py \
+            government_reality_v177_property_state.py \
+            government_reality_v177_ratings.py \
+            talent_entry_v164.py \
+            tests/test_government_reality_v177_static.py
+      - name: Check JavaScript syntax
+        run: node --check governmentapp_v127/reality-v177.js
+      - name: Run Reality 177 static and SQLite tests
+        run: python -m unittest tests.test_government_reality_v177_static -v
