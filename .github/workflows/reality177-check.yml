@@ -37,6 +37,7 @@ jobs:
             government_reality_v177_property_auctions.py \
             government_reality_v177_property_state.py \
             government_reality_v177_ratings.py \
+            government_reality_v177_safety.py \
             talent_entry_v164.py \
             tests/test_government_reality_v177_static.py
       - name: Check JavaScript syntax
