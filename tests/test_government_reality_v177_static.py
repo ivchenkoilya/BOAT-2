@@ -114,18 +114,26 @@ class Reality177StaticTests(unittest.TestCase):
         self.assertIn("RATING_VOTE_COOLDOWN", source)
         self.assertIn("UPDATE government_offices_v127 SET trust", source)
 
-    def test_property_economy_formulas_and_guards(self) -> None:
+    def test_property_economy_formulas_guards_and_journals(self) -> None:
         actions = read("government_reality_v177_property_actions.py")
         auctions = read("government_reality_v177_property_auctions.py")
+        maintenance = read("government_reality_v177_property_state.py")
         self.assertIn("* 70 // 100", actions)
         self.assertIn("* 20 // 100", actions)
         self.assertIn("* 5 // 100", actions)
         self.assertIn("Имущество участвует в открытом расследовании", actions)
+        self.assertIn("property_state_buyout_v177", actions)
+        self.assertIn("property_upgrade_fee_v177", actions)
+        self.assertIn("property_insurance_fee_v177", actions)
+        self.assertIn("points>=?", actions)
         self.assertIn("price * 5 // 100", auctions)
         self.assertIn("seller_payout = price - commission", auctions)
         self.assertIn("current_bidder_id", auctions)
         self.assertIn("DELETE FROM government_voluntary_auctions_v177", auctions)
         self.assertIn("voluntary_auction_bid_refund_v177", auctions)
+        self.assertIn("property_maintenance_v177", maintenance)
+        self.assertIn("maintenance_insured", maintenance)
+        self.assertIn("maintenance_debt", maintenance)
 
     def test_extended_api_exposes_all_property_actions(self) -> None:
         source = read("government_reality_v177_api.py")
@@ -156,6 +164,8 @@ class Reality177StaticTests(unittest.TestCase):
         self.assertLess(flag_at, debit_at)
         self.assertIn("api.emergency_transfer = emergency_transfer_safe", source)
         self.assertIn("integration.emergency_transfer = emergency_transfer_safe", source)
+        self.assertIn("government_property_primary_owner_guard_v177", source)
+        self.assertIn("window.__governmentProgramsPropertyV176=true", source)
 
     def test_webview_script_has_separate_sections_without_unbounded_observers(self) -> None:
         source = read("governmentapp_v127/reality-v177.js")
