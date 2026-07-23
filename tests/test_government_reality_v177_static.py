@@ -124,6 +124,8 @@ class Reality177StaticTests(unittest.TestCase):
         self.assertIn("price * 5 // 100", auctions)
         self.assertIn("seller_payout = price - commission", auctions)
         self.assertIn("current_bidder_id", auctions)
+        self.assertIn("DELETE FROM government_voluntary_auctions_v177", auctions)
+        self.assertIn("voluntary_auction_bid_refund_v177", auctions)
 
     def test_extended_api_exposes_all_property_actions(self) -> None:
         source = read("government_reality_v177_api.py")
@@ -143,12 +145,27 @@ class Reality177StaticTests(unittest.TestCase):
         ):
             self.assertIn(f'action == "{action}"', source)
 
+    def test_one_use_emergency_action_is_checked_inside_database_lock(self) -> None:
+        source = read("government_reality_v177_safety.py")
+        lock_at = source.index("async with core.db.lock")
+        select_at = source.index("SELECT * FROM government_program_effects_v177")
+        flag_at = source.index('payload.get("transfer_used")')
+        debit_at = source.index("await debit_fund_locked")
+        self.assertLess(lock_at, select_at)
+        self.assertLess(select_at, flag_at)
+        self.assertLess(flag_at, debit_at)
+        self.assertIn("api.emergency_transfer = emergency_transfer_safe", source)
+        self.assertIn("integration.emergency_transfer = emergency_transfer_safe", source)
+
     def test_webview_script_has_separate_sections_without_unbounded_observers(self) -> None:
         source = read("governmentapp_v127/reality-v177.js")
+        styles = read("governmentapp_v127/reality-v177.css")
         self.assertIn('data-screen="ratings177"', source)
         self.assertIn('data-screen="property177"', source)
         self.assertIn("/government-v177/api/extended-action", source)
         self.assertIn("ПРОДАТЬ ИМУЩЕСТВО", source)
+        self.assertIn("#r176Programs,#r176PropertyQuick", styles)
+        self.assertIn("#treasuryContributionV150 .contribution-head-v150", styles)
         self.assertNotIn("MutationObserver", source)
         self.assertNotIn("setInterval", source)
 
@@ -157,8 +174,10 @@ class Reality177StaticTests(unittest.TestCase):
         old = source.index("install_government_programs_property_v176(core)")
         new = source.index("install_government_reality_v177(core)")
         api = source.index("install_government_reality_v177_api(core)")
+        safety = source.index("install_government_reality_v177_safety(core)")
         self.assertLess(old, new)
         self.assertLess(new, api)
+        self.assertLess(api, safety)
 
 
 if __name__ == "__main__":
