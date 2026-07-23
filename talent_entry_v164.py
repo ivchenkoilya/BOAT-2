@@ -24,6 +24,7 @@ from government_release_v165 import install_government_release_v165
 from government_reliability_laws_v167 import install_government_reliability_laws_v167
 from government_ui_hotfix_v169 import install_government_ui_hotfix_v169
 from government_universal_voting_v174 import install_government_universal_voting_v174
+from unlimited_transfers_v178 import install_unlimited_transfers_v178
 
 
 # Финальный государственный слой включает запросы госструктур в казну Reality 165.
@@ -56,6 +57,8 @@ install_government_reality_v177(core)
 install_government_reality_v177_api(core)
 # Закрывает одновременное повторное исполнение одноразовых экстренных действий.
 install_government_reality_v177_safety(core)
+# Отключает дневной предел переводов и фиксированный максимум вкладов государству.
+install_unlimited_transfers_v178(core)
 # Финальные правила рейда ставятся после всех старых обёрток боя и героев.
 install_boss_rules_v163(core)
 install_boss_audio_v154()
