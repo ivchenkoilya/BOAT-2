@@ -67,6 +67,7 @@ async def contribute_v179(core: Any, chat_id: int, user_id: int, data: dict[str,
     await gov._ensure_state(core, int(chat_id))
     await fund_bridge.migrate_funds(core)
 
+    request_id = str(data.get("request_id") or "").strip() or secrets.token_urlsafe(16)
     amount = gov._as_int(data.get("amount"))
     fund_key = str(data.get("fund_key") or "state_treasury")
     note = str(data.get("note") or "").strip()
@@ -91,11 +92,25 @@ async def contribute_v179(core: Any, chat_id: int, user_id: int, data: dict[str,
         raise ValueError("Для выбранного фонда не настроен государственный баланс.")
 
     conn = core.db._require_connection()
+    cursor = await conn.execute(
+        "SELECT amount,fund_key,result_text FROM government_contribution_requests_v179 WHERE request_id=?",
+        (request_id,),
+    )
+    prior = await cursor.fetchone()
+    if prior is not None:
+        return int(prior["amount"]), str(contributions.FUND_SPECS.get(str(prior["fund_key"]), {"title": prior["fund_key"]})["title"])
     now = gov._now()
     contribution_id = secrets.token_urlsafe(12)
     title = str(contributions.FUND_SPECS[fund_key]["title"])
     async with core.db.lock:
         try:
+            cursor = await conn.execute(
+                "SELECT amount,fund_key,result_text FROM government_contribution_requests_v179 WHERE request_id=?",
+                (request_id,),
+            )
+            prior = await cursor.fetchone()
+            if prior is not None:
+                return int(prior["amount"]), str(contributions.FUND_SPECS.get(str(prior["fund_key"]), {"title": prior["fund_key"]})["title"])
             cursor = await conn.execute(
                 """UPDATE players SET points=points-?,updated_at=?
                 WHERE chat_id=? AND user_id=? AND points>=?""",
@@ -139,6 +154,13 @@ async def contribute_v179(core: Any, chat_id: int, user_id: int, data: dict[str,
             await conn.execute(
                 "INSERT INTO score_log(chat_id,user_id,delta,reason,created_at) VALUES(?,?,?,?,?)",
                 (int(chat_id), int(user_id), -amount, f"government_contribution_{fund_key}_v179", now),
+            )
+            result_text = f"Вклад {gov._fmt(amount)} влияния зачислен в «{title}»."
+            await conn.execute(
+                """INSERT INTO government_contribution_requests_v179(
+                request_id,chat_id,user_id,amount,fund_key,result_text,created_at)
+                VALUES(?,?,?,?,?,?,?)""",
+                (request_id, int(chat_id), int(user_id), amount, fund_key, result_text, now),
             )
             await conn.commit()
         except Exception:
