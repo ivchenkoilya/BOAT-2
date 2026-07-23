@@ -47,6 +47,15 @@ class Reality179StaticTests(unittest.TestCase):
         self.assertEqual(BUILDINGS["science"]["duration"], 48 * 3600)
         self.assertTrue(all(item["maintenance_bp"] > 0 for item in BUILDINGS.values()))
 
+    def test_construction_runtime_imports_source_titles(self) -> None:
+        runtime = read("government_reality_v179_construction_runtime.py")
+        import_line = next(
+            line for line in runtime.splitlines()
+            if line.startswith("from government_reality_v179_common import")
+        )
+        self.assertIn("SOURCE_TITLES", import_line)
+        self.assertIn('"title": SOURCE_TITLES[source]', runtime)
+
     def test_idempotency_constraints_exist(self) -> None:
         self.assertIn("request_id TEXT PRIMARY KEY", SCHEMA_SQL)
         self.assertIn("request_id TEXT NOT NULL UNIQUE", SCHEMA_SQL)
