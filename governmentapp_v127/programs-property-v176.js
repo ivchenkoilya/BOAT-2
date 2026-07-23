@@ -101,6 +101,17 @@
 
   function statusLabel(value){return ({owned:'Активно',seized_debt:'Арестовано за долги',seized_investigation:'Временно арестовано',auction:'На аукционе',state_owned:'Государственная собственность',open:'Открыта',referred:'Передана прокурору',bill_pending:'Решение в Госдуме',resolved:'Завершена',cleared:'Оправдан',warning:'Предупреждение'})[value]||String(value||'—')}
 
+  function prestigeTitle(value,count=0){
+    const total=Number(value)||0;
+    if(total>=25000000)return 'Дворцовый магнат';
+    if(total>=10000000)return 'Олигарх реальности';
+    if(total>=5000000)return 'Авиационный магнат';
+    if(total>=2000000)return 'Владелец империи роскоши';
+    if(total>=500000)return 'Элитный собственник';
+    if(total>0)return count>1?'Коллекционер статуса':'Солидный чиновник';
+    return 'Имущество ещё не приобретено';
+  }
+
   function renderPrograms(){
     const holder=document.getElementById('r176Programs');
     const data=state?.reality176?.programs;
@@ -130,10 +141,12 @@
     if(!holder||!data)return;
     const value=(data.my_items||[]).reduce((sum,item)=>sum+Number(item.purchase_price||0),0);
     const debts=(data.my_items||[]).reduce((sum,item)=>sum+Number(item.debt||0),0);
+    const icons=(data.my_items||[]).filter(item=>item.status!=='auction'&&item.status!=='state_owned').slice(0,6).map(item=>item.emoji).join(' ');
+    const prestige=prestigeTitle(value,(data.my_items||[]).length);
     holder.innerHTML=`
       <div class="section-head"><div><small>ЛИЧНЫЙ ПРЕСТИЖ И ДЕКЛАРАЦИИ</small><h2>Имущество чиновников</h2></div></div>
       <div class="r176-quick-grid">
-        <article class="r176-quick" data-r176-property="store"><span>🏛</span><div><b>Имущество чиновников</b><small>${data.is_official?'Магазин, моё имущество и декларации':'Просмотр деклараций, рейтинга и аукциона'}</small></div><strong>${(data.my_items||[]).length} · ${fmt(value)}</strong></article>
+        <article class="r176-quick" data-r176-property="store"><span>🏛</span><div><b>Имущество чиновников</b><small>${esc(prestige)}${icons?` · ${esc(icons)}`:''}</small></div><strong>${(data.my_items||[]).length} · ${fmt(value)}</strong></article>
         <article class="r176-quick" data-r176-property="auction"><span>🔨</span><div><b>Государственный аукцион</b><small>Конфискованное имущество и защищённые ставки</small></div><strong>${(data.auctions||[]).length}</strong></article>
         ${data.can_investigate?'<article class="r176-quick" data-r176-property="investigations"><span>🔎</span><div><b>Имущественная проверка</b><small>Декларации, предупреждения, прокурор и предложения конфискации</small></div><strong>'+(data.investigations||[]).filter(x=>x.status==='open'||x.status==='referred').length+'</strong></article>':''}
       </div>
@@ -196,11 +209,11 @@
   }
 
   function declarationsContent(data){
-    return (data.declarations||[]).length?`<div class="r176-declarations">${data.declarations.map(person=>`<details class="r176-details"><summary><span><b>${esc(person.name)}</b><small>${person.offices.map(key=>esc(state.office_specs?.[key]?.title||key)).join(' · ')}</small></span><strong>${fmt(person.total_value)}</strong></summary><div class="r176-declaration-grid"><div><small>ЛИЧНЫЙ БАЛАНС</small><b>${fmt(person.balance)}</b></div><div><small>ИМУЩЕСТВО</small><b>${person.items.length}</b></div><div><small>НАЛОГИ</small><b>${fmt(person.luxury_tax_paid)}</b></div><div><small>СОДЕРЖАНИЕ</small><b>${fmt(person.maintenance_paid)}</b></div></div><div class="r176-log-list">${person.items.length?person.items.map(item=>`<div class="r176-log"><span><b>${esc(item.emoji)} ${esc(item.title)}</b><small>${esc(statusLabel(item.status))}${item.debt?` · долг ${fmt(item.debt)}`:''}</small></span><strong>${fmt(item.value)}</strong></div>`).join(''):'<div class="empty">Имущества нет.</div>'}</div></details>`).join('')}</div>`:'<div class="empty">Действующих чиновников для деклараций нет.</div>';
+    return (data.declarations||[]).length?`<div class="r176-declarations">${data.declarations.map(person=>`<details class="r176-details"><summary><span><b>${esc(person.name)}</b><small>${esc(prestigeTitle(person.total_value,person.items.length))} · ${person.offices.map(key=>esc(state.office_specs?.[key]?.title||key)).join(' · ')}</small></span><strong>${fmt(person.total_value)}</strong></summary><div class="r176-declaration-grid"><div><small>ЛИЧНЫЙ БАЛАНС</small><b>${fmt(person.balance)}</b></div><div><small>ИМУЩЕСТВО</small><b>${person.items.length}</b></div><div><small>НАЛОГИ</small><b>${fmt(person.luxury_tax_paid)}</b></div><div><small>СОДЕРЖАНИЕ</small><b>${fmt(person.maintenance_paid)}</b></div></div><div class="r176-log-list">${person.items.length?person.items.map(item=>`<div class="r176-log"><span><b>${esc(item.emoji)} ${esc(item.title)}</b><small>${esc(statusLabel(item.status))}${item.debt?` · долг ${fmt(item.debt)}`:''}</small></span><strong>${fmt(item.value)}</strong></div>`).join(''):'<div class="empty">Имущества нет.</div>'}</div></details>`).join('')}</div>`:'<div class="empty">Действующих чиновников для деклараций нет.</div>';
   }
 
   function rankingContent(data){
-    return (data.ranking||[]).length?`<div class="r176-ranking">${data.ranking.map((person,index)=>`<div class="r176-rank"><strong>${index+1}</strong><span><b>${esc(person.name)}</b><small>${person.count} объектов · самый дорогой ${fmt(person.most_expensive)} · налог ${fmt(person.tax_paid)}</small></span><b>${fmt(person.total_value)}</b></div>`).join('')}</div>`:'<div class="empty">Рейтинг пока пуст.</div>';
+    return (data.ranking||[]).length?`<div class="r176-ranking">${data.ranking.map((person,index)=>`<div class="r176-rank"><strong>${index+1}</strong><span><b>${esc(person.name)}</b><small>${esc(prestigeTitle(person.total_value,person.count))} · ${person.count} объектов · самый дорогой ${fmt(person.most_expensive)} · налог ${fmt(person.tax_paid)}</small></span><b>${fmt(person.total_value)}</b></div>`).join('')}</div>`:'<div class="empty">Рейтинг пока пуст.</div>';
   }
 
   function auctionContent(data){
