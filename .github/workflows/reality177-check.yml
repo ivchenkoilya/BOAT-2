@@ -52,6 +52,7 @@ jobs:
             government_reality_v179_construction_core.py \
             government_reality_v179_construction_actions.py \
             government_reality_v179_construction_runtime.py \
+            government_reality_v179_safety.py \
             talent_entry_v164.py \
             tests/test_government_reality_v177_static.py \
             tests/test_unlimited_transfers_v178_static.py \
