@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
+import government_mandate_luxury_v147 as luxury
 import government_reality_v177 as integration
 import government_reality_v177_api as api
 import government_reality_v177_programs as programs
@@ -104,3 +105,18 @@ def install_government_reality_v177_safety(core: Any) -> None:
         await _ensure_property_owner_trigger(core)
 
     core.Database.connect = connect_with_reality177_safety
+
+    # Reality 177 fully replaces the visible Reality 176 client. Its server tables and
+    # functions remain installed, while the old hidden JavaScript does not start a
+    # second state loader and second DOM renderer in Android Telegram WebView.
+    previous_inject = luxury._inject_assets
+
+    def inject_without_reality176_client(source: str) -> str:
+        source = previous_inject(source)
+        old_script = '<script src="/government-v176/programs-property-v176.js?v=176"></script>'
+        guard = '<script>window.__governmentProgramsPropertyV176=true;</script>'
+        if old_script in source and guard not in source:
+            source = source.replace(old_script, guard + "\n  " + old_script)
+        return source
+
+    luxury._inject_assets = inject_without_reality176_client
