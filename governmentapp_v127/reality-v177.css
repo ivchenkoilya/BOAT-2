@@ -2,6 +2,7 @@
    compatibility, but their duplicate program/property entry points are hidden. */
 #r176Programs,#r176PropertyQuick{display:none!important}
 #treasuryManagementV164 .panel:has(.treasury-structure-grid-v164){display:none!important}
+#treasuryContributionV150 .contribution-head-v150,#treasuryContributionV150 .fund-grid-v150{display:none!important}
 body.r177-modal-open{overflow:hidden!important;touch-action:none}
 .r177-section{margin-top:18px}
 .r177-program-grid,.r177-structures,.r177-rating-list,.r177-shop,.r177-property-content{display:grid;gap:14px}
