@@ -59,8 +59,10 @@ async def _unlimited_contribution_api(core: Any, request: Any):
             raise ValueError("Для выбранного фонда не настроен единый государственный баланс.")
 
         await contributions._ensure_schema(core)
+        await fund_bridge.treasury._ensure_schema(core)
         await fund_bridge.ensure_schema(core)
         await gov._ensure_state(core, int(chat_id))
+        await fund_bridge.migrate_funds(core)
 
         conn = core.db._require_connection()
         now = gov._now()
@@ -68,70 +70,73 @@ async def _unlimited_contribution_api(core: Any, request: Any):
         title = str(contributions.FUND_SPECS[fund_key]["title"])
 
         async with core.db.lock:
-            cursor = await conn.execute(
-                """
-                UPDATE players SET points=points-?,updated_at=?
-                WHERE chat_id=? AND user_id=? AND points>=?
-                """,
-                (amount, now, int(chat_id), user_id, amount),
-            )
-            if int(cursor.rowcount or 0) <= 0:
-                await conn.rollback()
+            try:
                 cursor = await conn.execute(
-                    "SELECT points FROM players WHERE chat_id=? AND user_id=?",
-                    (int(chat_id), user_id),
+                    """
+                    UPDATE players SET points=points-?,updated_at=?
+                    WHERE chat_id=? AND user_id=? AND points>=?
+                    """,
+                    (amount, now, int(chat_id), user_id, amount),
                 )
-                row = await cursor.fetchone()
-                balance = int(row["points"] if row else 0)
-                raise ValueError(
-                    f"Недостаточно влияния. Твой баланс: {gov._fmt(balance)}."
-                )
+                if int(cursor.rowcount or 0) <= 0:
+                    cursor = await conn.execute(
+                        "SELECT points FROM players WHERE chat_id=? AND user_id=?",
+                        (int(chat_id), user_id),
+                    )
+                    row = await cursor.fetchone()
+                    balance = int(row["points"] if row else 0)
+                    raise ValueError(
+                        f"Недостаточно влияния. Твой баланс: {gov._fmt(balance)}."
+                    )
 
-            # Reality 177 uses structure funds as the only source of truth. The money is
-            # credited there directly, so it is neither duplicated in free treasury nor
-            # passed through the legacy one-million-limited balance.
-            await fund_bridge.credit_fund_locked(
-                core, int(chat_id), str(structure_key), int(amount)
-            )
-            await conn.execute(
-                """
-                INSERT INTO government_contributions_v150(
-                    contribution_id,chat_id,user_id,amount,fund_key,note,created_at
-                ) VALUES(?,?,?,?,?,?,?)
-                """,
-                (
-                    contribution_id,
+                # Reality 177 uses structure funds as the only source of truth. The money
+                # is credited there directly, so it is neither duplicated in free treasury
+                # nor passed through the legacy one-million-limited balance.
+                await fund_bridge.credit_fund_locked(
+                    core, int(chat_id), str(structure_key), int(amount)
+                )
+                await conn.execute(
+                    """
+                    INSERT INTO government_contributions_v150(
+                        contribution_id,chat_id,user_id,amount,fund_key,note,created_at
+                    ) VALUES(?,?,?,?,?,?,?)
+                    """,
+                    (
+                        contribution_id,
+                        int(chat_id),
+                        user_id,
+                        amount,
+                        fund_key,
+                        note,
+                        now,
+                    ),
+                )
+                await conn.execute(
+                    "INSERT INTO score_log(chat_id,user_id,delta,reason,created_at) VALUES(?,?,?,?,?)",
+                    (
+                        int(chat_id),
+                        user_id,
+                        -amount,
+                        f"government_contribution_{fund_key}_v178",
+                        now,
+                    ),
+                )
+                reason = f"Добровольный вклад: {title}"
+                if note:
+                    reason = f"{reason} — {note}"
+                await gov._treasury_log(
+                    core,
                     int(chat_id),
-                    user_id,
                     amount,
-                    fund_key,
-                    note,
-                    now,
-                ),
-            )
-            await conn.execute(
-                "INSERT INTO score_log(chat_id,user_id,delta,reason,created_at) VALUES(?,?,?,?,?)",
-                (
-                    int(chat_id),
+                    reason,
+                    "voluntary_contribution_v178",
+                    contribution_id,
                     user_id,
-                    -amount,
-                    f"government_contribution_{fund_key}_v178",
-                    now,
-                ),
-            )
-            reason = f"Добровольный вклад: {title}"
-            if note:
-                reason = f"{reason} — {note}"
-            await gov._treasury_log(
-                core,
-                int(chat_id),
-                amount,
-                reason,
-                "voluntary_contribution_v178",
-                contribution_id,
-                user_id,
-            )
-            await conn.commit()
+                )
+                await conn.commit()
+            except Exception:
+                await conn.rollback()
+                raise
 
         return core.web.json_response(
             {
