@@ -73,6 +73,21 @@ async def emergency_transfer_safe(
     return f"Свободная казна экстренно пополнена на {fmt(amount)}."
 
 
+async def _ensure_property_owner_trigger(core: Any) -> None:
+    conn = core.db._require_connection()
+    await conn.execute(
+        """CREATE TRIGGER IF NOT EXISTS government_property_primary_owner_guard_v177
+        AFTER UPDATE OF owner_id ON government_property_v176
+        WHEN OLD.owner_id <> NEW.owner_id
+        BEGIN
+          UPDATE government_property_meta_v177
+          SET is_primary=0,updated_at=CAST(strftime('%s','now') AS INTEGER)
+          WHERE property_id=NEW.property_id;
+        END"""
+    )
+    await conn.commit()
+
+
 def install_government_reality_v177_safety(core: Any) -> None:
     if getattr(core, "_government_reality_v177_safety_installed", False):
         return
@@ -81,3 +96,11 @@ def install_government_reality_v177_safety(core: Any) -> None:
     programs.emergency_transfer = emergency_transfer_safe
     integration.emergency_transfer = emergency_transfer_safe
     api.emergency_transfer = emergency_transfer_safe
+
+    original_connect = core.Database.connect
+
+    async def connect_with_reality177_safety(self: Any) -> None:
+        await original_connect(self)
+        await _ensure_property_owner_trigger(core)
+
+    core.Database.connect = connect_with_reality177_safety
