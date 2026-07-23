@@ -217,6 +217,17 @@ async def bid_auction(core: Any, bot: Any, chat_id: int, bidder_id: int, auction
         if int(auction["current_bidder_id"]) == bidder_id:
             raise ValueError("Вы уже лидируете. Нельзя бессмысленно перебивать собственную ставку.")
         cursor = await conn.execute(
+            """
+            SELECT 1 FROM government_property_auctions_v176 other
+            JOIN government_property_v176 other_property ON other_property.property_id=other.property_id
+            WHERE other.chat_id=? AND other.status='active' AND other.current_bidder_id=?
+              AND other.auction_id<>? AND other_property.item_key=? LIMIT 1
+            """,
+            (chat_id, bidder_id, auction_id, str(auction["item_key"])),
+        )
+        if await cursor.fetchone() is not None:
+            raise ValueError("Вы уже лидируете на другом аукционе за имущество этого типа.")
+        cursor = await conn.execute(
             "SELECT 1 FROM government_property_v176 WHERE chat_id=? AND owner_id=? AND item_key=? AND status IN ('owned','seized_debt','seized_investigation')",
             (chat_id, bidder_id, str(auction["item_key"])),
         )
