@@ -84,6 +84,11 @@ SOURCE_TITLES = {
 }
 
 SCHEMA_SQL = """
+CREATE TABLE IF NOT EXISTS government_contribution_requests_v179(
+  request_id TEXT PRIMARY KEY, chat_id INTEGER NOT NULL, user_id INTEGER NOT NULL,
+  amount INTEGER NOT NULL, fund_key TEXT NOT NULL, result_text TEXT NOT NULL,
+  created_at INTEGER NOT NULL
+);
 CREATE TABLE IF NOT EXISTS government_construction_projects_v179(
   project_id TEXT PRIMARY KEY, chat_id INTEGER NOT NULL, building_key TEXT NOT NULL,
   initiator_id INTEGER NOT NULL, initiator_office TEXT NOT NULL DEFAULT '',
