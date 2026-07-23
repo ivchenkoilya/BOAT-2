@@ -19,6 +19,7 @@ from government_president_direct_deputy_v173 import install_government_president
 from government_programs_property_v176 import install_government_programs_property_v176
 from government_reality_v177 import install_government_reality_v177
 from government_reality_v177_api import install_government_reality_v177_api
+from government_reality_v177_safety import install_government_reality_v177_safety
 from government_release_v165 import install_government_release_v165
 from government_reliability_laws_v167 import install_government_reliability_laws_v167
 from government_ui_hotfix_v169 import install_government_ui_hotfix_v169
@@ -53,6 +54,8 @@ install_government_programs_property_v176(core)
 # рейтинг власти и отдельный мобильный раздел имущества с безопасными операциями.
 install_government_reality_v177(core)
 install_government_reality_v177_api(core)
+# Закрывает одновременное повторное исполнение одноразовых экстренных действий.
+install_government_reality_v177_safety(core)
 # Финальные правила рейда ставятся после всех старых обёрток боя и героев.
 install_boss_rules_v163(core)
 install_boss_audio_v154()
