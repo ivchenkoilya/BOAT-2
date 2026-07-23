@@ -82,7 +82,8 @@ class Reality179StaticTests(unittest.TestCase):
         self.assertIn("government_contribution_requests_v179 WHERE request_id=?", treasury)
         self.assertIn("request_id:contributionRequestId()", safety)
         self.assertIn("crypto?.randomUUID", safety)
-        self.assertNotIn("new MutationObserver", safety)
+        self.assertIn("source.replace", safety)
+        self.assertIn("window.addEventListener('pageshow',scheduleEnsure)", safety)
 
     def test_construction_funding_is_bound_to_project(self) -> None:
         source = read("government_reality_v179_construction_actions.py")
