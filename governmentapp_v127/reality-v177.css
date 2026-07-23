@@ -3,7 +3,7 @@
 #r176Programs,#r176PropertyQuick{display:none!important}
 #treasuryManagementV164 .panel:has(.treasury-structure-grid-v164){display:none!important}
 #treasuryContributionV150 .contribution-head-v150,#treasuryContributionV150 .fund-grid-v150{display:none!important}
-body.r177-modal-open{overflow:hidden!important;touch-action:none}
+body.r177-modal-open{overflow:hidden!important}
 .r177-section{margin-top:18px}
 .r177-program-grid,.r177-structures,.r177-rating-list,.r177-shop,.r177-property-content{display:grid;gap:14px}
 .r177-program,.r177-structure,.r177-rating,.r177-property,.r177-property-hero,.r177-info{
@@ -59,7 +59,7 @@ body.r177-modal-open{overflow:hidden!important;touch-action:none}
 .r177-sheet>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 18px;border-bottom:1px solid rgba(255,255,255,.07)}
 .r177-sheet>header small,.r177-sheet>header h3{display:block;margin:0}.r177-sheet>header small{font-size:9px;color:#b783cd}.r177-sheet>header h3{margin-top:3px;color:#f4ebf6;font-size:18px}
 .r177-sheet>header button{width:42px;height:42px;border:0;border-radius:14px;background:rgba(255,255,255,.07);color:#fff;font-size:25px}
-.r177-modal-body{overflow-y:auto;max-height:calc(min(88dvh,820px) - 78px);padding:16px 18px 24px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.r177-modal-body{overflow-y:auto;max-height:calc(min(88dvh,820px) - 78px);padding:16px 18px 24px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
 .bottom-nav{overflow-x:auto!important;justify-content:flex-start!important;scrollbar-width:none!important;-webkit-overflow-scrolling:touch;padding-left:max(8px,env(safe-area-inset-left));padding-right:max(8px,env(safe-area-inset-right))}
 .bottom-nav::-webkit-scrollbar{display:none}.bottom-nav>button{flex:0 0 82px!important;min-width:82px!important}
 .r177-screen{padding-bottom:calc(var(--nav,76px) + env(safe-area-inset-bottom) + 24px)!important}
