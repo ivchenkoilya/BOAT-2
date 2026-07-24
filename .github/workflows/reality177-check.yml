@@ -1,4 +1,4 @@
-name: Reality 177-180 checks
+name: Reality 177-181 checks
 
 on:
   push:
@@ -10,10 +10,13 @@ on:
       - "governmentapp_v127/reality-v179.*"
       - "government_reality_v180*.py"
       - "governmentapp_v127/reality-v180-map.*"
+      - "government_reality_v181*.py"
+      - "governmentapp_v127/reality-v181-map.*"
       - "tests/test_government_reality_v177_static.py"
       - "tests/test_unlimited_transfers_v178_static.py"
       - "tests/test_government_reality_v179_static.py"
       - "tests/test_government_reality_v180_map.py"
+      - "tests/test_government_reality_v181_map.py"
       - "talent_entry_v164.py"
       - ".github/workflows/reality177-check.yml"
   workflow_dispatch:
@@ -59,20 +62,26 @@ jobs:
             government_reality_v180.py \
             government_reality_v180_common.py \
             government_reality_v180_map.py \
+            government_reality_v181.py \
+            government_reality_v181_common.py \
+            government_reality_v181_map.py \
             talent_entry_v164.py \
             tests/test_government_reality_v177_static.py \
             tests/test_unlimited_transfers_v178_static.py \
             tests/test_government_reality_v179_static.py \
-            tests/test_government_reality_v180_map.py
+            tests/test_government_reality_v180_map.py \
+            tests/test_government_reality_v181_map.py
       - name: Check JavaScript syntax
         run: |
           node --check governmentapp_v127/reality-v177.js
           node --check governmentapp_v127/reality-v179.js
           node --check governmentapp_v127/reality-v180-map.js
-      - name: Run Reality 177-180 static and SQLite tests
+          node --check governmentapp_v127/reality-v181-map.js
+      - name: Run Reality 177-181 static and SQLite tests
         run: |
           python -m unittest \
             tests.test_government_reality_v177_static \
             tests.test_unlimited_transfers_v178_static \
             tests.test_government_reality_v179_static \
-            tests.test_government_reality_v180_map -v
+            tests.test_government_reality_v180_map \
+            tests.test_government_reality_v181_map -v
