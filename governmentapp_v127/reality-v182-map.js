@@ -192,9 +192,9 @@
   function fitWorld(mode='cover',animate=true){const size=worldSize();fitMode=mode;fitBounds({x:0,y:0,width:size.width,height:size.height},mode,animate);scheduleRenderMiniOnly()}
   function focusDistrict(key,animate=true){
     activeDistrict=key;
-    if(key==='all'){fitWorld('cover',animate);return}
-    const bounds=currentLayout()?.districts?.[key];if(bounds){fitMode='district';fitBounds(bounds,'contain',animate)}
-    updateControls();
+    if(key==='all')fitWorld('cover',animate);
+    else{const bounds=currentLayout()?.districts?.[key];if(bounds){fitMode='district';fitBounds(bounds,'contain',animate)}}
+    if(animate)updateControls();
   }
   function focusObject(item){
     const view=viewport(),pos=visualPosition(item);if(!view)return;
