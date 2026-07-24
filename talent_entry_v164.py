@@ -25,6 +25,7 @@ from government_reality_v179_safety import install_government_reality_v179_safet
 from government_reality_v180 import install_government_reality_v180
 from government_reality_v181 import install_government_reality_v181
 from government_reality_v182 import install_government_reality_v182
+from government_reality_v183 import install_government_reality_v183
 from government_release_v165 import install_government_release_v165
 from government_reliability_laws_v167 import install_government_reliability_laws_v167
 from government_ui_hotfix_v169 import install_government_ui_hotfix_v169
@@ -76,6 +77,9 @@ install_government_reality_v181(core)
 # Reality 182 заменяет визуальный клиент вертикальной мобильной картой 3.0,
 # убирает чёрные пустоты, увеличивает здания и добавляет стадии строительства.
 install_government_reality_v182(core)
+# Reality 183 превращает карту в живой город: SVG-здания, кликабельные участки,
+# компактное управление, события программ и визуальное развитие государства.
+install_government_reality_v183(core)
 # Финальные правила рейда ставятся после всех старых обёрток боя и героев.
 install_boss_rules_v163(core)
 install_boss_audio_v154()
