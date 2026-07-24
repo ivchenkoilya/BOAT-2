@@ -24,6 +24,7 @@ from government_reality_v179 import install_government_reality_v179
 from government_reality_v179_safety import install_government_reality_v179_safety
 from government_reality_v180 import install_government_reality_v180
 from government_reality_v181 import install_government_reality_v181
+from government_reality_v182 import install_government_reality_v182
 from government_release_v165 import install_government_release_v165
 from government_reliability_laws_v167 import install_government_reliability_laws_v167
 from government_ui_hotfix_v169 import install_government_ui_hotfix_v169
@@ -70,9 +71,11 @@ install_government_reality_v179(core)
 install_government_reality_v179_safety(core)
 # Reality 180 формирует серверное размещение всех проектов и построенных объектов.
 install_government_reality_v180(core)
-# Reality 181 заменяет старый клиент карты полноэкранной картой 2.0,
-# рабочими районами, фильтрами, мини-картой и нижней карточкой объекта.
+# Reality 181 добавляет полноэкранную карту, районы, фильтры и карточки объектов.
 install_government_reality_v181(core)
+# Reality 182 заменяет визуальный клиент вертикальной мобильной картой 3.0,
+# убирает чёрные пустоты, увеличивает здания и добавляет стадии строительства.
+install_government_reality_v182(core)
 # Финальные правила рейда ставятся после всех старых обёрток боя и героев.
 install_boss_rules_v163(core)
 install_boss_audio_v154()
