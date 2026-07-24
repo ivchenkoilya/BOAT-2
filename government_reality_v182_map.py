@@ -34,6 +34,11 @@ def _decorations(chat_id: int, mode: str, districts: dict[str, dict[str, Any]]) 
     return result
 
 
+def _district_stats_only(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    allowed = {"key", "objects", "active", "construction", "problems", "institutions"}
+    return [{key: value for key, value in dict(row).items() if key in allowed} for row in rows]
+
+
 def enhance_map_state_v182(base: dict[str, Any], chat_id: int) -> dict[str, Any]:
     data = copy.deepcopy(base or {})
     layouts = layout_payload()
@@ -63,5 +68,6 @@ def enhance_map_state_v182(base: dict[str, Any], chat_id: int) -> dict[str, Any]
         "version": VERSION,
         "layout_version": LAYOUT_VERSION,
         "layouts": layouts,
+        "districts": _district_stats_only(list(data.get("districts") or [])),
         "metrics": metrics,
     }
