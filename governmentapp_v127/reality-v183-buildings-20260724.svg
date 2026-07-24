@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g-gold" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#f3d780"/><stop offset="1" stop-color="#8a5a22"/></linearGradient>
+    <linearGradient id="g-red" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#ea7a62"/><stop offset="1" stop-color="#70251f"/></linearGradient>
+    <linearGradient id="g-blue" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#8bd5ef"/><stop offset="1" stop-color="#284e71"/></linearGradient>
+    <linearGradient id="g-green" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#8fd5a7"/><stop offset="1" stop-color="#28563a"/></linearGradient>
+    <linearGradient id="g-violet" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#c496f2"/><stop offset="1" stop-color="#4b2c75"/></linearGradient>
+    <linearGradient id="g-stone" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#e6e5eb"/><stop offset="1" stop-color="#777889"/></linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#000" flood-opacity=".45"/></filter>
+
+    <symbol id="factory" viewBox="0 0 120 100">
+      <g filter="url(#shadow)"><ellipse cx="61" cy="89" rx="48" ry="7" fill="#09070b" opacity=".55"/><rect x="12" y="42" width="72" height="41" rx="5" fill="url(#g-red)" stroke="#f0a178"/><path d="M12 43 32 29v14l20-14v14l20-14v14h12v40H12Z" fill="#b9563d" stroke="#e68c68"/><rect x="87" y="17" width="11" height="66" rx="3" fill="#4a3030"/><rect x="102" y="28" width="8" height="55" rx="3" fill="#3d292a"/><g fill="#ffd66e"><rect x="22" y="57" width="12" height="12" rx="2"/><rect x="43" y="57" width="12" height="12" rx="2"/><rect x="64" y="57" width="12" height="12" rx="2"/></g><rect x="36" y="69" width="21" height="14" fill="#40252a"/></g>
+    </symbol>
+
+    <symbol id="power_plant" viewBox="0 0 120 100">
+      <g filter="url(#shadow)"><ellipse cx="60" cy="89" rx="46" ry="7" fill="#09070b" opacity=".55"/><path d="M15 80h90L94 43H26Z" fill="url(#g-blue)" stroke="#a3ddf2"/><path d="M25 43 34 12h17l5 31M68 43l5-27h17l7 27" fill="#49647e" stroke="#b4e7f5" stroke-width="4"/><rect x="33" y="58" width="54" height="22" rx="5" fill="#23394e"/><path d="m61 51-9 16h8l-3 13 14-20h-8l5-9Z" fill="#ffe66b"/></g>
+    </symbol>
+
+    <symbol id="school" viewBox="0 0 120 100">
+      <g filter="url(#shadow)"><ellipse cx="60" cy="89" rx="47" ry="7" fill="#09070b" opacity=".5"/><rect x="12" y="44" width="96" height="39" rx="5" fill="#9b6c3b" stroke="#e2b477"/><path d="M8 45 60 16l52 29Z" fill="#bd8748" stroke="#f0c184"/><rect x="50" y="58" width="20" height="25" rx="2" fill="#493324"/><g fill="#d8f4ff"><rect x="22" y="55" width="15" height="12" rx="2"/><rect x="83" y="55" width="15" height="12" rx="2"/></g><path d="M60 15V5h2v10M62 5l16 5-16 5Z" fill="#f0c34e"/></g>
+    </symbol>
+
+    <symbol id="hospital" viewBox="0 0 120 100">
+      <g filter="url(#shadow)"><ellipse cx="60" cy="90" rx="48" ry="7" fill="#09070b" opacity=".5"/><rect x="20" y="25" width="80" height="60" rx="7" fill="url(#g-stone)" stroke="#fff"/><rect x="9" y="47" width="24" height="38" rx="4" fill="#c9ced8" stroke="#fff"/><rect x="87" y="47" width="24" height="38" rx="4" fill="#c9ced8" stroke="#fff"/><rect x="52" y="54" width="16" height="31" fill="#7e8796"/><path d="M53 33h14v10h10v14H67v10H53V57H43V43h10Z" fill="#d92f50"/><g fill="#8fd8ef"><rect x="27" y="65" width="8" height="8"/><rect x="85" y="65" width="8" height="8"/></g></g>
+    </symbol>
+
+    <symbol id="housing" viewBox="0 0 120 100">
+      <g filter="url(#shadow)"><ellipse cx="60" cy="91" rx="48" ry="7" fill="#09070b" opacity=".5"/><rect x="17" y="26" width="33" height="60" rx="4" fill="#5470a1" stroke="#9eb8e7"/><rect x="52" y="13" width="34" height="73" rx="4" fill="#76569b" stroke="#c6a5e9"/><rect x="88" y="35" width="22" height="51" rx="4" fill="#3e6d70" stroke="#8ecbcb"/><g fill="#ffe69a"><rect x="25" y="38" width="8" height="8"/><rect x="37" y="38" width="8" height="8"/><rect x="25" y="54" width="8" height="8"/><rect x="37" y="54" width="8" height="8"/><rect x="61" y="27" width="8" height="8"/><rect x="73" y="27" width="8" height="8"/><rect x="61" y="43" width="8" height="8"/><rect x="73" y="43" width="8" height="8"/><rect x="95" y="49" width="7" height="7"/></g></g>
+    </symbol>
+
+    <symbol id="police" viewBox="0 0 120 100">
+      <g filter="url(#shadow)"><ellipse cx="60" cy="90" rx="47" ry="7" fill="#09070b" opacity=".5"/><rect x="17" y="39" width="86" height="46" rx="7" fill="#45536e" stroke="#9db3d7"/><path d="M12 40 60 17l48 23Z" fill="#27344b" stroke="#829bc1"/><rect x="47" y="58" width="26" height="27" rx="3" fill="#202a3c"/><rect x="32" y="51" width="15" height="13" fill="#70a6ee"/><rect x="73" y="51" width="15" height="13" fill="#ed5f71"/><rect x="50" y="11" width="10" height="8" rx="3" fill="#4e91ff"/><rect x="60" y="11" width="10" height="8" rx="3" fill="#ff536b"/><path d="M60 32 70 39l-4 12H54l-4-12Z" fill="#f2d476"/></g>
+    </symbol>
+
+    <symbol id="culture_house" viewBox="0 0 120 100">
+      <g filter="url(#shadow)"><ellipse cx="60" cy="90" rx="48" ry="7" fill="#09070b" opacity=".5"/><rect x="13" y="41" width="94" height="44" rx="5" fill="url(#g-violet)" stroke="#d5b5f4"/><path d="M8 42 60 16l52 26Z" fill="#7a4e9f" stroke="#d7b5f0"/><g fill="#f1d889"><rect x="27" y="51" width="8" height="27"/><rect x="43" y="51" width="8" height="27"/><rect x="69" y="51" width="8" height="27"/><rect x="85" y="51" width="8" height="27"/></g><path d="M52 56h16v29H52Z" fill="#3d2852"/><path d="M60 27c8 0 13 5 13 11H47c0-6 5-11 13-11Z" fill="#f1d889"/></g>
+    </symbol>
+
+    <symbol id="science" viewBox="0 0 120 100">
+      <g filter="url(#shadow)"><ellipse cx="60" cy="90" rx="46" ry="7" fill="#09070b" opacity=".5"/><rect x="20" y="51" width="80" height="34" rx="8" fill="#4d3d72" stroke="#bca6ef"/><path d="M32 51a28 28 0 0 1 56 0Z" fill="#7b65a9" stroke="#d6c4ff"/><path d="M60 16v20M60 16l19 8" stroke="#b5ebff" stroke-width="4" stroke-linecap="round"/><circle cx="60" cy="15" r="5" fill="#74d9ef"/><circle cx="60" cy="51" r="9" fill="#8de4ff" opacity=".8"/><rect x="48" y="67" width="24" height="18" rx="3" fill="#28203d"/></g>
+    </symbol>
+
+    <symbol id="state_bank" viewBox="0 0 120 100">
+      <g filter="url(#shadow)"><ellipse cx="60" cy="90" rx="48" ry="7" fill="#09070b" opacity=".5"/><path d="M8 39 60 12l52 27Z" fill="url(#g-gold)" stroke="#ffe29b"/><rect x="14" y="39" width="92" height="10" fill="#b5833e"/><rect x="16" y="80" width="88" height="7" rx="2" fill="#9b6c2d"/><g fill="#e9cf8c"><rect x="24" y="48" width="10" height="32"/><rect x="43" y="48" width="10" height="32"/><rect x="67" y="48" width="10" height="32"/><rect x="86" y="48" width="10" height="32"/></g><circle cx="60" cy="31" r="10" fill="#fff0b3"/><text x="60" y="36" text-anchor="middle" font-size="15" font-weight="700" fill="#8a5a22">₽</text></g>
+    </symbol>
+
+    <symbol id="administration" viewBox="0 0 120 100">
+      <g filter="url(#shadow)"><ellipse cx="60" cy="91" rx="50" ry="7" fill="#09070b" opacity=".5"/><rect x="10" y="43" width="100" height="42" rx="5" fill="#7e6849" stroke="#dac28a"/><rect x="35" y="25" width="50" height="60" rx="5" fill="#a48a5f" stroke="#efd59a"/><path d="M28 26 60 8l32 18Z" fill="url(#g-gold)" stroke="#ffe4a1"/><g fill="#ffecb1"><rect x="44" y="39" width="10" height="13"/><rect x="66" y="39" width="10" height="13"/><rect x="20" y="57" width="12" height="12"/><rect x="88" y="57" width="12" height="12"/></g><rect x="52" y="61" width="16" height="24" fill="#4f402e"/><path d="M60 8V1h2v7M62 1l15 4-15 4Z" fill="#f1c84e"/></g>
+    </symbol>
+
+    <symbol id="presidency" viewBox="0 0 120 100"><use href="#administration"/><circle cx="60" cy="31" r="11" fill="#fff0ad"/><path d="m60 20 4 8 9 1-7 6 2 9-8-4-8 4 2-9-7-6 9-1Z" fill="#c48e24"/></symbol>
+    <symbol id="duma" viewBox="0 0 120 100"><use href="#culture_house"/><rect x="18" y="75" width="84" height="9" fill="#d3b66f"/></symbol>
+    <symbol id="finance" viewBox="0 0 120 100"><use href="#state_bank"/></symbol>
+    <symbol id="court" viewBox="0 0 120 100"><use href="#state_bank"/><path d="M60 25v28M43 34h34M47 34l-10 18h20ZM73 34 63 52h20Z" fill="none" stroke="#7a5420" stroke-width="3"/></symbol>
+    <symbol id="oversight" viewBox="0 0 120 100"><use href="#police"/></symbol>
+
+    <symbol id="construction_plan" viewBox="0 0 120 100"><g filter="url(#shadow)"><ellipse cx="60" cy="87" rx="43" ry="6" fill="#08070b" opacity=".45"/><rect x="22" y="44" width="76" height="38" rx="5" fill="#3a303f" stroke="#8b7596"/><path d="M30 52h60M30 61h45M30 70h52" stroke="#c8b7cf" stroke-width="4"/><path d="M83 24v50M83 24l22 10-22 10" stroke="#e5b84f" stroke-width="4"/></g></symbol>
+    <symbol id="construction_foundation" viewBox="0 0 120 100"><g filter="url(#shadow)"><ellipse cx="60" cy="88" rx="47" ry="7" fill="#08070b" opacity=".45"/><path d="M17 70 48 50l55 15-31 20Z" fill="#807786" stroke="#c8bdce"/><path d="M17 70v11l55 12V85ZM103 65v11L72 93V85Z" fill="#4d4652"/><path d="M28 70 58 58l31 8-30 13Z" fill="#302b34"/></g></symbol>
+  </defs>
+</svg>
