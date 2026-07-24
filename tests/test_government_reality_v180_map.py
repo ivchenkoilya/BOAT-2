@@ -65,6 +65,7 @@ class Reality180MapTests(unittest.TestCase):
         self.assertIn("data-tab='map180'", source.replace('"', "'"))
         self.assertIn("pointerDistance", source)
         self.assertIn("pointers.size>=2", source)
+        self.assertIn("centerCamera", source)
         self.assertIn("Масштаб — двумя пальцами", source)
         self.assertNotIn("MutationObserver", source)
         self.assertNotIn("setInterval", source)
