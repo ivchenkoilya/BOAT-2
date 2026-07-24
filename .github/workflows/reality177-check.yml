@@ -1,4 +1,4 @@
-name: Reality 177-182 checks
+name: Reality 177-183 checks
 
 on:
   push:
@@ -14,12 +14,15 @@ on:
       - "governmentapp_v127/reality-v181-map.*"
       - "government_reality_v182*.py"
       - "governmentapp_v127/reality-v182-map.*"
+      - "government_reality_v183*.py"
+      - "governmentapp_v127/reality-v183-*"
       - "tests/test_government_reality_v177_static.py"
       - "tests/test_unlimited_transfers_v178_static.py"
       - "tests/test_government_reality_v179_static.py"
       - "tests/test_government_reality_v180_map.py"
       - "tests/test_government_reality_v181_map.py"
       - "tests/test_government_reality_v182_map.py"
+      - "tests/test_government_reality_v183_map.py"
       - "talent_entry_v164.py"
       - ".github/workflows/reality177-check.yml"
   workflow_dispatch:
@@ -71,13 +74,17 @@ jobs:
             government_reality_v182.py \
             government_reality_v182_common.py \
             government_reality_v182_map.py \
+            government_reality_v183.py \
+            government_reality_v183_common.py \
+            government_reality_v183_map.py \
             talent_entry_v164.py \
             tests/test_government_reality_v177_static.py \
             tests/test_unlimited_transfers_v178_static.py \
             tests/test_government_reality_v179_static.py \
             tests/test_government_reality_v180_map.py \
             tests/test_government_reality_v181_map.py \
-            tests/test_government_reality_v182_map.py
+            tests/test_government_reality_v182_map.py \
+            tests/test_government_reality_v183_map.py
       - name: Check JavaScript syntax
         run: |
           node --check governmentapp_v127/reality-v177.js
@@ -85,7 +92,18 @@ jobs:
           node --check governmentapp_v127/reality-v180-map.js
           node --check governmentapp_v127/reality-v181-map.js
           node --check governmentapp_v127/reality-v182-map.js
-      - name: Run Reality 177-182 static and SQLite tests
+          node --check governmentapp_v127/reality-v183-map-20260724.js
+      - name: Check SVG sprite
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          source = Path('governmentapp_v127/reality-v183-buildings-20260724.svg').read_text(encoding='utf-8')
+          required = ('factory','power_plant','school','hospital','housing','police','culture_house','science','state_bank','administration')
+          missing = [name for name in required if f'id="{name}"' not in source]
+          if missing:
+              raise SystemExit(f'Missing SVG symbols: {missing}')
+          PY
+      - name: Run Reality 177-183 static and SQLite tests
         run: |
           python -m unittest \
             tests.test_government_reality_v177_static \
@@ -93,4 +111,5 @@ jobs:
             tests.test_government_reality_v179_static \
             tests.test_government_reality_v180_map \
             tests.test_government_reality_v181_map \
-            tests.test_government_reality_v182_map -v
+            tests.test_government_reality_v182_map \
+            tests.test_government_reality_v183_map -v
