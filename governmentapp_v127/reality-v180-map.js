@@ -18,6 +18,7 @@
   const camera={x:0,y:0,scale:1};
   const pointers=new Map();
   let gesture=null;
+  let cameraInitialized=false;
 
   function toast(text,type='success'){
     const node=document.getElementById('toast');
@@ -208,8 +209,13 @@
         <div><small>ДОЛГ СОДЕРЖАНИЯ</small><b>${fmt(data.metrics?.maintenance_debt)}</b></div>
         <div><small>ФИНАНСОВАЯ УСТОЙЧИВОСТЬ</small><b>${fmt(data.metrics?.financial_stability)}%</b></div>
       </article>`;
-    applyCamera();
     bindMapGestures();
+    if(!cameraInitialized){
+      centerCamera();
+      cameraInitialized=true;
+    }else{
+      applyCamera();
+    }
   }
 
   function applyCamera(){
@@ -218,8 +224,18 @@
     world.style.transform=`translate3d(${camera.x}px,${camera.y}px,0) scale(${camera.scale})`;
   }
 
+  function centerCamera(){
+    const viewport=document.getElementById('r180Viewport');
+    if(!viewport)return;
+    const scale=viewport.clientWidth<700?.72:Math.min(1,viewport.clientWidth/1000);
+    camera.scale=Math.max(.72,Math.min(1,scale));
+    camera.x=Math.round((viewport.clientWidth-1000*camera.scale)/2);
+    camera.y=Math.round((viewport.clientHeight-650*camera.scale)/2);
+    applyCamera();
+  }
+
   function resetCamera(){
-    camera.x=0;camera.y=0;camera.scale=1;applyCamera();
+    centerCamera();
   }
 
   function pointerDistance(){
