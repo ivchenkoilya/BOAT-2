@@ -45,6 +45,10 @@ class Reality182MapTests(unittest.TestCase):
                 "status": "building", "progress": 61, "total_cost": 1_000_000,
                 "funded_amount": 1_000_000,
             }],
+            "districts": [{
+                "key": "industrial", "x": 999, "y": 999, "width": 1, "height": 1,
+                "objects": 1, "active": 0, "construction": 1, "problems": 0,
+            }],
             "metrics": {"treasury": 7_000_000, "active": 0, "construction": 1},
         }
         result = enhance_map_state_v182(base, 55)
@@ -52,6 +56,8 @@ class Reality182MapTests(unittest.TestCase):
         self.assertEqual(result["objects"][0]["project_id"], "p1")
         self.assertEqual(result["objects"][0]["construction_stage"], "shell")
         self.assertEqual(result["objects"][0]["progress_label"], "61%")
+        self.assertNotIn("x", result["districts"][0])
+        self.assertNotIn("width", result["districts"][0])
         self.assertIn("mobile", result["layouts"])
         self.assertIn("wide", result["layouts"])
 
@@ -68,7 +74,7 @@ class Reality182MapTests(unittest.TestCase):
             "fitWorld('cover'", "fitWorld('contain'", "data-r182-close-fullscreen",
             "data-r182-district", "data-r182-filter", "data-r182-mini",
             "construction_stage", "selectedPlot", "requestAnimationFrame",
-            "visualViewport", "load(true)",
+            "visualViewport", "load(true)", "if(animate)updateControls()",
         ):
             self.assertIn(fragment, source)
         self.assertNotIn("MutationObserver", source)
