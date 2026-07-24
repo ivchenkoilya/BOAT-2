@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+import time
 from pathlib import Path
 from typing import Any
 
@@ -12,6 +14,8 @@ from government_reality_v180_map import ensure_schema, map_state
 APP_DIR = Path(__file__).resolve().parent / "governmentapp_v127"
 ASSET_JS = APP_DIR / "reality-v180-map.js"
 ASSET_CSS = APP_DIR / "reality-v180-map.css"
+_MAP_CACHE: dict[int, tuple[float, dict[str, Any]]] = {}
+_MAP_LOCKS: dict[int, asyncio.Lock] = {}
 
 
 def _route_keys(app: Any) -> set[tuple[str, str]]:
@@ -27,6 +31,23 @@ def _route_keys(app: Any) -> set[tuple[str, str]]:
     return result
 
 
+async def _cached_map_state(core: Any, chat_id: int, user_id: int) -> dict[str, Any]:
+    key = int(chat_id)
+    now = time.monotonic()
+    cached = _MAP_CACHE.get(key)
+    if cached is not None and now - cached[0] <= 0.5:
+        return cached[1]
+    lock = _MAP_LOCKS.setdefault(key, asyncio.Lock())
+    async with lock:
+        now = time.monotonic()
+        cached = _MAP_CACHE.get(key)
+        if cached is not None and now - cached[0] <= 0.5:
+            return cached[1]
+        value = await map_state(core, key, int(user_id))
+        _MAP_CACHE[key] = (time.monotonic(), value)
+        return value
+
+
 def install_government_reality_v180(core: Any) -> None:
     if getattr(core, "_government_reality_v180_installed", False):
         return
@@ -39,6 +60,7 @@ def install_government_reality_v180(core: Any) -> None:
     async def connect_v180(self: Any) -> None:
         await original_connect(self)
         core._government_reality_v180_schema_ready = False
+        _MAP_CACHE.clear()
         await ensure_schema(core)
 
     core.Database.connect = connect_v180
@@ -49,7 +71,7 @@ def install_government_reality_v180(core: Any) -> None:
         payload = await previous_state(core_arg, bot, int(chat_id), int(user_id))
         payload["version"] = VERSION
         payload["reality180"] = {
-            "map": await map_state(core_arg, int(chat_id), int(user_id)),
+            "map": await _cached_map_state(core_arg, int(chat_id), int(user_id)),
         }
         return payload
 
