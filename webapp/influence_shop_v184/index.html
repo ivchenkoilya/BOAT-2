@@ -4,11 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#09070d">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>Главный герой — игровой центр</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="/influence-shop-v184/style.css?build=1842">
-  <link rel="stylesheet" href="/influence-shop-v184/style_184_1.css?build=1842">
-  <link rel="stylesheet" href="/influence-shop-v184/style_184_2.css?build=1842">
+  <link rel="stylesheet" href="/influence-shop-v184/style.css?build=1843">
+  <link rel="stylesheet" href="/influence-shop-v184/style_184_1.css?build=1843">
+  <link rel="stylesheet" href="/influence-shop-v184/style_184_2.css?build=1843">
 </head>
 <body>
   <div class="ambient" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
@@ -20,7 +21,7 @@
         <span class="frame-orbit"></span>
       </div>
       <div class="identity">
-        <p class="eyebrow">ГЛАВНЫЙ ГЕРОЙ · REALITY 184.2</p>
+        <p class="eyebrow">ГЛАВНЫЙ ГЕРОЙ · REALITY 184.3</p>
         <h1 id="profileName">Загрузка…</h1>
         <div class="role-line"><span id="roleEmoji">🎭</span><strong id="roleName">Определяем роль…</strong><em id="profileTitle"></em></div>
       </div>
@@ -31,7 +32,7 @@
         <small id="rank">Рейтинг загружается</small>
       </div>
       <div class="aura-card"><span>АУРА</span><strong id="aura">0</strong><i><b id="auraFill"></b></i></div>
-      <div class="sync-status loading" id="liveSync"><i></i><span>Подключаем живую статистику…</span></div>
+      <div class="sync-status loading" id="liveSync"><i></i><span>Автообновление запускается…</span></div>
     </header>
 
     <section class="page active" data-page="shop">
@@ -55,8 +56,8 @@
       <div class="title-block"><div><p class="eyebrow">ЛИЧНОЕ ДОСЬЕ</p><h2>СТАТИСТИКА ПЕРСОНАЖА</h2></div></div>
       <div id="statsOverview" class="stats-overview glass">
         <small>ЗА ВЫБРАННЫЙ ПЕРИОД</small>
-        <strong id="overviewDelta">Собираем историю…</strong>
-        <span id="overviewHint">Первое обновление занимает несколько секунд</span>
+        <strong id="overviewDelta">0 влияния</strong>
+        <span id="overviewHint">История обновится автоматически</span>
       </div>
       <div class="period-tabs" id="periodTabs"><button data-days="24">24 часа</button><button data-days="7" class="active">7 дней</button><button data-days="30">30 дней</button><button data-days="90">90 дней</button></div>
       <article class="chart-card glass live-chart-card">
@@ -120,7 +121,97 @@
   <div class="live-delta" id="liveDelta"></div>
   <div class="toast" id="toast"></div>
   <div class="loading-screen" id="loadingScreen"><div class="loader-emblem">👑</div><p>СОБИРАЕМ ВАШЕ ВЛИЯНИЕ</p><i></i></div>
-  <script src="/influence-shop-v184/app.js?build=1842"></script>
-  <script src="/influence-shop-v184/live_184_2.js?build=1842"></script>
+  <script src="/influence-shop-v184/app.js?build=1843"></script>
+  <script src="/influence-shop-v184/live_184_2.js?build=1843"></script>
+  <script>
+  (() => {
+    'use strict';
+    const tg = window.Telegram && window.Telegram.WebApp;
+    const params = new URLSearchParams(location.search);
+    const startParam = String((tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param) || params.get('tgWebAppStartParam') || params.get('startapp') || '');
+    const chatId = params.get('chat_id') || '';
+    const headers = {'X-Telegram-Init-Data': (tg && tg.initData) || ''};
+    let running = false;
+    let timer = null;
+
+    function el(id) { return document.getElementById(id); }
+    function fmt(value) { return new Intl.NumberFormat('ru-RU').format(Number(value) || 0); }
+    function setStatus(text, kind) {
+      const node = el('liveSync');
+      if (!node) return;
+      node.className = 'sync-status ' + (kind || 'online');
+      const span = node.querySelector('span');
+      if (span) span.textContent = text;
+    }
+    function roleFor(balance, rank) {
+      if (balance < 500) return ['Декорация', '🪑'];
+      if (balance < 1000) return ['Пыль', '🌫'];
+      if (balance < 2000) return ['Массовка', '👥'];
+      if (balance < 3000 || Number(rank) !== 1) return ['Второстепенная роль', '🎭'];
+      return ['Главный герой', '👑'];
+    }
+    function applyState(data) {
+      const profile = data.profile || {};
+      const balance = Number(profile.balance || 0);
+      const role = roleFor(balance, profile.rank || 0);
+      if (el('balance')) el('balance').textContent = fmt(balance);
+      if (el('roleName')) el('roleName').textContent = role[0];
+      if (el('roleEmoji')) el('roleEmoji').textContent = role[1];
+      if (el('rank')) el('rank').textContent = 'Место ' + (profile.rank || 0) + ' из ' + (profile.participants_total || 0);
+
+      const since = Date.now() / 1000 - 7 * 86400;
+      const transactions = Array.isArray(data.transactions) ? data.transactions : [];
+      const recent = transactions.filter(item => Number(item.created_at || 0) >= since);
+      const delta = recent.reduce((sum, item) => sum + Number(item.amount || item.delta || 0), 0);
+      const overview = el('overviewDelta');
+      if (overview) {
+        overview.textContent = (delta >= 0 ? '+' : '−') + fmt(Math.abs(delta)) + ' влияния';
+        overview.className = delta < 0 ? 'negative' : '';
+      }
+      const hint = el('overviewHint');
+      if (hint) hint.textContent = recent.length ? 'Операций за 7 дней: ' + recent.length : 'История операций пока пуста';
+      const stamp = new Date().toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+      setStatus('Основные данные обновлены ' + stamp, 'online');
+    }
+    async function tick() {
+      if (running || document.hidden) return schedule(5000);
+      running = true;
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 6000);
+      try {
+        const query = new URLSearchParams({start_param:startParam, chat_id:chatId});
+        const response = await fetch('/influence-shop-v184/api/state?' + query.toString(), {headers, cache:'no-store', signal:controller.signal});
+        const data = await response.json();
+        if (!response.ok || !data || !data.ok) throw new Error('state unavailable');
+        applyState(data);
+      } catch (error) {
+        setStatus('Баланс загружен · история временно недоступна', 'error');
+        const overview = el('overviewDelta');
+        if (overview && /Собираем|Загрузка/i.test(overview.textContent || '')) overview.textContent = '0 влияния';
+        const hint = el('overviewHint');
+        if (hint) hint.textContent = 'Повторная проверка выполняется автоматически';
+      } finally {
+        clearTimeout(timeout);
+        running = false;
+        schedule(10000);
+      }
+    }
+    function schedule(delay) {
+      clearTimeout(timer);
+      timer = setTimeout(tick, delay);
+    }
+    setTimeout(tick, 900);
+    setTimeout(() => {
+      const status = el('liveSync');
+      const text = status && status.textContent || '';
+      if (/Подключаем|запускается|Собираем/i.test(text)) {
+        setStatus('Баланс загружен · проверяем историю', 'online');
+      }
+      const overview = el('overviewDelta');
+      if (overview && /Собираем|Загрузка/i.test(overview.textContent || '')) overview.textContent = '0 влияния';
+    }, 7000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
+  })();
+  </script>
 </body>
 </html>
