@@ -4,6 +4,7 @@ import main as core
 import talent_entry_v164  # noqa: F401  # Устанавливает Reality 183 и все предыдущие слои.
 from hero_expansion_v184 import install_hero_expansion_v184
 from shop_command_hotfix_v185 import install_shop_command_hotfix_v185
+from hero_reality_v184_1 import install_reality_v184_1
 
 
 # Reality 184 устанавливается последним: магазин и единая история влияния
@@ -12,6 +13,8 @@ install_hero_expansion_v184(core)
 # Reality 185 переносит /shop перед старым общим F.text-обработчиком, иначе
 # команда может молча поглощаться монолитным роутером.
 install_shop_command_hotfix_v185(core)
+# Reality 184.1 добавляет live-статистику, исправляет роль и обновляет slash-меню.
+install_reality_v184_1(core)
 
 
 if __name__ == "__main__":
