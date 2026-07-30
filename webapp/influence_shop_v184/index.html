@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#09070d">
+  <title>Магазин влияния</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="/influence-shop-v184/style.css?build=184">
+</head>
+<body>
+  <div class="ambient" aria-hidden="true">
+    <i></i><i></i><i></i><i></i><i></i><i></i>
+  </div>
+
+  <main class="app-shell">
+    <header class="hero-header glass reveal">
+      <div class="avatar-wrap" id="avatarWrap">
+        <div class="avatar" id="avatar">Г</div>
+        <span class="frame-orbit"></span>
+      </div>
+      <div class="identity">
+        <p class="eyebrow">ГЛАВНЫЙ ГЕРОЙ · REALITY 184</p>
+        <h1 id="profileName">Загрузка…</h1>
+        <div class="role-line"><span id="roleEmoji">🎭</span><strong id="roleName">Участник</strong><em id="profileTitle"></em></div>
+      </div>
+      <button class="icon-button" id="closeButton" aria-label="Закрыть">✕</button>
+      <div class="balance-card">
+        <span>ВЛИЯНИЕ</span>
+        <strong id="balance">0</strong>
+        <small id="rank">Рейтинг загружается</small>
+      </div>
+      <div class="aura-card"><span>АУРА</span><strong id="aura">0</strong><i><b id="auraFill"></b></i></div>
+    </header>
+
+    <section class="page active" data-page="shop">
+      <div class="title-block reveal">
+        <div><p class="eyebrow">ЗДЕСЬ ВЛИЯНИЕ</p><h2>ПРЕВРАЩАЕТСЯ ВО ВЛАСТЬ</h2></div>
+        <span class="live-dot">МАГАЗИН ОТКРЫТ</span>
+      </div>
+      <nav class="category-tabs reveal" id="categoryTabs">
+        <button class="active" data-category="all">Все</button>
+        <button data-category="popular">Популярное</button>
+        <button data-category="status">Статус</button>
+        <button data-category="defense">Защита</button>
+        <button data-category="chaos">Хаос</button>
+        <button data-category="appearance">Внешний вид</button>
+      </nav>
+      <div class="product-grid" id="productGrid"></div>
+    </section>
+
+    <section class="page" data-page="stats">
+      <div class="title-block"><div><p class="eyebrow">ЛИЧНОЕ ДОСЬЕ</p><h2>СТАТИСТИКА ПЕРСОНАЖА</h2></div></div>
+      <div class="period-tabs" id="periodTabs"><button data-days="7" class="active">7 дней</button><button data-days="30">30 дней</button><button data-days="90">90 дней</button></div>
+      <article class="chart-card glass">
+        <div class="card-heading"><span>Динамика влияния</span><strong id="chartDelta">0</strong></div>
+        <svg id="influenceChart" viewBox="0 0 360 150" preserveAspectRatio="none" aria-label="График влияния"></svg>
+      </article>
+      <div class="metric-grid" id="metricGrid"></div>
+      <article class="glass history-card">
+        <div class="card-heading"><span>История влияния</span><button id="historyFilter">Все операции</button></div>
+        <div class="history-list" id="historyList"></div>
+      </article>
+    </section>
+
+    <section class="page" data-page="story">
+      <div class="title-block"><div><p class="eyebrow">РАНЕЕ В ЭТОЙ БЕСЕДЕ</p><h2>СЮЖЕТНАЯ ХРОНИКА</h2></div></div>
+      <div class="story-filters glass"><input id="storySearch" placeholder="Найти участника или событие"><select id="storyImportance"><option value="0">Любая важность</option><option value="3">Важные</option><option value="4">Эпические</option></select></div>
+      <div class="timeline" id="storyTimeline"></div>
+    </section>
+
+    <section class="page" data-page="relations">
+      <div class="title-block"><div><p class="eyebrow">СВЯЗИ ПЕРСОНАЖА</p><h2>ОТНОШЕНИЯ УЧАСТНИКОВ</h2></div></div>
+      <article class="relation-map glass" id="relationMap"><div class="map-core" id="mapCore">ВЫ</div></article>
+      <div class="relation-list" id="relationList"></div>
+    </section>
+
+    <section class="page" data-page="achievements">
+      <div class="title-block"><div><p class="eyebrow">УСЛОВИЯ СКРЫТЫ</p><h2>ТАЙНЫЕ ДОСТИЖЕНИЯ</h2></div><span class="counter" id="achievementCounter">0/0</span></div>
+      <div class="achievement-grid" id="achievementGrid"></div>
+    </section>
+
+    <nav class="bottom-nav glass" id="bottomNav">
+      <button class="active" data-page-target="shop"><span>🛍</span><b>Магазин</b></button>
+      <button data-page-target="stats"><span>📊</span><b>Статистика</b></button>
+      <button data-page-target="story"><span>🎬</span><b>Сюжет</b></button>
+      <button data-page-target="relations"><span>🕸</span><b>Связи</b></button>
+      <button data-page-target="achievements"><span>🏅</span><b>Награды</b></button>
+    </nav>
+  </main>
+
+  <div class="modal-backdrop" id="purchaseModal" aria-hidden="true">
+    <section class="purchase-modal glass">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div class="modal-icon" id="modalIcon">🎭</div>
+      <p class="rarity" id="modalRarity">РЕДКИЙ ТОВАР</p>
+      <h3 id="modalTitle">Товар</h3>
+      <p id="modalDescription"></p>
+      <div id="payloadFields"></div>
+      <div class="purchase-summary">
+        <div><span>Текущий баланс</span><strong id="modalBalance">0</strong></div>
+        <div><span>Цена</span><strong id="modalPrice">0</strong></div>
+        <div class="after"><span>После покупки</span><strong id="modalAfter">0</strong></div>
+      </div>
+      <button class="buy-button" id="confirmPurchase"><span>ПОДТВЕРДИТЬ ПОКУПКУ</span><b id="confirmPrice">0</b></button>
+    </section>
+  </div>
+
+  <div class="purchase-success" id="purchaseSuccess" aria-hidden="true">
+    <div class="success-ring"><span>✓</span></div>
+    <h3>ПОКУПКА СОВЕРШЕНА</h3>
+    <p id="successText"></p>
+    <div class="particles" id="successParticles"></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <div class="loading-screen" id="loadingScreen"><div class="loader-emblem">👑</div><p>СОБИРАЕМ ВАШЕ ВЛИЯНИЕ</p><i></i></div>
+  <script src="/influence-shop-v184/app.js?build=184"></script>
+</body>
+</html>
